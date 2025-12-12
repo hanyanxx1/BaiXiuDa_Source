@@ -1,0 +1,35 @@
+主叫号码					callere164				varchar(64)
+被叫号码					calleee164				varchar(64)
+起始时间					starttime   			bigint			毫秒时间戳
+终止时间					stoptime   				bigint			毫秒时间戳
+通话时长					holdtime				int				秒
+计费时长					feetime					int				秒
+通话费用					fee						double
+话费成本					agentfee				double
+终止原因					endreason				int				枚举：-8（被叫挂断）....
+挂断方					enddirection			int				枚举：1（被叫）...
+主叫经由网关				callergatewayid			varchar(64)		
+被叫经由网关				calleegatewayid			varchar(64)	
+主叫ip					callerip				varchar(64)	
+被叫ip					calleeip				varchar(64)	
+账户名称					customername			varchar（255）
+账户号码					customeraccount			varchar（255）
+代理商账号				agentaccount			varchar（255）
+通话类型					callertype				int				枚举：1（国内长途）...
+地区前缀					callerareacode			varchar(64)
+呼入主叫					calleraccesse164		varchar(64)
+呼入被叫					calleeaccesse164		varchar(64)
+呼出主叫					callertogatewaye164		varchar(64)
+呼出被叫					calleetogatewaye164		varchar(64)
+主叫设备名称				callerproductid			varchar(64)
+被叫设备名称				calleeproductid			varchar(64)
+套餐时长					suitefeetime			int
+套餐费用					suitefee				int
+计费方式					billingtype				int
+计费模式					billingmode				int
+续接时长					callerpdd				int				结果除以1000
+接通延迟					calleepdd				int				结果除以1000
+主叫Call-Id				calleroriginalcallid	varchar(64)
+被叫Call-Id				calleecallid			varchar(64)
+是否录音					recordstarttime			bigint			如果大于0 显示“是”  如果为0  显示“否”
+序列号					flowno					bigint

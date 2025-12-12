@@ -1,0 +1,41 @@
+61.158.166.34
+联通落地服务器用户名：	root	51431
+联通落地服务器密码：	37967771@BAIXIUDA@hp
+数据库用户名：  hanyan
+数据库密码：	BAIXIUDA@@han138388	
+
+61.158.166.35-停用
+联通落地服务器用户名：	root	51995
+联通落地服务器密码：	37967771@@hp#@BAIXIUDA	
+数据库用户名：  hanyan
+数据库密码：	BAIXIUDA@@han138388
+
+61.158.166.35
+联通落地服务器用户名：	root	35498
+联通落地服务器密码：	HANpei@138388
+数据库用户名：  hanyan
+数据库密码：	BAIXIUDA@@han138388
+
+47.92.82.249
+联通落地服务器用户名：	root	51874
+联通落地服务器密码：	37967771@BAIXIUDA@hp
+数据库用户名：  hanyan
+数据库密码：	BAIXIUDA@@han138388
+
+8.130.15.135
+联通落地服务器用户名：	root	35498
+联通落地服务器密码：	HANpei@138388
+数据库用户名：  hanyan
+数据库密码：	BAIXIUDA@@han138388
+
+61.158.166.40
+联通落地服务器用户名：	root
+联通落地服务器密码：	HANpei@138388
+数据库用户名：  无
+数据库密码：	无
+
+
+ALTER USER 'hanyan'@'%' IDENTIFIED WITH mysql_native_password BY 'BAIXIUDA@@han138388';
+
+韩焱的公网IP
+221.14.88.149

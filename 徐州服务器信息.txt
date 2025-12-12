@@ -1,0 +1,18 @@
+wifi密码：jskuaixin2009
+
+主机ip：112.25.240.74
+主机端口：22
+
+一般用户：zhangfuqi
+一般用户密码：xkxt123@xkxt.2025
+
+su - root
+
+root
+Kxs2g==%34Q&kk
+
+mysql -uroot -p
+My@Passwd219x
+
+HANpei@138388
+

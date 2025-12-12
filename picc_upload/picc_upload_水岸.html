@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>picc_upload_水岸</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</head>
+<body class="bg-light">
+  <div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="card shadow-sm" style="max-width: 560px; width: 100%;">
+      <div class="card-header bg-primary text-white">上传文件</div>
+      <div class="card-body">
+        <form id="upload-form" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label for="url" class="form-label">url</label>
+            <input id="url" name="url" type="url" class="form-control" placeholder="https://示例地址" value="https://8.130.181.162:51361" />
+          </div>
+          <div class="mb-3">
+            <label for="project_id" class="form-label">project_id</label>
+            <input id="project_id" name="project_id" type="text" class="form-control" placeholder="项目 ID" value="1" />
+          </div>
+          <div class="mb-3">
+            <label for="access_token" class="form-label">access_token</label>
+            <textarea id="access_token" name="access_token" class="form-control" rows="4">eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3cucHN5Y2FsbC5jbiIsImlzcyI6Imh0dHA6XC9cL3d3dy5wc3ljYWxsLmNuIiwiY2xhaW0iOnsic3VwZXJfYWRtaW4iOjEsImFsbG93X2Rvd24iOnRydWUsIm5hbWUiOiJTQWd1b2ppIiwiYWRtaW4iOjEsInBlcm1pc3Npb24iOjEsImRlY3J5cHQiOiIiLCJoaWRlVGVsIjoiIiwiYWxsb3dfaW5zcGVjdGlvbiI6dHJ1ZX0sImV4cCI6MTc2NTA0NjM5M30.cHVtnlkqCbzuWl8nkmOVoxzIg3Brw9oQGvjGM7aw9-o</textarea>
+          </div>
+          <div class="mb-4">
+            <label for="files" class="form-label">Upload</label>
+            <input id="files" name="files" type="file" class="form-control" multiple />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">提交</button>
+        </form>
+        <div id="status-container"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 修改js代码逻辑如下：
+    // 1、将files文件数组翻转一下
+    // 2、遍历files
+    // 3、开启loading状态
+    // 4、对当前file执行/admin/project_task/add
+    // 5、如果/admin/project_task/add接口调用成功，则在status-container中添加一行“文件名添加成功”
+    // 6、如果/admin/project_task/add接口调用失败，则在status-container中添加一行“文件名添加失败”
+    // 7、/admin/project_task/add接口调用成功后，调用/admin/project_task/import
+    // 8、如果/admin/project_task/import调用成功，则在status-container中添加一行“文件名上传成功”
+    // 9、如果/admin/project_task/import调用失败，则在status-container中添加一行“文件名上传失败”
+    // 10、关闭loading状态
+    // 11、如果所有文件都处理完成，提示“所有文件处理完成”
+
+
+    var form = document.getElementById("upload-form");
+    var statusContainer = document.getElementById("status-container");
+    function addStatus(text) {
+      var div = document.createElement("div");
+      div.textContent = text;
+      statusContainer.appendChild(div);
+    }
+    function setDisabled(disabled) {
+      var elements = form.elements;
+      for (var i = 0; i < elements.length; i++) {
+        var el = elements[i];
+        if (el && typeof el.disabled !== "undefined") {
+          el.disabled = disabled;
+        }
+      }
+    }
+    function showLoading() {
+      setDisabled(true);
+      var spinner = document.createElement("div");
+      spinner.id = "upload-loading";
+      spinner.className = "d-flex align-items-center my-2";
+      spinner.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div><span>处理中...</span>';
+      statusContainer.appendChild(spinner);
+    }
+    function hideLoading() {
+      setDisabled(false);
+      var spinner = document.getElementById("upload-loading");
+      if (spinner) spinner.remove();
+    }
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var formData = new FormData(form);
+      var url = String(formData.get("url") || "");
+      var access_token = String(formData.get("access_token") || "");
+      var project_id = String(formData.get("project_id") || "");
+      var files = [];
+      formData.getAll("files").forEach(function (f) {
+        if (f instanceof File) files.push(f);
+      });
+
+      var addUrl = url + "/admin/project_task/add";
+
+      if (!files.length) {
+        alert("请上传文件");
+        return;
+      }
+      statusContainer.innerHTML = "";
+      showLoading();
+      files.reverse();
+      try {
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          try {
+            var myHeaders = new Headers();
+            myHeaders.append("access_token", access_token);
+            myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+            var urlencoded = new URLSearchParams();
+            urlencoded.append("project_id", project_id);
+            urlencoded.append("name", file.name);
+            urlencoded.append("access_token", access_token);
+
+            var requestOptions = {
+              method: "POST",
+              headers: myHeaders,
+              body: urlencoded,
+              redirect: "follow",
+            };
+
+            var response = await fetch(addUrl, requestOptions);
+            var result = await response.text();
+            var data = JSON.parse(result);
+            var task_id = data.data;
+            if (task_id === undefined || task_id === null) {
+              addStatus(file.name + "添加失败");
+              continue;
+            }
+            addStatus(file.name + "添加成功");
+
+            var headers2 = new Headers();
+            headers2.append("access_token", access_token);
+
+            var formdata = new FormData();
+            formdata.append("file", file, file.name);
+            formdata.append("project_id", project_id);
+            formdata.append("task_id", task_id);
+            formdata.append("filter", "0");
+            formdata.append("order", "0");
+
+            var requestOptions2 = {
+              method: "POST",
+              headers: headers2,
+              body: formdata,
+              redirect: "follow",
+            };
+
+            try {
+              var response2 = await fetch(url + "/admin/project_task/import", requestOptions2);
+              var result2 = await response2.text();
+              var data2 = JSON.parse(result2);
+              if (data2.code === 0) {
+                addStatus(file.name + "上传成功");
+              } else {
+                addStatus(file.name + "上传失败");
+              }
+            } catch (err2) {
+              addStatus(file.name + "上传失败");
+            }
+          } catch (error) {
+            addStatus(file.name + "添加失败");
+          }
+        }
+      } finally {
+        hideLoading();
+      }
+      alert("所有文件处理完成");
+    });
+  </script>
+</body>
+</html>
