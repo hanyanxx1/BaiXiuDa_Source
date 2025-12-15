@@ -204,4 +204,3 @@ CALL ExportCallData('e_cdr_20251212', '/var/lib/mysql-files/e_cdr_20251212/', 'h
 CALL ExportCallData('e_cdr_20251213', '/var/lib/mysql-files/e_cdr_20251213/', 'holdtime <= 0');
 CALL ExportCallData('e_cdr_20251214', '/var/lib/mysql-files/e_cdr_20251214/', 'holdtime <= 0');
 CALL ExportCallData('e_cdr_20251215', '/var/lib/mysql-files/e_cdr_20251215/', 'holdtime <= 0');
-
