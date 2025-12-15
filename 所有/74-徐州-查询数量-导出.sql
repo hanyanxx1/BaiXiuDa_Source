@@ -199,4 +199,9 @@ DELIMITER ;
 -- CALL ExportCallData('e_cdr_20251208', '/var/lib/mysql-files/', 'holdtime <= 0');
 -- CALL ExportCallData('e_cdr_20251209', '/var/lib/mysql-files/', 'holdtime <= 0');
 -- CALL ExportCallData('e_cdr_20251210', '/var/lib/mysql-files/', 'holdtime <= 0');
+CALL ExportCallData('e_cdr_20251211', '/var/lib/mysql-files/e_cdr_20251211/', 'holdtime <= 0');
+CALL ExportCallData('e_cdr_20251212', '/var/lib/mysql-files/e_cdr_20251212/', 'holdtime <= 0');
+CALL ExportCallData('e_cdr_20251213', '/var/lib/mysql-files/e_cdr_20251213/', 'holdtime <= 0');
+CALL ExportCallData('e_cdr_20251214', '/var/lib/mysql-files/e_cdr_20251214/', 'holdtime <= 0');
+CALL ExportCallData('e_cdr_20251215', '/var/lib/mysql-files/e_cdr_20251215/', 'holdtime <= 0');
 
