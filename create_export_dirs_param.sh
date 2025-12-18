@@ -53,7 +53,7 @@ while [ "$current_date_ts" -le "$end_date_ts" ]; do
     TABLE_NAME="e_cdr_${DATE_STR}"
     
     # 构造完整的导出路径 (例如：/var/lib/mysql-files/e_cdr_20251101/)
-    EXPORT_PATH="${BASE_EXPORT_DIR}${TABLE_NAME}/"
+    EXPORT_PATH="${BASE_EXPORT_DIR}${TABLE_NAME}/all"
     
     echo "✨ 正在创建目录: **${EXPORT_PATH}**"
     
@@ -78,3 +78,13 @@ done
 echo ""
 echo "🎉🎉🎉 **所有目录创建任务 (${START_DATE} 到 ${END_DATE}) 已成功完成！** 🎉🎉🎉"
 echo "-------------------------------------------------------------------------"
+
+--- 使用方式： ./create_export_dirs_param.sh 2025-11-01 2025-11-05
+--- 说明：
+--- 该脚本用于批量创建指定日期范围内的导出目录。
+--- 每个目录的路径为：/var/lib/mysql-files/[表名]/all
+--- 例如：/var/lib/mysql-files/e_cdr_20251101/all
+--- 给脚本授权：
+--- chmod +x create_export_dirs_param.sh
+--- 给mysql写入权限：
+--- chown -R mysql:mysql e_cdr_2025*
