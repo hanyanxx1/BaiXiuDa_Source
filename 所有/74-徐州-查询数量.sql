@@ -35,7 +35,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- 74-徐州
 -- CALL GetCallDataCount('e_cdr_20250906', 'holdtime <= 0');
 -- CALL GetCallDataCount('e_cdr_20250908', 'holdtime <= 0');
 -- CALL GetCallDataCount('e_cdr_20250925', 'holdtime <= 0');
