@@ -80,10 +80,7 @@ echo "🎉🎉🎉 **所有目录创建任务 (${START_DATE} 到 ${END_DATE}) �
 echo "-------------------------------------------------------------------------"
 
 --- 使用方式： ./create_export_dirs_param.sh 2025-11-01 2025-11-05
---- 说明：
---- 该脚本用于批量创建指定日期范围内的导出目录。
---- 每个目录的路径为：/var/lib/mysql-files/[表名]/all
---- 例如：/var/lib/mysql-files/e_cdr_20251101/all
+
 --- 给脚本授权：
 --- chmod +x create_export_dirs_param.sh
 --- 给mysql写入权限：
