@@ -99,5 +99,5 @@ BEGIN
 END //
 DELIMITER ;
 
--- 74
+-- 203
 CALL ExportCallData('e_cdr_20251223', '/var/lib/mysql-files/e_cdr_20251223/all/', 'holdtime <= 0');

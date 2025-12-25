@@ -15,15 +15,15 @@
         <form id="upload-form" class="needs-validation" novalidate>
           <div class="mb-3">
             <label for="url" class="form-label">url</label>
-            <input id="url" name="url" type="url" class="form-control" placeholder="https://示例地址" value="https://61.158.166.35:52103" />
+            <input id="url" name="url" type="url" class="form-control" placeholder="https://示例地址" value="https://47.92.77.25" />
           </div>
           <div class="mb-3">
             <label for="project_id" class="form-label">project_id</label>
-            <input id="project_id" name="project_id" type="text" class="form-control" placeholder="项目 ID" value="1" />
+            <input id="project_id" name="project_id" type="text" class="form-control" placeholder="项目 ID" value="3" />
           </div>
           <div class="mb-3">
             <label for="access_token" class="form-label">access_token</label>
-            <textarea id="access_token" name="access_token" class="form-control" rows="4">eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3cucHN5Y2FsbC5jbiIsImlzcyI6Imh0dHA6XC9cL3d3dy5wc3ljYWxsLmNuIiwiY2xhaW0iOnsic3VwZXJfYWRtaW4iOjEsImFsbG93X2Rvd24iOnRydWUsIm5hbWUiOiJxaW5nbmlhbmdvbmciLCJhZG1pbiI6MSwicGVybWlzc2lvbiI6MSwiZGVjcnlwdCI6IiIsImhpZGVUZWwiOiIiLCJhbGxvd19pbnNwZWN0aW9uIjp0cnVlfSwiZXhwIjoxNzY1MDQ2NDQ0fQ.PigrhlJjY6KjmywwfKgiF6fSLVJCITLSSIPBERsJsHA</textarea>
+            <textarea id="access_token" name="access_token" class="form-control" rows="4">eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3cucHN5Y2FsbC5jbiIsImlzcyI6Imh0dHA6XC9cL3d3dy5wc3ljYWxsLmNuIiwiY2xhaW0iOnsic3VwZXJfYWRtaW4iOjEsImFsbG93X2Rvd24iOnRydWUsIm5hbWUiOiJZQU5zaGk4NjQiLCJhZG1pbiI6MywicGVybWlzc2lvbiI6MSwiZGVjcnlwdCI6IiIsImhpZGVUZWwiOiIiLCJhbGxvd19pbnNwZWN0aW9uIjp0cnVlfSwiZXhwIjoxNzY1MDQ2MjAyfQ.GjYLOoEz04CBLoT7oHefMuyUj3i3DxW4C06M90ZY2RQ</textarea>
           </div>
           <div class="mb-4">
             <label for="files" class="form-label">Upload</label>
@@ -123,7 +123,7 @@
             var result = await response.text();
             var data = JSON.parse(result);
             var task_id = data.data;
-            if (task_id === undefined || task_id === null) {
+            if (task_id === undefined || task_id === null || task_id === -1) {
               addStatus(file.name + "添加失败");
               continue;
             }
@@ -150,7 +150,7 @@
               var response2 = await fetch(url + "/admin/project_task/import", requestOptions2);
               var result2 = await response2.text();
               var data2 = JSON.parse(result2);
-              if (data2.code === 0) {
+              if (data2.code === 0 && data2.data !== -1) {
                 addStatus(file.name + "上传成功");
               } else {
                 addStatus(file.name + "上传失败");
