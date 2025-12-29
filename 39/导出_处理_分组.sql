@@ -210,4 +210,5 @@ END //
 DELIMITER ;
 
 -- 39
-CALL ExportDistinctGroupedCallData('e_cdr_20251224','/var/lib/mysql-files/e_cdr_20251224/','holdtime <= 0');
+CALL ExportDistinctGroupedCallData('e_cdr_20251227','/var/lib/mysql-files/e_cdr_20251227/','holdtime <= 0');
+CALL ExportDistinctGroupedCallData('e_cdr_20251228','/var/lib/mysql-files/e_cdr_20251228/','holdtime <= 0');

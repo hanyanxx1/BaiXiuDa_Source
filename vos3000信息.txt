@@ -26,6 +26,6 @@
 密码 hanzong6688.
 36.139.87.39:2839     d6131a93-243c-4156-b195-4ce7fcd81de4
 
-账户：hanzong
-密码：hanzong6688.
+账户  hanzong
+密码  hanzong6688.
 36.139.251.203:8934   b7bc2c70-b12d-4c78-b226-5fa0434c947d
