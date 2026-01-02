@@ -173,6 +173,122 @@ BEGIN
 END //
 DELIMITER ;
 
+-- DELIMITER //
+-- CREATE PROCEDURE ExportBatchData(
+--     IN table_name VARCHAR(50), 
+--     IN export_path VARCHAR(255), 
+--     IN where_condition VARCHAR(1000),
+--     IN file_prefix VARCHAR(255)
+-- )
+-- BEGIN
+--     DECLARE i INT DEFAULT 0;
+--     DECLARE batch_size INT DEFAULT 50000;
+--     DECLARE total_records INT;
+--     DECLARE num_batches INT;
+--     DECLARE curr_date VARCHAR(10);
+    
+--     SET curr_date = DATE_FORMAT(NOW(), '%m.%d');
+    
+--     SET @count_sql = CONCAT('SELECT COUNT(*) INTO @total_records FROM ', table_name);
+    
+--     IF where_condition != '' THEN
+--         SET @count_sql = CONCAT(@count_sql, ' WHERE ', where_condition);
+--     END IF;
+    
+--     PREPARE stmt_count FROM @count_sql;
+--     EXECUTE stmt_count;
+--     DEALLOCATE PREPARE stmt_count;
+    
+--     SET total_records = @total_records;
+--     SET num_batches = CEILING(total_records / batch_size);
+    
+--     batch_loop: WHILE i < num_batches DO
+--         SET @sql = CONCAT(
+--             'SELECT * FROM (',
+--                 'SELECT ''客户姓名'' AS col1, ''客户号码'' AS col2, ''地址'' AS col3, ''购买套数'' AS col4, ''签收电话'' AS col5, ''备注'' AS col6 ',
+--                 'UNION ALL ',
+--                 'SELECT '''', CAST(calleee164 AS CHAR), '''', '''', '''', '''' ',
+--                 'FROM ', table_name, ' ',
+--                 IF(where_condition != '', CONCAT('WHERE ', where_condition, ' '), ''),
+--                 'LIMIT ', i * batch_size, ', ', batch_size,
+--             ') AS result_table ',
+--             'INTO OUTFILE ''', export_path, '/', 
+--             i+1, '-', 
+--             file_prefix,
+--             '-0-', curr_date, '.csv'' ',
+--             'FIELDS TERMINATED BY '','' ',
+--             'OPTIONALLY ENCLOSED BY ''"'' ',
+--             'ESCAPED BY ''\\\\'' ',
+--             'LINES TERMINATED BY ''\\n'''
+--         );
+        
+--         PREPARE stmt FROM @sql;
+--         EXECUTE stmt;
+--         DEALLOCATE PREPARE stmt;
+        
+--         SET i = i + 1;
+--     END WHILE batch_loop;
+
+-- END //
+-- DELIMITER ;
+
+-- DELIMITER //
+-- CREATE PROCEDURE ExportBatchData(
+--     IN table_name VARCHAR(50), 
+--     IN export_path VARCHAR(255), 
+--     IN where_condition VARCHAR(1000),
+--     IN file_prefix VARCHAR(255)
+-- )
+-- BEGIN
+--     DECLARE i INT DEFAULT 0;
+--     DECLARE batch_size INT DEFAULT 50000;
+--     DECLARE total_records INT;
+--     DECLARE num_batches INT;
+--     DECLARE curr_date VARCHAR(10);
+    
+--     SET curr_date = DATE_FORMAT(NOW(), '%m.%d');
+    
+--     -- 1. 获取总行数
+--     SET @count_sql = CONCAT('SELECT COUNT(*) INTO @total_records FROM ', table_name);
+--     IF where_condition != '' THEN
+--         SET @count_sql = CONCAT(@count_sql, ' WHERE ', where_condition);
+--     END IF;
+    
+--     PREPARE stmt_count FROM @count_sql;
+--     EXECUTE stmt_count;
+--     DEALLOCATE PREPARE stmt_count;
+    
+--     SET total_records = @total_records;
+--     SET num_batches = CEILING(total_records / batch_size);
+    
+--     -- 2. 循环导出
+--     batch_loop: WHILE i < num_batches DO
+--         -- 核心修改：完全移除 CHARACTER SET 声明，避免语法解析冲突
+--         -- 将 UNION ALL 放在最内层，外层不做包裹，直接导出
+--         SET @sql = CONCAT(
+--             'SELECT ''客户姓名'', ''客户号码'', ''地址'', ''购买套数'', ''签收电话'', ''备注'' ',
+--             'UNION ALL ',
+--             'SELECT '''', CAST(calleee164 AS CHAR), '''', '''', '''', '''' ',
+--             'FROM (SELECT calleee164 FROM ', table_name, ' ',
+--                 IF(where_condition != '', CONCAT('WHERE ', where_condition, ' '), ''),
+--                 'LIMIT ', i * batch_size, ', ', batch_size,
+--             ') AS sub_data ',
+--             'INTO OUTFILE ''', export_path, '/', i+1, '-', file_prefix, '-0-', curr_date, '.csv'' ',
+--             'FIELDS TERMINATED BY '','' ',
+--             'OPTIONALLY ENCLOSED BY ''"'' ',
+--             'ESCAPED BY ''\\\\'' ',
+--             'LINES TERMINATED BY ''\\n'''
+--         );
+        
+--         PREPARE stmt FROM @sql;
+--         EXECUTE stmt;
+--         DEALLOCATE PREPARE stmt;
+        
+--         SET i = i + 1;
+--     END WHILE batch_loop;
+-- END //
+-- DELIMITER ;
+
 DELIMITER //
 CREATE PROCEDURE ExportBatchData(
     IN table_name VARCHAR(50), 
@@ -189,8 +305,8 @@ BEGIN
     
     SET curr_date = DATE_FORMAT(NOW(), '%m.%d');
     
+    -- 1. 获取总行数
     SET @count_sql = CONCAT('SELECT COUNT(*) INTO @total_records FROM ', table_name);
-    
     IF where_condition != '' THEN
         SET @count_sql = CONCAT(@count_sql, ' WHERE ', where_condition);
     END IF;
@@ -202,35 +318,22 @@ BEGIN
     SET total_records = @total_records;
     SET num_batches = CEILING(total_records / batch_size);
     
+    -- 2. 循环导出
     batch_loop: WHILE i < num_batches DO
+        -- 核心修改点：
+        -- 1. 确保 UNION ALL 前后字段一一对应
+        -- 2. 调整 INTO OUTFILE 参数以匹配图 2 纯文本效果
         SET @sql = CONCAT(
-            '(SELECT ''客户姓名'',''客户号码'',''地址'',''购买套数'',''签收电话'',''备注'') ',
+            'SELECT ''客户姓名'', ''客户号码'', ''地址'', ''购买套数'', ''签收电话'', ''备注'' ',
             'UNION ALL ',
-            '(SELECT '''', calleee164, '''', '''', '''', '''' ',
-            'FROM ', table_name, ' ',
-            IF(where_condition != '', CONCAT('WHERE ', where_condition, ' '), ''),
-            'LIMIT ', batch_size, ' OFFSET ', i * batch_size, ') ',
-            ' INTO OUTFILE ''', export_path, '/', 
-            i+1, '-', 
-            file_prefix,
-            '-0-', curr_date, '.csv'' ',
+            'SELECT '''', CAST(calleee164 AS CHAR), '''', '''', '''', '''' ',
+            'FROM (SELECT calleee164 FROM ', table_name, ' ',
+                IF(where_condition != '', CONCAT('WHERE ', where_condition, ' '), ''),
+                'LIMIT ', i * batch_size, ', ', batch_size,
+            ') AS sub_data ',
+            'INTO OUTFILE ''', export_path, '/', i+1, '-', file_prefix, '-0-', curr_date, '.csv'' ',
             'FIELDS TERMINATED BY '','' ',
-            'ESCAPED BY ''\\\\'' ',
-            'LINES TERMINATED BY ''\\n'''  -- 恢复为原始的换行符
-        );
-        SET @sql = CONCAT(
-            'SELECT ''客户姓名'',''客户号码'',''地址'',''购买套数'',''签收电话'',''备注'' ',
-            'UNION ALL ',
-            'SELECT '''', calleee164, '''', '''', '''', '''' ',
-            'FROM ', table_name, ' ',
-            IF(where_condition != '', CONCAT('WHERE ', where_condition, ' '), ''),
-            'LIMIT ', i * batch_size, ', ', batch_size, ' ',
-            'INTO OUTFILE ''', export_path, '/', 
-            i+1, '-', 
-            file_prefix,
-            '-0-', curr_date, '.csv'' ',
-            'FIELDS TERMINATED BY '','' ',
-            'ESCAPED BY ''\\\\'' ',
+            'ENCLOSED BY '''' ',          -- 修改点：取消引号包裹，使内容像图2一样直接显示
             'LINES TERMINATED BY ''\\n'''
         );
         
@@ -244,7 +347,7 @@ END //
 DELIMITER ;
 
 -- 34
-CALL ExportDistinctGroupedCallData('e_cdr_20250829', '/export_dir', 
+CALL ExportDistinctGroupedCallData('e_cdr_20251203', '/var/lib/mysql-files/e_cdr_20251203', 
     'calleee164 NOT LIKE "%QIANHAO%" 
     AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
     AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
@@ -257,3 +360,4 @@ CALL ExportDistinctGroupedCallData('e_cdr_20250829', '/export_dir',
     AND calleee164 NOT LIKE "%-" 
     AND holdtime <= 0'
 );
+
