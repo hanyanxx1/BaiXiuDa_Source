@@ -36,5 +36,4 @@ END //
 DELIMITER ;
 
 -- 34
--- CALL GetCallDataCount('e_cdr_20250608', 'holdtime <= 0  AND calleee164 LIKE "%HMD%"');
 CALL GetCallDataCount('e_cdr_20250825', 'holdtime <= 0');

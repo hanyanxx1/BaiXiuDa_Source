@@ -7,7 +7,7 @@ DROP EVENT IF EXISTS daily_export_grouped_calldata;
 CREATE EVENT daily_export_grouped_calldata
 ON SCHEDULE 
     EVERY 1 DAY            -- 每天重复执行
-    STARTS '2025-12-25 23:00:00' -- 第一次执行时间示例 (请根据您的实际需求修改)
+    STARTS '2026-01-08 23:00:00' -- 第一次执行时间示例 (请根据您的实际需求修改)
 DO
 BEGIN
     -- 声明两个变量

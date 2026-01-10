@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>picc_upload_偃师</title>
+  <title>picc_upload_水岸</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </head>
@@ -15,7 +15,7 @@
         <form id="upload-form" class="needs-validation" novalidate>
           <div class="mb-3">
             <label for="url" class="form-label">url</label>
-            <input id="url" name="url" type="url" class="form-control" placeholder="https://示例地址" value="https://61.158.166.35:52103" />
+            <input id="url" name="url" type="url" class="form-control" placeholder="https://示例地址" value="https://61.158.166.40:53183" />
           </div>
           <div class="mb-3">
             <label for="project_id" class="form-label">project_id</label>
@@ -23,7 +23,7 @@
           </div>
           <div class="mb-3">
             <label for="access_token" class="form-label">access_token</label>
-            <textarea id="access_token" name="access_token" class="form-control" rows="4">eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3cucHN5Y2FsbC5jbiIsImlzcyI6Imh0dHA6XC9cL3d3dy5wc3ljYWxsLmNuIiwiY2xhaW0iOnsic3VwZXJfYWRtaW4iOjEsImFsbG93X2Rvd24iOnRydWUsIm5hbWUiOiJxaW5nbmlhbmdvbmciLCJhZG1pbiI6MSwicGVybWlzc2lvbiI6MSwiZGVjcnlwdCI6IiIsImhpZGVUZWwiOiIiLCJhbGxvd19pbnNwZWN0aW9uIjp0cnVlfSwiZXhwIjoxNzY1MDQ2NDQ0fQ.PigrhlJjY6KjmywwfKgiF6fSLVJCITLSSIPBERsJsHA</textarea>
+            <textarea id="access_token" name="access_token" class="form-control" rows="4">eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3d3cucHN5Y2FsbC5jbiIsImlzcyI6Imh0dHA6XC9cL3d3dy5wc3ljYWxsLmNuIiwiY2xhaW0iOnsic3VwZXJfYWRtaW4iOjEsImFsbG93X2Rvd24iOnRydWUsIm5hbWUiOiJKSU5HQU5HIiwiYWRtaW4iOjMsInBlcm1pc3Npb24iOjEsImRlY3J5cHQiOiIiLCJoaWRlVGVsIjoiIiwiYWxsb3dfaW5zcGVjdGlvbiI6dHJ1ZX0sImV4cCI6MTc2NTA0NjI1MH0.hcnqBWdRUqYRDWj-PBkQ584ULf9wQ9s9D8KQ-sNc4m8</textarea>
           </div>
           <div class="mb-4">
             <label for="files" class="form-label">Upload</label>
@@ -123,7 +123,7 @@
             var result = await response.text();
             var data = JSON.parse(result);
             var task_id = data.data;
-            if (task_id === undefined || task_id === null) {
+            if (task_id === undefined || task_id === null || task_id === -1) {
               addStatus(file.name + "添加失败");
               continue;
             }
@@ -150,7 +150,7 @@
               var response2 = await fetch(url + "/admin/project_task/import", requestOptions2);
               var result2 = await response2.text();
               var data2 = JSON.parse(result2);
-              if (data2.code === 0) {
+              if (data2.code === 0 && data2.data !== -1) {
                 addStatus(file.name + "上传成功");
               } else {
                 addStatus(file.name + "上传失败");

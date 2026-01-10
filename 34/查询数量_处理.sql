@@ -67,7 +67,7 @@ DELIMITER;
 
 -- 34:
 CALL GetDistinctCallDataCount(
-    'e_cdr_20250608', 
+    'e_cdr_20250830', 
     'calleee164 NOT LIKE "%QIANHAO%" 
     AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
     AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
@@ -80,4 +80,3 @@ CALL GetDistinctCallDataCount(
     AND calleee164 NOT LIKE "%-" 
     AND holdtime <= 0'
 );
-
