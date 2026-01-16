@@ -1,0 +1,17 @@
+20465827
+
+
+IP Address: 142.171.158.230
+
+Username: root
+Root Password: 0I1dMjtT61SG73Hxxp
+SSH Port 22
+
+
+URL: https://nerdvm.racknerd.com/
+Username: vmuser285419
+Password: jKBcaUQxbltRlNJ (If you already have access to the above control panel please use your existing password)
+
+使用在 Hysteria 2 节点的密码为：d472aa42
+
+hysteria2://d472aa42@142.171.158.230:64195/?insecure=1&sni=www.bing.com#Hysteria2-misaka

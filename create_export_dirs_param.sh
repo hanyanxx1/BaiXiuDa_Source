@@ -79,9 +79,9 @@ echo ""
 echo "🎉🎉🎉 **所有目录创建任务 (${START_DATE} 到 ${END_DATE}) 已成功完成！** 🎉🎉🎉"
 echo "-------------------------------------------------------------------------"
 
---- 使用方式： ./create_export_dirs_param.sh 2025-11-01 2025-11-05
+--- 使用方式： ./create_export_dirs_param.sh 2026-01-08 2026-01-31
 
 --- 给脚本授权：
 --- chmod +x create_export_dirs_param.sh
 --- 给mysql写入权限：
---- chown -R mysql:mysql e_cdr_2025*
+--- chown -R mysql:mysql e_cdr_2026*
