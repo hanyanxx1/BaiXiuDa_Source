@@ -1,0 +1,38 @@
+<div class="layui-form" lay-filter="layuiadmin-form-detect-report" style="padding: 20px;">
+    <div id="data_echarts">
+        <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
+            lay-filter="LAY-index-dataviews1">
+            <div carousel-item id="LAY-index-dataviews1">
+                <div class="layui-this"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+            </div>
+        </div>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <span style="color: #cd6864;">说明：</span>
+
+            <br><span style="color: #cd6864;">1. 过滤无声及语音助手，减少坐席无效通话节约成本</span>
+            <br><span style="color: #cd6864;">2. 有效提高线路利用率，节省线路</span>
+            <br><span style="color: #cd6864;">3. 可针对线路定制库，提高过滤精确度</span>
+            <br><span style="color: #cd6864;">4. 号码资源消耗加快属于正常现象</span>
+        </blockquote>
+    </div>
+    <style>
+        .layadmin-dataview {
+            height: 650px !important;
+        }
+
+        .layadmin-dataview>*[carousel-item]:before {
+            display: none;
+        }
+
+        .layadmin-dataview>*[carousel-item]>div {
+            height: 650px;
+        }
+    </style>
+    <script>
+        layui.use(['laydate', 'form'], function () {
+            var laydate = layui.laydate;
+            var $ = layui.$;
+            var form = layui.form;
+
+        })
+    </script>

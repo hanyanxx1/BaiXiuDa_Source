@@ -1,0 +1,408 @@
+ <!DOCTYPE html>
+ <html>
+
+ <head>
+ 	<meta charset="UTF-8">
+ 	<title></title>
+ </head>
+
+
+ <body>
+ 	<div class="layui-fluid">
+ 		<div class="layui-card">
+ 			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+ 				lay-filter="layadmin-rolefront-formlist">
+ 				<div class="layui-form-item">
+
+ 					<div class="layui-inline">
+ 						<label class="layui-form-label">名称</label>
+ 						<div class="layui-input-block">
+ 							<input type="text" id="role_name" name="name" placeholder="请输入" autocomplete="off"
+ 								class="layui-input">
+ 						</div>
+ 					</div>
+
+
+ 					<div class="layui-btn-group" style="float: right;">
+ 						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+ 							lay-filter="LAY-role-front-search">
+ 							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+ 						</button>
+ 						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+ 							data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+ 						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+ 							title="删除" data-type="batchdel"> <i
+ 								class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+
+ 					</div>
+ 				</div>
+
+ 			</div>
+
+ 			<div class="layui-card-body">
+
+ 				<table id="LAY-user-manage-role" lay-filter="LAY-user-manage-role"></table>
+
+ 				<script type="text/html" id="barDemoRole">
+ 					<a class="layui-btn layui-btn-xs" lay-event="editrole">编辑</a>
+ 				</script>
+
+ 			</div>
+ 		</div>
+ 	</div>
+
+ </body>
+ <style>
+	/*.layui-form-label {
+		width: 90px;
+	}*/
+	
+	.layui-layer-content {
+		overflow: visible !important;
+	}
+</style>
+ <script>
+ 	layui.use(['admin', 'authtree', 'table', 'tree', 'util'], function () {
+ 		var table = layui.table;
+ 		form = layui.form;
+ 		var $ = layui.$;
+ 		view = layui.view;
+ 		admin = layui.admin;
+ 		var authtree = layui.authtree;
+ 		var tree = layui.tree,
+ 			layer = layui.layer,
+ 			util = layui.util;
+
+ 		table.render({
+ 			elem: '#LAY-user-manage-role',
+ 			url: layui.setter.configUrl + 'admin/role/grid',
+ 			height: 'full-180',
+ 			method: 'post',
+			where:{
+				name:""
+			},
+ 			cols: [
+ 				[{
+ 						type: 'checkbox'
+ 					}, {
+ 						field: 'id',
+ 						title: '用户id',
+ 						sort: true,
+ 						align: 'center',
+ 						hide: true
+ 					}, {
+ 						field: 'admin_id',
+ 						title: '用户编号',
+ 						align: 'center',
+ 						hide: true
+
+ 					}, {
+ 						field: 'name',
+ 						title: '角色名称',
+ 						align: 'center'
+ 					}, {
+ 						field: 'menus',
+ 						title: '菜单',
+ 						align: 'center',
+ 						hide: true
+ 					}, {
+ 						field: 'permission',
+ 						title: '权限',
+ 						align: 'center',
+ 						templet: function (d) {
+ 							if (d.permission == 1) {
+ 								return "全局";
+ 							} else if (d.permission == 2) {
+ 								return "本项目";
+ 							} else if (d.permission == 3) {
+ 								return "标签组";
+ 							}else if (d.permission == 4) {
+ 								return "个人";
+ 							}
+ 						}
+ 					}, {
+ 						field: 'caozuo',
+ 						title: '操作',
+ 						toolbar: '#barDemoRole',
+ 						align: 'center'
+ 					}
+
+ 				]
+ 			],
+ 			page: true
+ 		});
+ 		form.render(null, 'layadmin-rolefront-formlist');
+
+ 		//监听搜索
+ 		form.on('submit(LAY-role-front-search)', function (data) {
+ 			var field = data.field;
+
+ 			//执行重载
+ 			table.reload('LAY-user-manage-role', {
+ 				where: field,
+ 				page: {
+ 					curr: 1
+ 				}
+ 			});
+ 		});
+
+ 		form.verify({
+ 			exist_roleName: function (value, item) { //value：表单的值、item：表单的DOM对象
+ 				var exist;
+ 				admin.req({
+ 					type: "POST",
+ 					async: false,
+ 					url: layui.setter.configUrl + "admin/role/exist",
+ 					dataType: 'json',
+ 					data: {
+ 						name: value
+ 					},
+ 					success: function (res) {
+ 						exist = res.data;
+ 					}
+
+ 				})
+ 				if (exist == true) {
+ 					//layer.tips('该用户名已存在', '#name', {tips: [2, 'red']});
+ 					return "该名称已被使用,请重试";
+ 				}
+
+ 			}
+ 		})
+
+ 		//行监听工具
+ 		table.on('tool(LAY-user-manage-role)', function (obj) {
+ 			var data = obj.data,
+ 				layEvent = obj.event;
+ 			if (layEvent === 'editrole') {
+ 				admin.popupRight({
+ 					title: '修改',
+ 					area: '520px',
+ 					id: 'LAY-popup-user-update',
+ 					success: function (layero, index) {
+ 						view(this.id).render('config/role/update').done(function () {
+
+ 							$("input[name=allow_inspection]").attr("checked", data.allow_inspection == true ? true : false);
+							$("input[name=allow_down]").attr("checked", data.allow_down == true ? true : false);
+							$("input[name=all_projects]").attr("checked", data.all_projects == true ? true : false);
+ 							//console.log(data.allow_inspection == true ? "true" : "false");
+
+ 							form.val('layuiadmin-form-roleupdate', data); //表单初始赋值
+ 							form.render(null, 'layuiadmin-form-roleupdate');
+
+							 if(data.permission==4){
+								data.permission=3;
+							 }
+
+ 							admin.req({
+ 								type: "post",
+ 								url: layui.setter.configUrl +
+ 									'admin/role/getMenus',
+
+ 								dataType: 'json',
+ 								data: {
+ 									permission_id: data.permission,
+ 									menus: data.menus
+ 								},
+ 								success: function (res) {
+ 									//基本演示
+ 									tree.render({
+ 										elem: '#test12',
+ 										data: res.data.trees,
+ 										showCheckbox: true //是否显示复选框
+ 											,
+ 										id: 'demoId1'
+ 									});
+
+ 								}
+ 							});
+
+ 							//监听提交
+ 							form.on('submit(LAY-roleupdate-front-submit-true)',function (data) {
+ 									layer.load();
+ 									var field = data.field; //获取提交的字段
+ 									field.allow_inspection = $("#allow_inspection").is(':checked');
+									field.allow_down = $("#allow_down").is(':checked');
+									field.all_projects = $("#all_projects").is(':checked');
+
+ 									let str = "";
+ 									var checkData = tree.getChecked('demoId1');
+ 									for (let i = 0; i < checkData.length; i++) {
+ 										if (str == "") {
+ 											str = checkData[i].id;
+ 										} else {
+ 											str = str + "," + checkData[i].id;
+ 										}
+ 										var children = checkData[i].children;
+ 										for (let j = 0; j < children
+ 											.length; j++) {
+ 											str = str + "," + children[j].id;
+ 										}
+
+ 									}
+
+ 									field['menus'] = str;
+ 									admin.req({
+ 										type: "post",
+ 										url: layui.setter.configUrl +
+ 											'admin/role/edit',
+ 										dataType: 'json',
+ 										data: field,
+ 										success: function (res) {
+ 											layer.closeAll('loading');
+ 											layer.msg('提交成功', {
+ 												icon: 1
+ 											});
+ 											layui.table.reload(
+ 												'LAY-user-manage-role'
+ 											); //重载表格
+ 											layer.close(
+ 												index); //执行关闭 
+ 										}
+ 									});
+ 								});
+ 						});
+ 					}
+ 				});
+ 			}
+ 		})
+
+ 		//事件
+ 		var active = {
+ 			batchdel: function () {
+ 				var checkStatus = table.checkStatus('LAY-user-manage-role'),
+ 					checkData = checkStatus.data; //得到选中的数据
+
+ 				var ids = "";
+ 				for (var i = 0; i < checkData.length; i++) {
+ 					if (ids != "") {
+ 						ids = ids + "," + checkData[i].id;
+ 					} else
+ 						ids = checkData[i].id;
+ 				}
+
+ 				if (checkData.length === 0) {
+ 					return layer.msg('请选择数据');
+ 				}
+
+ 				layer.confirm('确定删除吗？', {
+ 					icon: 3
+ 				}, function (index) {
+
+ 					//执行 Ajax 后重载
+ 					layer.load();
+ 					admin.req({
+ 						type: "post",
+ 						url: layui.setter.configUrl + '/admin/role/remove',
+ 						//async: true,
+ 						//dataType: "json",
+ 						data: {
+ 							ids: ids
+ 						},
+
+ 						success: function (obj) {
+ 							layer.closeAll('loading');
+ 							if (obj.data > 0) {
+ 								layer.msg("已删除", {
+ 									icon: 1
+ 								});
+ 								table.reload('LAY-user-manage-role');
+ 							} else {
+ 								layer.msg("删除失败,请重试", {
+ 									icon: 2
+ 								});
+ 							}
+ 						}
+ 					});
+
+ 				});
+ 			},
+ 			add: function () {
+ 				admin.popupRight({
+ 					title: '添加',
+ 					area: '620px',
+ 					id: 'LAY-popup-user-add',
+ 					success: function (layero, index) {
+ 						view(this.id).render('config/role/add').done(function () {
+ 							form.render(null, 'layuiadmin-form-roleadd');
+
+ 							//监听提交
+ 							form.on('submit(LAY-role-front-submit-true)', function (
+ 								data) {
+ 								layer.load();
+ 								var field = data.field; //获取提交的字段
+ 								//field['allow_down'] = true;
+ 								if (field.allow_inspection == "on") {
+ 									field.allow_inspection = "true";
+ 								} else {
+ 									field.allow_inspection = "false";
+ 								}
+								if (field.allow_down == "on") {
+ 									field.allow_down = "true";
+ 								} else {
+ 									field.allow_down = "false";
+ 								}
+
+								if (field.all_projects == "on") {
+ 									field.all_projects = "true";
+ 								} else {
+ 									field.all_projects = "false";
+ 								}
+								
+
+ 								let str = "";
+ 								var checkData = tree.getChecked('demoId1');
+ 								for (let i = 0; i < checkData.length; i++) {
+ 									if (str == "") {
+ 										str = checkData[i].id;
+ 									} else {
+ 										str = str + "," + checkData[i].id;
+ 									}
+ 									var children = checkData[i].children;
+ 									for (let j = 0; j < children
+ 										.length; j++) {
+ 										str = str + "," + children[j].id;
+ 									}
+
+ 								}
+ 								//$.ajax({});
+ 								// var authids = authtree.getChecked(
+ 								// 	'#LAY-auth-tree-index');
+ 								// var arr = authids;
+ 								// var str = arr.join(',');
+ 								field['menus'] = str;
+ 								admin.req({
+ 									type: "POST",
+ 									url: layui.setter.configUrl +
+ 										'admin/role/add',
+ 									dataType: 'json',
+ 									data: field,
+ 									success: function (res) {
+ 										layer.closeAll('loading');
+ 										layer.msg('提交成功', {
+ 											icon: 1
+ 										});
+ 										layui.table.reload(
+ 											'LAY-user-manage-role'
+ 										); //重载表格
+ 										layer.close(
+ 											index); //执行关闭 
+ 									}
+ 								});
+
+ 							});
+ 						});
+ 					}
+ 				});
+ 			}
+ 		};
+
+ 		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+ 			var type = $(this).data('type');
+ 			active[type] ? active[type].call(this) : '';
+ 		});
+
+ 	});
+ </script>
+
+ </html>

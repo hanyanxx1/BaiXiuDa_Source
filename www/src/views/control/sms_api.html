@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+
+			<div class="layui-col-md12">
+				<div class="layui-card">
+					<div class="layui-card-body">
+						<div class="layui-collapse" lay-accordion="">
+							<div class="layui-colla-item">
+								<h2 class="layui-colla-title">接口配置<i class="layui-icon layui-colla-icon"></i></h2>
+								<div class="layui-colla-content layui-show">
+	
+									<form class="layui-form layui-form-pane" lay-filter="sms-api-form" action="">
+										<div class="layui-form-item">
+											<label class="layui-form-label">地址</label>
+											<div class="layui-input-1">
+												<input id="url" name="url" autocomplete="off" placeholder="请输入"
+													class="layui-input">
+											</div>
+										</div>
+	
+										<div class="layui-form-item">
+											<label class="layui-form-label">请求类型</label>
+											<div class="layui-input-1">
+
+												<select id="http_method" name="http_method">
+													<option value="post">POST</option>
+													<option value="get">GET</option>
+												</select>
+											</div>
+										</div>
+	
+										<div class="layui-form-item">
+											<label class="layui-form-label">请求编码</label>
+											<div class="layui-input-1">
+												<input id="content_type" name="content_type" value="application/x-www-form-urlencoded;charset=UTF-8" placeholder="请输入"
+													class="layui-input">
+											</div>
+										</div>
+	
+										<div class="layui-form-item">
+											<label class="layui-form-label">请求头</label>
+											<div class="layui-input-1">
+												<input id="headers" name="headers" placeholder="请输入"
+													class="layui-input">
+											</div>
+										</div>
+	
+										<div class="layui-form-item layui-form-text">
+											<div><span style="color: red">备注:</span>${timestamp}  当前时间(例：20210924235959);  ${stamp} 当前时间戳(例：1632465791); ${tel} 电话号码; ${msg} 短信内容;  MD5() MD5加密</div>
+											<label class="layui-form-label">请求参数</label>
+											<div class="layui-input-block">
+												<textarea id="bodys" name="bodys" placeholder="请输入" class="layui-textarea"></textarea>
+											</div>
+										</div>
+										
+										<div class="layui-form-item" style="margin-top: 20px;">
+											<div class="layui-input-block">
+												<button class="layui-btn" lay-submit lay-filter="sms_api_submit">立即提交</button>
+												<button type="layui-btn" lay-submit lay-filter="sms_api_not_submit"
+												class="layui-btn layui-btn-primary">清除配置</button>
+											</div>
+											
+										</div>
+	
+									   
+	
+									</form>
+	
+								</div>
+							</div>
+	
+							<div class="layui-colla-item">
+								<h2 class="layui-colla-title">接口测试<i class="layui-icon layui-colla-icon"></i></h2>
+								<div class="layui-colla-content layui-show">
+									<form class="layui-form layui-form-pane" action="">
+										<div class="layui-form-item">
+											<label class="layui-form-label">号码:</label>
+											<div class="layui-input-1">
+												<input id="telephone" name="telephone" autocomplete="off" placeholder="请输入"
+													class="layui-input">
+											</div>
+										</div>
+	
+										<div class="layui-form-item layui-form-text">
+											<label class="layui-form-label">短信内容:</label>
+											<div class="layui-input-block">
+
+												<textarea id="msg" name="msg" placeholder="请输入" class="layui-textarea"></textarea>
+											</div>
+										</div>
+	
+										<div class="layui-form-item layui-form-text">
+											<label class="layui-form-label">返回结果</label>
+											<div class="layui-input-block">
+												<textarea id="result" name="result" placeholder="请输入" readonly="readonly" class="layui-textarea"></textarea>
+												
+											</div>
+										</div>
+
+										<div class="layui-form-item" style="margin-top: 20px;">
+											<div class="layui-input-block">
+												<button class="layui-btn" lay-submit lay-filter="sms_api__test_submit">立即提交</button>
+											</div>
+										</div>
+	
+									</form>
+	
+								</div>
+							</div>
+	
+	
+							
+	
+						</div>
+	
+					</div>
+	
+				</div>
+			</div>
+
+
+
+		</div>
+	</div>
+
+
+</body>
+
+</html>
+
+
+
+
+
+<script>
+	layui.use('admin', function () {
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		form.render();
+
+		$(function () {
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "admin/sms_api/get",
+					//async: true,
+					dataType: "json",
+					success: function (obj) {
+						if(obj.data!=null){
+							if (obj.data.content_type=="") {
+							obj.data.content_type="application/x-www-form-urlencoded;charset=UTF-8";
+						}
+						form.val('sms-api-form', obj.data);
+						}
+						
+					}
+
+				});
+			}
+		})
+
+		form.on('submit(sms_api_submit)', function (data) {
+			layer.load();
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "/admin/sms_api/edit",
+				//async: true,
+				data: {
+					url: $("#url").val(),
+					http_method: $("#http_method").val(),
+					content_type: $("#content_type").val(),
+					bodys: $("#bodys").val(),
+					headers: $("#headers").val()
+				},
+				//dataType: "json",
+				success: function (obj) {
+					layer.closeAll('loading');
+					if (obj.data > 0) {
+						layer.msg("重新配置成功", {
+							icon: 1
+						});
+					} else {
+						layer.msg("操作失败", {
+							icon: 2
+						});
+					}
+				}
+			});
+			return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+
+		form.on('submit(sms_api_not_submit)', function (data) {
+			layer.load();
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "/admin/sms_api/edit",
+				//async: true,
+				data: {
+					url: "",
+					http_method: "",
+					content_type:"",
+					bodys: "",
+					headers: ""
+				},
+				//dataType: "json",
+				success: function (obj) {
+					layer.closeAll('loading');
+					if (obj.data > 0) {
+						layer.msg("配置已清空", {
+							icon: 1
+						});
+					} else {
+						layer.msg("操作失败", {
+							icon: 2
+						});
+					}
+				}
+			});
+			return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+
+		form.on('submit(sms_api__test_submit)', function (data) {
+			layer.load();
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "/admin/sms_api/send",
+				//async: true,
+				data: {
+					telephone: $("#telephone").val(),
+					msg: $("#msg").val()
+				},
+				//dataType: "json",
+				success: function (obj) {
+					layer.closeAll('loading');
+					var datas = obj.data;
+					if (!datas.match("^\{(.+:.+,*){1,}\}$")) { //当数据不是json数据时
+						$("#result").val(datas);
+					} else {
+						var result_data = JSON.stringify(datas); //把json转换成string
+						$("#result").val(result_data);
+					}
+
+					layer.msg("发送成功", {
+						icon: 1
+					});
+
+				}
+			});
+			return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+
+	})
+</script>

@@ -1,0 +1,168 @@
+<div class="layui-form" lay-filter="layuiadmin-form-record-aitext" style="padding: 0px 0 0 0;">
+
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layim-chat-main" style="height: 80vh;" id="outDiv">
+
+                    <ul id="LAY_view">
+                        <!-- <li>
+                            <div class="layim-chat-user">
+                                <img src="../start/images/RobotOutline.png">
+                            </div>
+                            <div class="layim-chat-text" style="margin-top: 0px;">
+                                喂，您好, （停顿2s）您好，我这边是专业办理银行信用贷款和抵押贷款的。月息在5，6厘左右，（语气高昂兴奋）请问您最近有没有资金周转的需求啊？
+                            </div>
+                        </li>
+                        <li class="layim-chat-mine">
+                            <div class="layim-chat-user">
+                                <img src="../start/images/user.png">
+                                <cite><i>1480897882000</i>纸飞机</cite>
+                            </div>
+                            <div class="layim-chat-text ">
+                                喂，您好, （停顿2s）您好，我这边是专业办理银行信用贷款和抵押贷款的。月息在5，6厘左右，（语气高昂兴奋）请问您最近有没有资金周转的需求啊？
+                            </div>
+
+                        </li> -->
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    layui.link('../src/lib/extend/layim/layim-assets/layim.css', 'skinlayimcss') //加载 css
+</script>
+<style>
+    /* .layui-layer-content {
+        background-color: #eee;
+    }
+	#LAY_view img {
+		width: 40px;
+		height: 40px;
+		border-radius: 100%
+	}
+    #LAY_view .layim-chat-AI {
+       display: flex;
+       justify-content: flex-start;
+    }
+    #LAY_view .layim-chat-mine {
+       display: flex;
+       justify-content: flex-end;
+       align-items: flex-start;
+    } */
+    .layim-chat-user {
+		display: inline-block;
+		*display: inline;
+		*zoom: 1;
+		vertical-align: top;
+		font-size: 14px
+	}
+
+	.layim-chat-user {
+		position: absolute;
+		left: 3px
+	}
+
+	.layim-chat-user img {
+		width: 40px;
+		height: 40px;
+		border-radius: 100%
+	}
+
+	.layim-chat-user cite {
+		position: absolute;
+		left: 60px;
+		top: -2px;
+		width: 500px;
+		line-height: 24px;
+		font-size: 12px;
+		white-space: nowrap;
+		color: #999;
+		text-align: left;
+		font-style: normal
+	}
+
+	.layim-chat-user cite i {
+		padding-left: 15px;
+		font-style: normal
+	}
+
+	.layim-chat-mine {
+		text-align: right;
+		padding-left: 0;
+		padding-right: 60px
+	}
+
+	.layim-chat-text {
+		padding-left: 0;
+		padding-right: 60px
+	}
+
+	.layim-chat-text {
+		max-width: 350px;
+		position: relative;
+		line-height: 22px;
+		margin-top: 25px;
+		padding: 8px 15px;
+		background-color: #e2e2e2;
+		border-radius: 3px;
+		color: #333;
+		word-break: break-all;
+		max-width: 462px\9
+	}
+
+	.layim-chat-text:after {
+		content: '';
+		position: absolute;
+		left: -10px;
+		top: 13px;
+		width: 0;
+		height: 0;
+		border-style: solid dashed dashed;
+		border-color: #e2e2e2 transparent transparent;
+		overflow: hidden;
+		border-width: 10px
+	}
+
+	.layim-chat-text a {
+		color: #33DF83
+	}
+
+	.layim-chat-text img {
+		max-width: 100%;
+		vertical-align: middle
+	}
+
+	.layim-chat-text .layui-layim-file,
+	.layui-layim-file {
+		display: block;
+		text-align: center
+	}
+
+	.layim-chat-text .layui-layim-file {
+		color: #333
+	}
+
+
+	.layim-chat-mine .layim-chat-text {
+		max-width: 350px;
+		margin-left: 0;
+		text-align: left;
+		background-color: #5FB878;
+		color: #fff
+	}
+
+	.layim-chat-mine .layim-chat-text:after {
+		left: auto;
+		right: -10px;
+		border-top-color: #5FB878
+	}
+
+	.layim-chat-mine .layim-chat-text a {
+		color: #fff
+	}
+</style>

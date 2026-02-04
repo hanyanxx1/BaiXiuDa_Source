@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <title></title>
+
+    <script src="../start/js/public.js"></script>
+    <script src="../start/js/verify.js"></script>
+    <script src="../start/js/md5.js"></script>
+</head>
+
+<body>
+
+    <div class="login">
+        <div class="enter">
+            <div class="enter_title"> </div>
+            <div class="enter_box" style="display: none;">
+                <div class="nav_title">
+                    <p>使用帮助</p>
+                    <p><img src="../start/images/icon_arrow.png" alt="" /></p>
+                </div>
+                <div class="nav_box">
+                    <ul>
+                        <li><a href="https://www.google.cn/chrome/" target="_blank">谷歌浏览器下载</a></li>
+                        <li><a href="https://www.psyai.cn/uploads/soft/180507/V20.21.pdf" target="_blank">使用说明书</a></li>
+                        <li><a href="https://www.psyai.cn/xinwenzhongxin/222.html" target="_blank">常见问题</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="login_box clear">
+            <div class="left_img"></div>
+            <div class="login_content">
+                <h2 class="logo_title"></h2>
+                <form action="">
+                    <div class="group">
+                        <img src="../start/images/company.png" alt="" />
+                        <input type="text" name="company" id="LAY-user-login-company" placeholder="公司名称" />
+                    </div>
+
+                    <div class="group">
+                        <img src="../start/images/icon_user.png" alt="" />
+                        <input type="text" name="name" id="LAY-user-login-username" placeholder="用户名" />
+                    </div>
+                    <div class="group">
+                        <img src="../start/images/icon_password.png" alt="" />
+                        <input type="password" name="passwd" id="LAY-user-login-password" placeholder="密码" />
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="group">
+                                    <img src="../start/images/icon_safe.png" alt="" />
+                                    <input type="text" name="verifyCode" id="vercode" placeholder="验证码" />
+                                </div>
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img style="margin-top: -16px;" class="layadmin-user-login-codeimg" id="canvas"></td>
+                        </tr>
+                    </table>
+
+                    <div class="rule" style="display: none;">
+                        <input type="checkbox" name="checkbox" id="checkbox" />
+                        <span class="enter_detail">请阅读《隐私及服务说明》</span>
+                    </div>
+                    <div class="btn_box">
+                        <button class="btn" class="layui-btn layui-btn-fluid" id="login_submit" lay-submit
+                            lay-filter="LAY-user-login-submit" style="cursor: pointer;" type="submit">登 入</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="foot" style="display: none;">
+            <p>© 2024 &nbsp;
+                <a href="http://www.psycall.cn" target="_blank">苏州磐石云通信技术有限公司</a>
+            </p>
+        </div>
+    </div>
+
+
+    <!--隐私及服务说明-->
+    <div class="rule_hide">
+        <div class="bg_fade"></div>
+        <div class="main_text">
+            <div class="main_title">
+                <p>《 隐私及服务说明 》</p>
+                <div class="remove">×</div>
+            </div>
+            <div class="main_content" id="explain">
+
+            </div>
+            <div class="main_next">
+                <button type="button" class="agree">同意并继续</button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+<script type="text/javascript">
+    layui.use(['admin', 'form', 'user', 'captcha'], function () {
+        var $ = layui.$,
+            setter = layui.setter,
+            admin = layui.admin,
+            form = layui.form,
+            router = layui.router(),
+            search = router.search,
+            capcha = layui.captcha;
+
+        form.render();
+
+
+        $.ajax({
+            type: "post",
+            url: layui.setter.configUrl + "common/logo",
+            success: function (res) {
+                //layui.setter.name =res.data;
+                if (res.data == "PSCC") {
+                    $(".logo_title").html(res.data + "-旗舰版");
+                    $(".enter_box").css("display", "");
+                    $(".foot").css("display", "");
+                    $(".rule").css("display", "");
+                } else if (res.data != "") {
+                    $(".logo_title").html(res.data + "-旗舰版");
+                }
+
+            }
+        })
+
+        $(function () {
+
+            document.getElementById('LAY-user-login-company').focus();
+        })
+
+        $('.nav_title').click(function () {
+            $('.nav_box').toggle();
+        })
+        $('.enter_detail').click(function () {
+            $('.rule_hide').show();
+        })
+        $('.remove').click(function () {
+            $('.rule_hide').hide();
+        })
+        $('.agree').click(function () {
+            $('.rule_hide').hide();
+        })
+        $('#checkbox').attr('checked', true) //默认《隐私及服务说明》勾选
+
+
+        $(function () {
+            $("#canvas").attr("src", layui.setter.configUrl + "verifyCode?rnd=" + Math.random());
+            document.getElementById('LAY-user-login-company').focus();
+        })
+
+        var isSend = true;
+        // $(document).keydown(function (e) {
+        //     if (e.keyCode === 13 && isSend) {
+        //         isSend = false;
+        //         $("#login_submit").trigger("click");
+        //     }
+        // });
+
+
+        //显示验证码
+        $("#canvas").on('click', function () {
+            $("#canvas").attr("src", layui.setter.configUrl + "verifyCode?rnd=" + Math.random());
+        });
+
+        //提交
+        form.on('submit(LAY-user-login-submit)', function (obj) {
+            layer.load();
+            // var webpassword = obj.field.passwd;
+            // obj.field.passwd = $.md5(obj.field.passwd);
+            //请求登入接口
+            window.sessionStorage.removeItem("load");
+
+            var username = $('#LAY-user-login-username').val();
+            var company = $('#LAY-user-login-company').val();
+            var passwod = escape($('#LAY-user-login-password').val());
+            // console.log(passwod)
+            var password = $.md5(passwod);
+
+            if (username == "") {
+                isSend = true;
+                layer.closeAll('loading');
+                layer.msg('用户名不能为空', {
+                    offset: '15px',
+                    icon: 2
+                });
+                return false;
+            } else if (passwod == "") {
+                isSend = true;
+                layer.closeAll('loading');
+                layer.msg('密码不能为空', {
+                    offset: '15px',
+                    icon: 2
+                });
+                return false;
+            } else if (company == "") {
+                isSend = true;
+                layer.closeAll('loading');
+                layer.msg('公司名不能为空', {
+                    offset: '15px',
+                    icon: 2
+                });
+                return false;
+            } else {
+
+                if ($("#checkbox").is(":checked") == false) {
+                    layer.closeAll('loading');
+                    layer.msg('请勾选《隐私及服务说明》', {
+                        offset: '15px',
+                        icon: 2
+                    });
+                    return false;
+
+                } else {
+                    if ($("#vercode").val() == '') {
+
+                        layer.closeAll('loading');
+                        layer.msg("请输入验证码！", {
+                            offset: '15px',
+                            icon: 2
+                        });
+                        isSend = true;
+                        return false;
+                    } else {
+                       
+                        $.ajax({
+                            type: 'post',
+                            url: layui.setter.configUrl + "login",
+                            data: {
+                                name: username,
+                                company: company,
+                                passwd: password,
+                                verifyCode: $("#vercode").val()
+                            //    verifyCode: ""
+                            },
+                            success: function (res) {
+                                isSend = true;
+
+                                if (res.msg == "fail") {
+                                    layer.closeAll('loading');
+                                    layer.msg(res.data, {
+                                        offset: '15px',
+                                        icon: 2,
+                                        time: 1000
+                                    });
+
+                                    $("#vercode").val("");
+                                    $("#canvas").click();
+                                    return false;
+                                }
+                                window.sessionStorage.setItem("name", username);
+                                let result = res.data;
+                                result.isOpen = 0;
+                                result.super_admin_name = "1";
+                                if (res.data.role == 'super_admin') {
+                                    result.super_admin_name = username;
+                                    result.allow_down = true;
+                                    result.allow_inspection = true;
+                                    result.permission = 1;
+                                } else {
+                                    $.ajax({
+                                        url: layui.setter.configUrl + 'menu/info',
+                                        async: false,
+                                        headers: { //通过 request 头传递
+                                            access_token: res.data.access_token
+                                        },
+                                        success: function (obj) {
+                                            result.allow_down = obj.data.allow_down;
+                                            result.allow_inspection = obj.data.allow_inspection;
+                                            result.permission = obj.data.permission;
+                                        }
+                                    });
+                                }
+                                result.user_pwd = res.data.wss_md5;
+                                //新方式的存储token
+                                layui.data(setter.tableName, {
+                                    key: username,
+                                    value: result
+                                });
+                                layui.table.set({
+                                    headers: { //通过 request 头传递
+                                        access_token: res.data.access_token
+                                    }
+                                });
+                                
+                                //
+                                layui.data(setter.tableName, {
+                                    key: setter.request.tokenName,
+                                    value: res.data.access_token
+                                });
+
+                                //请求成功后，写入 access_token
+                                // layui.data(setter.tableName, {
+                                //     key: setter.request.tokenName,
+                                //     value: res.data.access_token
+                                // });
+                                // layui.table.set({
+                                //     headers: { //通过 request 头传递
+                                //         access_token: res.data.access_token
+                                //     }
+                                // });
+
+                                // layui.data(setter.tableName, {
+                                //     key: "role",
+                                //     value: res.data.role
+                                // });
+                                // layui.data(setter.tableName, {
+                                //     key: "isOpen",
+                                //     value: 0
+                                // });
+
+                                // if (res.data.webphone != undefined) {
+                                //     layui.data(setter.tableName, {
+                                //         key: "webphone",
+                                //         value: res.data.webphone
+                                //     });
+                                // }
+
+                                // if (res.data.role == 'super_admin') {
+                                //     layui.data(setter.tableName, {
+                                //         key: "super_admin_name",
+                                //         value: username
+                                //     });
+                                //     layui.data(setter.tableName, {
+                                //         key: "allow_down",
+                                //         value: true
+                                //     });
+
+                                //     layui.data(setter.tableName, {
+                                //         key: "allow_inspection",
+                                //         value: true
+                                //     });
+
+                                //     layui.data(setter.tableName, {
+                                //         key: "permission",
+                                //         value: 1
+                                //     });
+
+                                // } else {
+                                //     layui.data(setter.tableName, {
+                                //         key: "super_admin_name",
+                                //         value: "1"
+                                //     });
+                                //     $.ajax({
+                                //         url: layui.setter.configUrl + 'menu/info',
+                                //         headers: { //通过 request 头传递
+                                //             access_token: res.data.access_token
+                                //         },
+                                //         success: function (obj) {
+                                //             layui.data(setter.tableName, {
+                                //                 key: "allow_down",
+                                //                 value: obj.data
+                                //                     .allow_down
+                                //             });
+
+                                //             layui.data(setter.tableName, {
+                                //                 key: "allow_inspection",
+                                //                 value: obj.data
+                                //                     .allow_inspection
+                                //             });
+                                //             layui.data(setter.tableName, {
+                                //                 key: "permission",
+                                //                 value: obj.data
+                                //                     .permission
+                                //             });
+
+                                //             layui.data(setter.tableName, {
+                                //                 key: "name",
+                                //                 value: obj.data.name
+                                //             });
+
+                                //         }
+                                //     });
+                                // }
+                                // layui.data(setter.tableName, {
+                                //     key: "user_pwd",
+                                //     value: res.data.wss_md5
+                                // });
+
+
+                                //window.sessionStorage.setItem("role_names", res.data.role);
+                                // window.sessionStorage.setItem("user_pwd", passwod);
+                                layer.closeAll('loading');
+                                //登入成功的提示与跳转
+                                window.sessionStorage.removeItem("own");
+                                location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/';
+                            },
+                            error: function (res) {
+                                isSend = true;
+                                layer.closeAll('loading');
+
+                                layer.msg("服务器无响应", {
+                                    offset: '15px',
+                                    icon: 2
+                                });
+                                return false;
+                            }
+
+                        });
+                    }
+                }
+            }
+
+            return false;
+        });
+
+        $("#explain").append("<p align='center'>隐私政策</p>" +
+            "<p align='left'>引言</p>" +
+            "<p align='left'>苏州磐石云通信技术有限公司（以下简称磐石云）尊重并保护所有使用服务用户的个人隐私权。为了给您提供更准确、更有个性化的服务，磐石云会按照本隐私权政策的规定使用和披露您的个人信息。但磐石云将以高度的勤勉、审慎义务对待这些信息。除本隐私权政策另有规定外，在未征得您事先许可的情况下，本应用不会将这些信息对外披露或向第三方提供。磐石云会不时更新本隐私权政策。 您在同意本应用服务使用协议之时，即视为您已经同意本隐私权政策全部内容。本隐私权政策属于本应用服务使用协议不可分割的一部分。</p>" +
+            "<br/><p align='left'>一、适用范围</p>" +
+            "<br/><p align='left'>二、用户信息的收集和使用</p>" +
+            "<br/><p align='left'>三、用户信息的共享、转让、公开披露</p>" +
+            "<br/><p align='left'>四、用户信息的管理</p>" +
+            "<br/><p align='left'>五、用户信息的安全</p>" +
+            "<br/><p align='left'>六、隐私权政策的更新</p>" +
+            "<br/><p align='left'>七、免责声明</p>" +
+            "<br/><p align='left'>八、如何联系我们</p>" +
+            "<br/><p align='left'>一、适用范围</p>" +
+            "<br/><p align='left'>1.1. 本隐私权政策适用于磐石云所有服务。服务包括向您提供您页面浏览、网站登录服务，以及通过磐石云出品的所有软件程序向您提供的技术服务。</p>" +
+            "<p align='left'>1.2. 需要特别说明的是，作为磐石云的用户，若您利用苏州磐石云通信技术有限公司的技术服务，为您的用户再行提供服务，因您的业务数据属于您所有，您应当另行与您的用户约定隐私权政策。</p>" +
+            "<br/><p align='left'>二、用户信息的收集和使用</p>" +
+            "<br/><p align='left'>2.1. 向您提供技术服务您向我们提供的信息包括：</p>" +
+            "<p align='left'>2.1.1. 根据《电话用户真实身份信息登记规定》，《工业和信息化部 公安部 工商总局联合印发电话“黑卡”治理专项行动工作方案》等国家相关法律法规，在您使用具体的技术服务时，您需要提供您的真实身份信息。</p>" +
+            "<br/><p align='left'>三、 用户信息的共享、转让和公开披露</p>" +
+            "<br/><p align='left'>3.1. 共享</p>" +
+            "<p align='left'>我们不会与其他组织和个人共享您的用户信息，但以下情况除外：</p>" +
+            "<p align='left'>3.1.1. 在获取明确同意的情况下共享：获得您的明确同意后，我们会与其他方共享您的用户信息；</p>" +
+            "<p align='left'>3.1.2. 在法定情形下的共享：我们可能会根据法律法规规定、诉讼、仲裁解决需要，或按行政、司法机关依法提出的要求，对外共享您的用户信息；</p>" +
+            "<p align='left'>3.2. 转让 </p>" +
+            "<p align='left'>我们不会将您的用户信息转让给任何公司、组织和个人，但以下情况除外：</p>" +
+            "<p align='left'>3.2.1. 在获取明确同意的情况下转让：获得您的明确同意后，我们会向其他方转让您的用户信息；</p>" +
+            "<p align='left'>3.2.2. 在苏州磐石云通信技术有限公司与其他法律主体发生合并、收购或破产清算情形，或其他涉及合并、收购或破产清算情形时，如涉及到用户信息转让，我们会要求新的持有您用户信息的公司、组织继续受本政策的约束，否则我们将要求该公司、组织和个人重新向您征求授权同意。</p>" +
+            "<p align='left'>3.3. 公开披露 </p>" +
+            "<p align='left'>我们仅会在以下情况下，公开披露您的用户信息：</p>" +
+            "<p align='left'>3.3.1． 获得您明确同意或基于您的主动选择，我们可能会公开披露您的用户信息；</p>" +
+            "<p align='left'>3.3.2. 或为苏州磐石云通信技术有限公司及其关联公司用户或公众的人身财产安全免遭侵害，我们可能依据法律法规或苏州磐石云通信技术有限公司与您签署的相关协议、规则披露关于您的用户信息。 </p>" +
+            "<p align='left'>3.4. 共享、转让、公开披露用户信息时事先征得授权同意的例外,以下情形中，共享、转让、公开披露您的用户信息无需事先征得您的授权同意：</p>" +
+            "<p align='left'>3.4.1. 与国家安全、国防安全有关的； </p>" +
+            "<p align='left'>3.4.2. 与公共安全、公共卫生、重大公共利益有关的；</p>" +
+            "<p align='left'>3.4.3. 与犯罪侦查、起诉、审判和判决执行等有关的；</p>" +
+            "<p align='left'>3.4.4. 出于维护您或其他个人的生命、财产等重大合法权益但又很难得到本人同意的；</p>" +
+            "<p align='left'>3.4.5. 您自行向社会公众公开的个人信息；</p>" +
+            "<p align='left'>3.4.6.从合法公开披露的信息中收集个人信息的，如合法的新闻报道、政府信息公开等渠道。</p>" +
+            "<br/><p align='left'>四、 用户信息的管理</p>" +
+            "<br/><p align='left'>4.1. 您可以通过或客服电话进行查询、管理（变更、删除）使用磐石云产品服务时而提交的基本业务信息（基本资料）和联系人信息。</p>" +
+            "<p align='left'>4.2. 在以下情形中，您可以向我们提出删除个人信息的请求：</p>" +
+            "<p align='left'>4.2.1. 如果我们处理个人信息的行为违反法律法规；</p>" +
+            "<p align='left'>4.2.2. 如果我们收集、使用您的个人信息，却未征得您的明确同意；</p>" +
+            "<p align='left'>4.2.3. 如果我们处理个人信息的行为严重违反了与您的约定；</p>" +
+            "<p align='left'>4.2.4. 如果您不再使用我们的产品或服务，或您要求注销了账号；</p>" +
+            "<p align='left'>4.2.5. 如果我们永远不再为您提供产品或服务。</p>" +
+            "<p align='left'>若我们决定响应您的删除请求，我们还将同时尽可能通知从我们处获得您的个人信息的实体，要求其及时删除，除非法律法规另有规定，或这些实体获得您的独立授权。</p>" +
+            "<br/><p align='left'>五、用户信息的安全</p>" +
+            "<br/><p align='left'>5.1. 苏州磐石云通信技术有限公司非常重视您的信息安全。我们努力采取各种合理的物理、电子和管理方面的安全措施来保护您的用户信息。</p>" +
+            "<p align='left'>5.2. 我们会采取合理可行的措施，尽力避免收集无关的用户信息。我们只会在达成本政策所述目的所需的期限内保留您的用户信息（包含通话服务内容），除非需要延长保留期或受到法律的允许。超出上述用户信息保存期限后，我们会对您的个人信息进行删除或匿名化处理。</p>" +
+            "<p align='left'>5.3. 如出现磐石云PSCC产品和服务停止运营的情形，我们会采取合理措施保护您用户信息安全，包括及时停止继续收集用户信息的活动；将停止运营的通知以逐一送达或公告的形式通知用户；对所持有的个人信息进行删除或匿名化处理等。</p>" +
+            "<p align='left'>5.4. 如超出与收集用户信息时所声称的目或超出具有直接或合理关联的范围后使用用户信息前，我们会再次向您告知并征得您的明示同意。</p>" +
+            "<br/><p align='left'>六、隐私权政策的更新</p>" +
+            "<br/><p align='left'>6.1. 我们的隐私权政策可能修订。</p>" +
+            "<p align='left'>6.2. 未经您明确同意，我们不会限制您按照本隐私权政策所应享有的权利。我们会在专门页面上发布对隐私权政策所做的任何修订。</p>" +
+            "<p align='left'>6.3. 对于重大修订，我们还会提供更为显著的通知（包括对于某些服务，我们会通过网站公示的方式进行通知，说明隐私权政策的具体变更内容）。</p>" +
+            "<p align='left'>6.4. 本政策所指的重大变更包括但不限于：</p>" +
+            "<p align='left'>6.4.1. 我们的服务模式发生重大变化。如处理用户信息的目的、处理的用户信息类型、用户信息的使用方式等；</p>" +
+            "<p align='left'>6.4.2. 我们在控制权、组织架构等方面发生重大变化。如业务调整、破产并购等引起的所有者变更等；</p>" +
+            "<p align='left'>6.4.3.用户信息共享、转让或公开披露的主要对象发生变化； </p>" +
+            "<p align='left'>6.4.4. 您参与用户信息处理方面的权利及其行使方式发生重大变化；</p>" +
+            "<p align='left'>6.4.5. 我们负责处理用户信息安全的责任部门、联络方式及投诉渠道发生变化时； </p>" +
+            "<p align='left'>6.4.6. 用户信息安全影响评估报告表明存在高风险时。</p>" +
+            "<br/><p align='left'>七、免责声明</p>" +
+            "<br/><p align='left'>7.1用户使用磐石云软件服务时必须遵守国家有关法律和政策，维护国家利益，保护国家安全，并遵守本条款，对于用户违法或违反本协议的使用而引起的一切责任，由用户承担全部责任。</p>" +
+            "<p align='left'>7.2磐石云软件产品同大多数互联网产品一样，易受到各种安全问题的困扰，包括但不限于：</p>" +
+            "<p align='left'>7.2.1用户透露详细个人资料，被不法分子利用，造成现实生活中的骚扰。</p>" +
+            "<p align='left'>7.2.2被哄骗、破译密码。 </p>" +
+            "<p align='left'>7.2.3下载安装的其它软件中含有木马或病毒，威胁到个人终端机器上的信息和数据安全，继而威胁对本服务的使用。</p>" +
+            "<p align='left'>7.3对于发生上述情况的，用户应当自行承担责任。</p>" +
+            "<p align='left'>7.3.1用户理解，互联网技术的不稳定性，可能导致政府政策管制、病毒入侵、黑客攻击、服务器系统崩溃或者其他现今技术无法解决的风险发生，可能导致服务中断或账号数据损失，用户对此非人为因素引起的损失，不承担责任。</p>" +
+            "<p align='left'>7.3.2 对于系统发生故障影响到本服务的正常运行，磐石云承诺一经发现便及时处理、进行修复。但用户因此而产生的经济和精神损失，苏州磐石云通信技术有限公司不承担责任。</p>" +
+            "<br/><p align='left'>八、如何联系我们</p>" +
+            "<br/><p align='left'>您对本声明和政策内容有任何疑问和意见，或者您对苏州磐石云通信技术有限公司本隐私权政策的实践以及操作上有任何疑问和意见，您可通过苏州磐石云通信技术有限公司：4001-383-585 与我们联系。</p>" +
+            "<br/><p align='center'>磐石云PSCC服务协议</p>" +
+            "<br/><p align='left'>欢迎您使用磐石云PSCC服务！</p>" +
+            "<p align='left'>特别提示：在使用磐石云PSCC服务之前，您应当认真阅读并遵守《磐石云PSCC服务协议》（以下简称“本协议”），请您务必审慎阅读、充分理解各条款内容，特别是免除或者限制责任、争议解决和法律适用条款。免除或者限制责任的条款可能将以加粗字体显示，您应重点阅读。如您对协议有任何疑问的，可以向服务提供者客服热线咨询。</p>" +
+            "<p align='left'>当您按照页面提示填写信息、阅读并勾选“我已阅读并同意《磐石云PSCC服务协议》”且提交后，或您以其他服务提供者允许的方式实际使用磐石云PSCC服务时，即表示您已充分阅读、理解并同意接受本协议全部内容的约束。您承诺接受并遵守本协议的约定，届时您不应以未阅读本协议的内容或者未获得服务提供者对您问询的解答等理由，主张本协议无效，或要求撤销本协议。</p>" +
+            "<br/><p align='left'>一、协议范围</p>" +
+            "<br/><p align='left'>1、本协议由您（或称“用户”）与服务提供者苏州磐石云通信技术有限公司（简称“服务提供者”）共同缔结，具有合同效力。 </p>" +
+            "<p align='left'>2、服务提供者有权根据需要修改本协议，并以网站公示的方式进行变更公告，无需另行单独通知您。变更后的协议一经在网站公布后，立即或在公告明确的特定时间自动生效。如果用户继续使用本服务，则视为接受服务条款的变动。</p>" +
+            "<br/><p align='left'>二、服务使用规则</p>" +
+            "<br/><p align='left'>1、主体资格 </p>" +
+            "<p align='left'>1.1您确认，在您完成本服务购买程序或以其他服务提供者允许的方式实际使用本服务时，您应当是具备完全民事权利能力和与从事的民事行为相适应的民事行为能力的自然人、法人或其他组织。若您不具备前述主体资格，则您及您的监护人应承担因此而导致的一切后果，且服务提供者有权中止或终止向您提供本服务，并向您及您的监护人索偿相应损失。</p>" +
+            "<p align='left'>1.2服务提供者对您的个人信息依法保密，但为了与您建立沟通渠道，改善服务工作，您理解并授权同意服务提供者可以使用您的个人信息与您联系。</p>" +
+            "<p align='left'>1.3您的密码是您的重要资料，请注意保密。在密码遗失或被盗时，应及时进行修改或重置。因您的原因造成的密码丢失或被他人获取造成的损失，服务提供者不承担责任。 </p>" +
+            "<p align='left'>2、服务使用</p>" +
+            "<p align='left'>2.1您使用本服务时，应遵守国家法律、法规、规章等相关规定，不得为任何非法目的或侵犯他人合法权益的方式而使用本服务，否则服务提供者有权停止向您的服务。</p>" +
+            "<p align='left'>2.2未经服务提供者同意（并办理有效变更手续），您不得将本协议的全部或部分转让给第三方的，否则由此产生的责任均由您承担。</p>" +
+            "<p align='left'>2.3您理解并承诺，不通过本服务发送任何违法及其他违反公序良俗内容的信息。若您未经接收客户同意发送商业广告或各类不良信息的，服务提供者有权依据政府部门的要求、接收客户举报或投诉、或本协议约定停止向您提供相应的服务。</p>" +
+            "<p align='left'>2.4您理解并同意因使用本服务所引发的一切后果，由您承担全部责任。如因您使用本服务服务的行为，导致服务提供者或任何第三方为此承担了相关的责任，您需全额赔偿服务提供者或任何第三方的相关支出及损失，包括但不限于律师费用、诉讼费等。</p>" +
+            "<br/><p align='left'>三、服务费用</p>" +
+            "<br/><p align='left'>1、因订购本服务，您须向服务提供者支付相应费用，具体费用标准以官网公示的金额或者合同金额为准。</p>" +
+            "<br/><p align='left'>四、第三方服务说明</p>" +
+            "<br/><p align='left'>1、您了解并确认在本服务使用过程中涉及第三方运营商提供的服务，服务提供者对第三方运营商提供的服务不提供任何形式的保证。</p>" +
+            "<br/><p align='left'>五、协议变更、中止和终止</p>" +
+            "<br/><p align='left'>1、在服务期限届满前，您可以续订本服务，并付清全部费用。如您在服务到期时未进行续订或未支付全部费用，则服务将在您订购的服务期届满时终止。</p>" +
+            "<p align='left'>2、有下列情形之一的，服务提供者有权单方解除协议、并保留追究您的违约责任的权利：</p>" +
+            "<p align='left'>2.1您提供的个人实名认证信息（包括代理人或监护人提供的实名认证信息）虚假不实；</p>" +
+            "<p align='left'>2.2您使用本服务被国家机关认定用于违法犯罪活动或其它不当用途；</p>" +
+            "<p align='left'>2.3服务提供者收到政府部门通知，要求停止您的服务；</p>" +
+            "<p align='left'>2.4本协议的终止并不能当然的被认为免除您在本协议生效期间应履行的相关义务，也不能消除因终止前您的行为所带来的法律后果。</p>" +
+            "<br/><p align='left'>六、违约责任</p>" +
+            "<br/><p align='left'>一方违约给对方造成损失的，应当由违约方依法承担赔偿责任，但违约方应承担的赔偿损失的责任范围不包括守约方未实现的预期利润或利益、商业信誉的损失、数据的丢失、第三方损失及其他间接损失。</p>" +
+            "<br/><p align='left'>七、免责声明</p>" +
+            "<br/><p align='left'>1、由于不可抗力（包括但不限于战争、自然灾害等），导致本协议不能履行的，双方均不需承担违约责任。</p>" +
+            "<p align='left'>2、您理解并同意由于通信系统或互联网的中断或无法运作、技术故障、计算机错误或病毒、黑客攻击、信息损坏、数据丢失或其它在服务提供者合理控制范围之外的原因导致本服务无法正常使用时，服务提供者不就由此产生的损失或破坏而向用户或任何第三方承担赔偿责任。</p>" +
+            "<p align='left'>3、服务提供者有权在必要时修改本协议条款，协议条款一旦发生变动，服务提供者将会在官网等主要页面上提示修改内容。如果用户继续使用本服务，则视为接受服务条款的变动。</p>" +
+            "<br/><p align='left'>八、争议解决</p>" +
+            "<br/><p align='left'>1、所有因本协议引起的或与本协议有关的争议，本着互让互利的原则，通过协商解决。协商不成的，您可向电信管理部门申诉或向消费者协会等有关部门投诉。仍无法解决争议的，双方均可向被告所在地的人民法院起诉。</p>" +
+            "<p align='left'>2、因本协议产生的争议适用中华人民共和国法律予以处理。</p>");
+    });
+    function getBrowser() {
+        var UserAgent = navigator.userAgent.toLowerCase();
+        var browserInfo = {};
+        var browserArray = {
+            IE: window.ActiveXObject || "ActiveXObject" in window,
+            // IE       
+            Chrome: UserAgent.indexOf('chrome') > -1 && UserAgent.indexOf('safari') > -1,
+            // Chrome浏览器       
+            Firefox: UserAgent.indexOf('firefox') > -1,
+            // 火狐浏览器       
+            Opera: UserAgent.indexOf('opera') > -1,
+            // Opera浏览器        
+            Safari: UserAgent.indexOf('safari') > -1 && UserAgent.indexOf('chrome') == -1,
+            // safari浏览器        
+            Edge: UserAgent.indexOf('edge') > -1,
+            // Edge浏览器        
+            QQBrowser: /qqbrowser/.test(UserAgent),
+            // qq浏览器        
+            WeixinBrowser: /MicroMessenger/i.test(UserAgent)
+            // 微信浏览器  
+        };
+        // console.log(browserArray)  
+        for (var i in browserArray) {
+            if (browserArray[i]) {
+                var versions = '';
+                if (i == 'IE') {
+                    versions = UserAgent.match(/(msie\s|trident.*rv:)([\w.]+)/)[2];
+                }
+                else if (i == 'Chrome') {
+                    for (var mt in navigator.mimeTypes) {
+
+                        //检测是否是360浏览器(测试只有pc端的360才起作用)      
+                        if (navigator.mimeTypes[mt]['type'] == 'application/360softmgrplugin') {
+                            i = '360';
+                        }
+                    }
+                    versions = UserAgent.match(/chrome\/([\d.]+)/)[1];
+                }
+                else if (i == 'Firefox') {
+                    versions = UserAgent.match(/firefox\/([\d.]+)/)[1];
+                } else if (i == 'Opera') {
+                    versions = UserAgent.match(/opera\/([\d.]+)/)[1];
+                } else if (i == 'Safari') {
+                    versions = UserAgent.match(/version\/([\d.]+)/)[1];
+                } else if (i == 'Edge') {
+                    versions = UserAgent.match(/edge\/([\d.]+)/)[1];
+                } else if (i == 'QQBrowser') {
+                    versions = UserAgent.match(/qqbrowser\/([\d.]+)/)[1];
+                }
+                browserInfo.type = i; browserInfo.versions = parseInt(versions);
+            }
+        } return browserInfo;
+    }
+</script>
+
+</html>

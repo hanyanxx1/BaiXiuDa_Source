@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-blacklist">
+				<div class="layui-form-item">
+
+					<label class="layui-form-label">号码</label>
+					<div class="layui-input-inline">
+						<input type="text" id="telephone" name="telephone" autocomplete="off" placeholder="请输入"
+							class="layui-input">
+					</div>
+
+					<div class="layui-inline">
+
+						<label class="layui-form-label">日期范围</label>
+
+						<div class="layui-input-inline">
+
+							<input type="text" id="b_date" placeholder="yyyy-MM-dd" autocomplete="off"
+								class="layui-input">
+
+						</div>
+
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">备注</label>
+						<div class="layui-input-inline">
+							<input type="text" id="remark" name="remark" autocomplete="off" placeholder="请输入"
+								class="layui-input">
+						</div>
+
+					</div>
+
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+							lay-filter="LAY-user-front-search-blacklist">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+							data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="批量增加"
+							data-type="batadd"> <img src="../start/images/batchAdd.png"></img></button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+							title="勾选删除" data-type="batchdel"> <i
+								class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+							title="条件删除" data-type="batchdelSearch"> <img
+								src="../start/images/batchDel.png"></img></button>
+
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="导出"
+							data-type="exportBlack"><img src="../start/images/export.png"></img></button>
+					</div>
+
+				</div>
+
+
+
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-blacklist" lay-filter="LAY-user-manage-blacklist"></table>
+
+				<script type="text/html" id="barDemoBlacklist">
+					<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+				</script>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+<style>
+	.layui-form-pane .layui-form-label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+</style>
+<script>
+	layui.use(['admin', 'table', 'laydate'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		laydate = layui.laydate;
+
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		if (month < 10)
+			month = "0" + month;
+		var day = date.getDate();
+		if (day < 10)
+			day = "0" + day;
+		var timestamp = year + "-" + month + "-" + day;
+		$("#b_date").val(timestamp + " ~ " + timestamp);
+
+		//日期
+		laydate.render({
+			elem: '#b_date',
+			range: "~"
+		});
+
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-blacklist',
+			url: layui.setter.configUrl + 'admin/blacklist/grid',
+			height: 'full-180',
+			where: {
+				telephone: "",
+				start_time: $('#b_date').val().split(" ~ ")[0],
+				end_time: $('#b_date').val().split(" ~ ")[1],
+				remark: ""
+			},
+			cols: [
+				[{
+					type: 'checkbox'
+				}, {
+					field: 'telephone',
+					title: '号码',
+					align: 'center'
+				}, {
+					field: 'import_stamp',
+					title: '日期',
+					align: 'center'
+				}, {
+					field: 'remark',
+					title: '备注',
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'caozuo',
+					title: '操作',
+					toolbar: '#barDemoBlacklist',
+					align: 'center',
+				}]
+			]
+
+			,
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-blacklist');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-blacklist)', function (data) {
+			var field = data.field;
+			field['start_time'] = $('#b_date').val().split(" ~ ")[0];
+			field['end_time'] = $('#b_date').val().split(" ~ ")[1];
+
+			//执行重载
+			table.reload('LAY-user-manage-blacklist', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+		//行监听工具
+		table.on('tool(LAY-user-manage-blacklist)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'edit') {
+
+				admin.popup({
+					title: '修改',
+					area: ['580px', '350px'],
+					id: 'LAY-popup-user-update',
+					btn: ['提交', '取消'],
+					success: function (layero, index) {
+						view(this.id).render('base/black/update').done(function () {
+							form.render(null, 'layuiadmin-form-backlistupdate');
+							form.val('layuiadmin-form-backlistupdate', data); //表单初始赋值
+
+							//监听提交
+							form.on('submit(LAY-backlistupdate-front-submit)',
+								function (data) {
+									layer.load();
+									var field = data.field; //获取提交的字段
+
+									//提交 Ajax 成功后，关闭当前弹层并重载表格
+									//$.ajax({});
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +
+											'admin/blacklist/edit',
+										//async: true,
+										data: field,
+										dataType: "json",
+
+										success: function (obj) {
+											layer.closeAll('loading');
+											if (obj.data > 0) {
+												layer.msg("修改成功", {
+													icon: 1
+												});
+												layui.table.reload(
+													'LAY-user-manage-blacklist'
+												); //重载表格
+												layer.close(
+													index); //执行关闭 
+											} else {
+												layer.msg("修改失败,请重试", {
+													icon: 2
+												});
+											}
+										}
+
+									});
+
+								});
+						});
+					},
+					yes: function (index, layero) {
+						layero.find('#blacklist-update').click();
+					}
+
+				});
+
+			}
+
+		})
+
+		var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-blacklist'),
+					checkData = checkStatus.data; //得到选中的数据
+				//alert(checkData.length);
+				var ids = "";
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据');
+				}
+
+				layer.confirm('确定删除吗？', {
+					icon: 3
+				}, function (index) {
+
+					//执行 Ajax 后重载
+					layer.load();
+					admin.req({
+						type: "post",
+						url: layui.setter.configUrl + 'admin/blacklist/remove',
+						//async: true,
+						//dataType: "json",
+						data: {
+							ids: ids
+						},
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("删除成功", {
+									icon: 1
+								});
+								table.reload('LAY-user-manage-blacklist');
+							} else {
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+
+					});
+
+				});
+			},
+			batchdelSearch: function () {
+				layer.confirm('删除条件下的所有黑名单？', {
+					icon: 3
+				}, function (index) {
+
+					//执行 Ajax 后重载
+					layer.load();
+					admin.req({
+						type: "post",
+						url: layui.setter.configUrl + 'admin/blacklist/delete',
+						//async: true,
+						//dataType: "json",
+						data: {
+							telephone: $("#telephone").val(),
+							start_time: $('#b_date').val().split(" ~ ")[0],
+							end_time: $('#b_date').val().split(" ~ ")[1],
+							remark: $("#remark").val()
+						},
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("删除成功", {
+									icon: 1
+								});
+								table.reload('LAY-user-manage-blacklist');
+							} else {
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+
+					});
+
+				});
+			},
+			add: function () {
+				admin.popup({
+					title: '添加',
+					//area: ['45%', '45%'],
+					area: ['580px', '350px'],
+					id: 'LAY-popup-user-add',
+					btn: ['提交', '取消'],
+					success: function (layero, index) {
+						view(this.id).render('base/black/add').done(function () {
+							form.render(null, 'layuiadmin-form-backlistadd');
+
+							//监听提交
+							form.on('submit(LAY-backlistadd-front-submit)', function (
+								data) {
+								layer.load();
+								var field = data.field; //获取提交的字段
+
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										'admin/blacklist/add',
+									//async: true,
+									data: field,
+									dataType: "json",
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("添加成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-blacklist'
+											); //重载表格
+											layer.close(
+												index); //执行关闭 
+										} else {
+											layer.msg("添加失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+
+								});
+
+							});
+						});
+					},
+					yes: function (index, layero) {
+						layero.find('#blacklist-add').click();
+					}
+				});
+			},
+			batadd: function () {
+				admin.popup({
+					title: '批量添加',
+					//area: ['40%', '50%'],
+					area: ['580px', '400px'],
+					//offset: '100px',
+					id: 'LAY-popup-user-add',
+					btn: ['提交', '取消'],
+					success: function (layero, index) {
+						view(this.id).render('base/black/btachadd').done(function () {
+							form.render(null, 'layuiadmin-form-backlistbtachadd');
+
+							//监听提交
+							form.on('submit(LAY-backlistbtachadd-front-submit)',
+								function (data) {
+									layer.load();
+									var field = data.field; //获取提交的字段
+
+									//提交 Ajax 成功后，关闭当前弹层并重载表格
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +
+											'admin/blacklist/add',
+										//async: true,
+										data: field,
+										dataType: "json",
+										success: function (obj) {
+											layer.closeAll('loading');
+											if (obj.data > 0) {
+												layer.msg("批量添加成功", {
+													icon: 1
+												});
+												layui.table.reload(
+													'LAY-user-manage-blacklist'
+												); //重载表格
+												layer.close(
+													index); //执行关闭 
+											} else {
+												layer.msg("添加失败,请重试", {
+													icon: 2
+												});
+											}
+										}
+
+									});
+
+								});
+						});
+					},
+					yes: function (index, layero) {
+						layero.find('#blacklist-btachadd').click();
+					}
+				});
+
+			},
+			exportBlack: function () {
+
+				window.location = layui.setter.configUrl + "blacklist/download?start_time=" + $('#b_date').val().split(" ~ ")[0] +
+					"&end_time=" + $('#b_date').val().split(" ~ ")[1] + "&remark=" + $('#remark').val() + "&telephone=" + $('#telephone').val() +
+					"&access_token=" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+			}
+
+		};
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+</script>
+
+</html>

@@ -1,0 +1,53 @@
+<div class="layui-form" lay-filter="layuiadmin-form-smsSetting-edit" style="padding: 20px;">
+    <div class="layui-col-md6">
+                <form class="layui-form" id="fields-form_tel" action="" lay-filter="crm_fields_two_form">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">手机号</label>
+                            <div id="on_type" class="layui-input-inline">
+                                <button type="button" onclick="field_tool.addTelnode()"
+                                    class="layui-btn">添加选项</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nodes_tel">
+
+                    </div>
+
+                </form>
+    </div>
+    <div class="layui-col-md6">
+                <form class="layui-form" id="fields-form_rule" action="" lay-filter="crm_fields_two_form">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">告警阀值(分钟数)</label>
+                            <div id="on_type" class="layui-input-inline">
+                                <button type="button" onclick="field_tool.addRulenode()"
+                                    class="layui-btn">添加选项</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nodes_rule">
+
+                    </div>
+
+                </form>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="smsSetting_add" lay-submit lay-filter="LAY-user-front-smsSetting-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+</div>
+<script>
+
+    field_tool = {
+        addTelnode: function () {
+            $("#nodes_tel").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+        }, addRulenode: function () {
+            $("#nodes_rule").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+        }
+
+    }
+</script>

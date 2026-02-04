@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html>
+
+
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<title></title>
+
+</head>
+
+
+
+<body>
+
+
+
+	<div class="layui-fluid">
+
+		<div class="layui-card">
+
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-agent-reportt">
+
+				<div class="layui-form-item">
+
+
+
+					<div class="layui-inline">
+
+						<label class="layui-form-label">项目名称</label>
+
+						<div class="layui-input-inline">
+
+							<select id="ar_project" name="project_id" lay-filter="ar_project_select">
+
+								<option value="0">--请选择--</option>
+
+							</select>
+
+						</div>
+
+					</div>
+
+					<div class="layui-inline">
+
+						<label class="layui-form-label">日期范围</label>
+
+						<div class="layui-input-inline">
+
+							<input type="text" id="ar_date" placeholder="yyyy-MM-dd" autocomplete="off"
+								class="layui-input">
+
+						</div>
+
+					</div>
+
+
+
+
+					<!-- <div class="layui-inline">
+
+							<label class="layui-form-label">日期:</label>
+
+							<div class="layui-input-inline">
+
+								<input type="text" id="ar_start" name="startd" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+
+							</div>
+
+						</div>
+
+
+
+						<div class="layui-inline">
+
+							<label class="layui-form-label">结束:</label>
+
+							<div class="layui-input-inline">
+
+								<input type="text" id="ar_end" name="endd" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+
+							</div>
+
+						</div> -->
+
+
+
+					<div class="layui-btn-group" style="float: right;">
+
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" id="agent-re-btn" lay-submit
+							lay-filter="LAY-user-front-search-agentreport">
+
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+
+						</button>
+
+
+
+					</div>
+
+				</div>
+
+			</div>
+
+
+
+			<div class="layui-card-body">
+
+
+
+				<table id="LAY-user-manage_agentreport" lay-filter="LAY-user-manage_agentreport"></table>
+
+
+
+			</div>
+
+		</div>
+
+	</div>
+
+</body>
+
+
+
+<!--<style>
+
+	.layui-form-label {
+
+		width: 90px;
+
+	}
+
+</style>-->
+
+<script>
+	var extension = ''; //坐席工号
+
+	layui.use(['admin', 'table', 'laydate'], function () {
+
+		var table = layui.table;
+
+		form = layui.form;
+
+		var $ = layui.$;
+
+		view = layui.view;
+
+		admin = layui.admin;
+
+		laydate = layui.laydate;
+
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		if (month < 10)
+			month = "0" + month;
+		var day = date.getDate();
+		if (day < 10)
+			day = "0" + day;
+		var timestamp = year + "-" + month + "-" + day;
+		$("#ar_date").val(timestamp + " ~ " + timestamp);
+	
+
+		$(function () {
+
+
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+
+				admin.req({ //执行项目下拉列表
+
+					type: "POST",
+
+					url: layui.setter.configUrl + "/admin/project/list",
+
+					dataType: 'json',
+
+					success: function (res) {
+						$("#ar_project").empty();
+						var result = res.data;
+
+						$("#ar_project").append("<option value='0'>--请选择--</option>");
+
+						for (var i = 0; i < result.length; i++) {
+
+							$("#ar_project").append("<option value=" + result[i].id + ">" +
+								result[i].name + "</option>");
+
+						}
+
+						layui.form.render("select");
+
+					}
+
+				});
+
+
+
+
+			}
+
+
+
+		})
+
+
+		laydate.render({
+			elem: '#ar_date',
+			range: "~"
+		});
+
+
+
+
+
+		table.render({
+
+			method: 'POST',
+
+			elem: '#LAY-user-manage_agentreport',
+
+			url: layui.setter.configUrl + "/admin/getAgentReport",
+
+			height: 'full-180',
+			toolbar: true,
+			defaultToolbar: ['filter', 'print', 'exports'],
+			where: {
+				project_id: $("#ar_project").val(),
+				startd: timestamp,
+				endd: timestamp
+
+			},
+			totalRow: true,
+			parseData: function (obj) {
+
+				return {
+
+					"code": obj.code, //解析接口状态
+
+					"msg": obj.msg, //解析提示文本
+
+					"count": obj.data.length, //解析数据长度
+
+					"data": obj.data //解析数据列表
+
+				};
+
+
+
+			},
+
+			cols: [function () {
+				var arr = [{
+					field: 'extName',
+					title: '姓名',
+					align: 'center',
+					minWidth: 90
+				}, {
+					field: 'ext',
+					title: '工号',
+					sort: true,
+					minWidth: 90,
+					align: 'center'
+				}, {
+					field: 'time',
+					title: '日期',
+					minWidth: 110,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'total',
+					title: '呼叫总数',
+					sort: true,
+					minWidth: 150,
+					align: 'center'
+				}, {
+					field: 'inbound',
+					title: '呼入数',
+					minWidth: 200,
+					align: 'center',
+					width: 180
+				}, {
+					field: 'outbound',
+					title: '呼出数',
+					minWidth: 100,
+					align: 'center'
+				},  {
+					field: 'answer',
+					title: '应答数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'answerPercent',
+					title: '应答率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function(d){
+						return d.answerPercent+"%";
+					}
+				}, {
+					field: 'successfulNumber',
+					title: '成功数',
+					minWidth: 180,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'successfulPercent',
+					title: '成功率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function(d){
+						return d.successfulPercent+"%";
+					}
+				}, {
+					field: 'averageAnswer',
+					title: '平均应答时长(秒)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'answer_time',
+					title: '应答总时长',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'call_time',
+					title: '通话总时长',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'ai_bill',
+					title: 'BOT消费(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				},  {
+					field: 'phone_bill',
+					title: '话费金额(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}
+				,{
+					field: 'agentCost',
+					title: '今日消费(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}
+				, {
+					field: 'costAccounting',
+					title: '成本核算(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}
+				]
+				//初始化筛选状态
+				var local = layui.data('table-filter-agent-report');
+				layui.each(arr, function (index, item) {
+					if (item.field in local) {
+						item.hide = true;  // 在本地标识中则隐藏
+					}
+				});
+				return arr;
+			}()
+
+			
+
+			],
+
+			done: function (obj) {
+				//记录筛选状态
+				var that = this;
+				that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
+					var input = $(this).prev()[0];
+					var input = $(this).prev()[0];
+					if (input.checked === true) {  // 复选框取消，则加入本地缓存标识
+						layui.data('table-filter-agent-report', { key: input.name, value: !input.checked })
+					} else {  // 复选框勾上，则移除本地标识
+						layui.data('table-filter-agent-report', { key: input.name, remove: true });
+					}
+				});
+
+				var success_totals = 0;
+
+				var call_time = 0; //平均通话时长相加值
+
+				var callrow = 0; //有通话秒数的坐席人头数
+
+				var answer = 0; //应答数
+
+				for (var a = 0; a < obj.data.length; a++) {
+
+					answer = Number(answer) + Number(obj.data[a].answer);
+
+					success_totals = Number(success_totals) + Number(obj.data[a].successfulNumber);
+
+					if (obj.data[a]['averageCall'] != "--") {
+
+						call_time = Number(call_time) + Number(obj.data[a]['averageCall']);
+
+						callrow++;
+
+					}
+
+
+
+				}
+
+				var pvg = "" + success_totals / obj.count + "";
+
+				var pvgs = 0;
+				if(call_time>0){
+					pvgs ="" + call_time / callrow + "";
+				}
+				$(".layui-table-total div:eq(1)").html("坐席数:" + obj.count);
+
+				$(".layui-table-total div:eq(6)").html("应答数:" + answer);
+
+				$(".layui-table-total div:eq(8)").html("合计:" + success_totals + "(平均:" + pvg.substr(0,4) + "/坐席)");
+				var pvgs_pro = 0;
+				if(pvgs>0){
+					if(String(pvgs).indexOf(".")){
+						pvgs_pro =pvgs.split(".")[0]+"."+pvgs.split(".")[1].substr(0, 2)
+					}else{
+						pvgs_pro =pvgs;
+					}
+				}
+				$(".layui-table-total div:eq(10)").html("平均:" + pvgs_pro + "(秒)");
+
+			}
+
+
+
+			/*,
+
+			page: true*/
+
+
+
+		});
+
+
+
+		form.render(null, 'layadmin-userfront-formlist-agent-reportt');
+
+
+
+		//监听搜索
+
+		form.on('submit(LAY-user-front-search-agentreport)', function (data) {
+
+			var field = data.field;
+			field['startd'] = $('#ar_date').val().split(" ~ ")[0];
+			field['endd'] = $('#ar_date').val().split(" ~ ")[1];
+
+			//执行重载
+
+			table.reload('LAY-user-manage_agentreport', {
+
+				where: field,
+
+				/*page:{
+
+					curr:1
+
+				}*/
+
+			});
+
+		});
+		var aro_name;
+		form.on('select(ar_project_select)', function (data) { //layui获取项目下拉框的文本值
+			var elem = data.elem;
+			var textId = elem.getAttribute("ar_project");
+
+			aro_name = this.innerText;
+		})
+
+
+		table.on('toolbar(LAY-user-manage_agentreport)', function (obj) {
+			var tableData = layui.table.cache['LAY-user-manage_agentreport']; //表格数据
+			switch (obj.event) {
+				case 'LAYTABLE_EXPORT':
+
+					obj.config.title = "坐席报表-" + pro_name + "-" + timestamp; //更改默认文件名
+					table.exportFile(obj.config.id, tableData, 'csv'); // 参数依次：表格ID，数据，文件类型
+					break;
+			};
+		});
+
+
+
+
+
+	});
+</script>
+
+
+
+</html>

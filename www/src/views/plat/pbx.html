@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+                lay-filter="layadmin-userfront-formlist-pbx">
+                <div class="layui-form-item">
+
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+                            lay-filter="LAY-user-front-search-pbx">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                        </button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+                            data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="重启"
+                            data-type="reboot"> <i
+                                class="layui-icon layui-icon-refresh layuiadmin-button-btn"></i></button>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <script type="text/html" id="barDemoivr">
+                    <a class="layui-btn layui-btn-xs" lay-event="msg">运行信息</a>
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+                </script>
+
+                <table id="LAY-user-manage-pbx" lay-filter="LAY-user-manage-pbx"></table>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<style>
+    td .layui-form-select {
+        margin-top: -10px;
+        margin-left: -15px;
+        margin-right: -15px;
+    }
+
+    .layui-layer-content {
+        overflow: visible !important;
+    }
+</style>
+<script>
+    layui.use(['admin', 'table', 'upload', 'laydate'], function () {
+        var table = layui.table;
+
+        form = layui.form;
+
+        $ = layui.$;
+
+        view = layui.view;
+
+        admin = layui.admin;
+
+        upload = layui.upload;
+        var laydate = layui.laydate;
+
+        var audioFileList;
+
+        table.render({
+            method: "post",
+            elem: '#LAY-user-manage-pbx',
+            url: layui.setter.configUrl + 'super_admin/pbx/grid',
+            height: 'full-180',
+            // parseData:function(res){
+            // 	//console.log(res.data);
+            // 	let data = JSON.parse(res.data);
+            // 	let data1 = JSON.stringify(data);
+            // 	let data2 = JSON.parse(data1);
+            // 	return {
+            // 		"code":res.code,
+            // 		"msg": res.msg,
+            // 		"count": res.count,
+            // 		"data": data2
+            // 	}
+            // },
+            cols: [
+                    [{
+                            type: 'radio'
+                        }, {
+                            field: 'id',
+                            title: '编号',
+                            sort: true,
+                            align: 'center',
+                            hide: true
+                        }, {
+                            field: 'name',
+                            title: '名称',
+                            minWidth: 150,
+                            align: 'center'
+                        },
+                        {
+                            field: 'hostname',
+                            title: '主机',
+                            minWidth: 150,
+                            align: 'center'
+                        }, {
+                            field: 'core_uuid',
+                            title: '运行状态',
+                            minWidth: 150,
+                            align: 'center',
+                            templet: function (d) {
+                                if (d.core_uuid.length > 0 && d.core_uuid != "null") {
+                                    return "<span style='color:green;'>运行中</span>";
+                                } else {
+                                    return "<span style='color:red;'>已停止</span>";
+                                }
+                            }
+                        }, {
+                            field: 'external',
+                            title: 'SIP URI',
+                            minWidth: 200,
+                            align: 'center'
+                        }, {
+                            field: 'url',
+                            title: '管理地址',
+                            minWidth: 200,
+                            align: 'center'
+                        }, {
+                            field: 'status',
+                            title: '状态',
+                            minWidth: 150,
+                            align: 'center',
+                            templet: function (d) {
+                                if (d.status == 1) {
+                                    return "<span style='color:green;'>启用</span>";
+                                } else {
+                                    return "<span style='color:red;'>禁用</span>";
+                                }
+                            }
+                        }, {
+                            field: 'caozuo',
+                            title: '操作',
+                            minWidth: 220,
+                            fixed: 'right',
+                            toolbar: '#barDemoivr',
+                            align: 'center'
+                            // ,
+                            // templet: function(d) {
+
+                            // 	return '<a class="layui-btn layui-btn-xs" title="试听" onclick="greeting_tool.listen_greeting(' + d.description.replace(".wav", "") + ')">试听</a>'
+
+                            // }
+                        }
+                    ]
+                ]
+
+                ,
+            page: true
+        });
+        form.render(null, 'layadmin-userfront-formlist-pbx');
+
+        //监听搜索
+        form.on('submit(LAY-user-front-search-pbx)', function (data) {
+            var field = data.field;
+
+            //执行重载
+            table.reload('LAY-user-manage-pbx', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        table.on('tool(LAY-user-manage-pbx)', function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'edit') {
+                admin.popupRight({
+                    title: '修改',
+                    //area: ['45%', '57%'],
+                    area: '500px',
+                    id: 'LAY-popup-pbxadd-edit',
+                    success: function (layero, index) {
+                        view(this.id).render('plat/pbx/edit').done(function () {
+                            form.render(null, 'layuiadmin-form-pbx-edit');
+
+                            form.val('layuiadmin-form-pbx-edit', data); //表单初始赋值
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-pbx-edit-submit)',
+                                function (datas) {
+                                    var field = datas.field; //获取提交的字段
+                                    field.id = data.id;
+                                    admin.req({
+                                        type: 'post',
+                                        url: layui.setter.configUrl +
+                                            'super_admin/pbx/edit',
+                                        data: field,
+                                        success: function (obj) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            table.reload(
+                                                "LAY-user-manage-pbx"
+                                            );
+                                        }
+
+                                    })
+
+                                    //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                    //$.ajax({});
+                                    layer.close(index); //执行关闭 
+                                });
+                        });
+                    }
+                });
+            }
+            if (layEvent === 'delete') {
+                layer.confirm('确定删除吗？', {
+                    icon: 3
+                }, function (index) {
+
+                    //执行 Ajax 后重载
+                    layer.load();
+                    admin.req({
+                        type: "post",
+                        url: layui.setter.configUrl + 'super_admin/pbx/delete',
+                        //async: true,
+                        //dataType: "json",
+                        data: {
+                            id: data.id
+                        },
+
+                        success: function (obj) {
+                            layer.closeAll('loading');
+                            if (obj.data > 0) {
+                                layer.msg("已删除", {
+                                    icon: 1
+                                });
+                                table.reload('LAY-user-manage-pbx');
+                            } else {
+                                layer.msg("删除失败,请重试", {
+                                    icon: 2
+                                });
+                            }
+                        }
+                    });
+
+                });
+            }
+
+            if (layEvent === 'msg') {
+                // 	layer.load();
+                // 	let msg = "";
+                // 	if(data.msg!=null){
+                // //msg = JSON.stringify(data.msg)
+                // 		for (let i = 0; i < data.msg.length; i++) {
+                // 			if(msg==""){
+                // 				msg=data.msg[i];
+                // 			}else{
+                // 				msg+="<br>"+data.msg[i];
+                // 			}
+
+                // 		}
+                // 	}
+                // 	layer.alert(msg, {
+                // 		area: '50%',
+                // 		title: '运行信息'
+                // 	});
+                // 	layer.closeAll('loading');
+
+
+                admin.req({
+                    type: "POST",
+                    url: layui.setter.configUrl + "super_admin/pbx/systemInfo",
+                    //async: true,
+                    dataType: "json",
+                    data: {
+                        id: data.id
+                    },
+
+                    success: function (obja) {
+                        if (obja.data.msg == "") {
+                            layer.msg("未运行", {
+                                icon: 2
+                            });
+                            return;
+                        } else {
+                            var disks = obja.data.disk; //磁盘
+                            var memory = obja.data.memory; //内存
+                            var m_usable = 0; //内存使用
+                            var m_total = 0; //内存总量
+                            if (memory.usable.indexOf("G") != -1) {
+                                m_usable = (memory.usable).replace("G", "") * 1024;
+                            } else {
+                                m_usable = memory.usable.replace("M", "");
+                            }
+
+                            if (memory.total.indexOf("G") != -1) {
+                                m_total = (memory.total).replace("G", "") * 1024;
+                            } else {
+                                m_total = memory.total.replace("M", "");
+                            }
+
+                            let monmey =
+                                '<div class="layui-progress" lay-showPercent="yes">' +
+                                '<h3>' + obja.data.memory.usable + ' / ' + obja.data.memory
+                                .total +
+                                '</h3>' +
+                                '<div class="layui-progress-bar layui-bg-red" lay-percent="' +
+                                ((
+                                    m_usable / m_total) * 100).toFixed(2) +
+                                '%"></div></div>';
+
+                            var d_usable = 0; //磁盘使用
+                            var d_total = 0; //磁盘总量
+                            var d_parent = 0;
+                            let disk_1 = "";
+                            for (var i = 0; i < disks.length; i++) {
+                                if (disks[i].usable.indexOf("G") != -1) {
+                                    d_usable = (disks[i].usable).replace("G", "") * 1024;
+                                } else {
+                                    d_usable = disks[i].usable.replace("M", "");
+                                }
+
+                                if (disks[i].total.indexOf("G") != -1) {
+                                    d_total = (disks[i].total).replace("G", "") * 1024;
+                                } else {
+                                    d_total = disks[i].total.replace("M", "");
+                                }
+                                if (disk_1 == "") {
+                                    disk_1 =
+                                        '<div class="layui-progress" lay-showPercent="yes">' +
+                                        '<h3>' + disks[i].path + '（' + disks[i].usable +
+                                        ' / ' +
+                                        disks[i].total +
+                                        '<span lay-tips="增长" lay-offset="-15"></span>）</h3>' +
+                                        '<div class="layui-progress-bar layui-bg-red" lay-percent="' +
+                                        ((d_usable / d_total) * 100).toFixed(2) +
+                                        '%"></div></div>';
+                                } else {
+                                    disk_1 +=
+                                        '<div class="layui-progress" lay-showPercent="yes">' +
+                                        '<h3>' + disks[i].path + '（' + disks[i].usable +
+                                        ' / ' +
+                                        disks[i].total +
+                                        '<span lay-tips="增长" lay-offset="-15"></span>）</h3>' +
+                                        '<div class="layui-progress-bar layui-bg-red" lay-percent="' +
+                                        ((d_usable / d_total) * 100).toFixed(2) +
+                                        '%"></div></div>'
+                                }
+
+
+                            }
+
+                            layer.open({
+                                type: 1,
+                                title: "运行信息",
+                                //skin: 'layui-layer-rim', //加上边框
+                                area: ['800px', '800px'], //宽高
+                                shadeClose: true,
+                                btn: ["重启", "关闭"],
+                                content: '<textarea style="height:35%;" placeholder="请输入内容" class="layui-textarea">' +
+                                    clickFormat(JSON.stringify(obja.data.msg)) +
+                                    '</textarea><div class="layui-card" style="width:60%;" ><div class="layui-card-header">内存占用</div><div class="layui-card-body layadmin-takerates" id="memory">' +
+                                    monmey +
+                                    '</div></div><div class="layui-card" style="width:60%;"><div class="layui-card-header">磁盘</div><div class="layui-card-body layadmin-takerates" id="disk">' +
+                                    disk_1 + '</div></div>',
+                                yes: function () {
+                                    admin.req({
+                                        type: "POST",
+                                        url: layui.setter.configUrl +
+                                            "super_admin/pbx/reboot",
+                                        //async: true,
+                                        dataType: "json",
+                                        data: {
+                                            id: data.id
+                                        },
+                                        success: function (objs) {
+                                            if (objs.data == 1) {
+                                                layer.msg("重启成功", {
+                                                    icon: 1
+                                                });
+                                                return;
+                                            } else {
+                                                layer.msg("重启失败", {
+                                                    icon: 2
+                                                });
+                                                return;
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                            element.render();
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+        //事件
+        var active = {
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-user-manage-ivr'),
+                    checkData = checkStatus.data; //得到选中的数据
+
+                var ids = "";
+                for (var i = 0; i < checkData.length; i++) {
+                    if (ids != "") {
+                        ids = ids + "," + checkData[i].id;
+                    } else
+                        ids = checkData[i].id;
+                }
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据', {
+                        icon: 2
+                    });
+                }
+
+                layer.confirm('确定删除吗？', {
+                    icon: 3
+                }, function (index) {
+
+                    //执行 Ajax 后重载
+                    layer.load();
+                    admin.req({
+                        type: "post",
+                        url: layui.setter.configUrl + 'admin/ivr/remove',
+                        //async: true,
+                        //dataType: "json",
+                        data: {
+                            ids: ids
+                        },
+
+                        success: function (obj) {
+                            layer.closeAll('loading');
+                            if (obj.data > 0) {
+                                layer.msg("已删除", {
+                                    icon: 1
+                                });
+                                table.reload('LAY-user-manage-ivr');
+                            } else {
+                                layer.msg("删除失败,请重试", {
+                                    icon: 2
+                                });
+                            }
+                        }
+                    });
+
+                });
+            },
+            add: function () {
+                admin.popupRight({
+                    title: '新增',
+                    //area: ['45%', '57%'],
+                    area: '500px',
+                    id: 'LAY-popup-pbxadd-add',
+                    success: function (layero, index) {
+                        view(this.id).render('plat/pbx/add').done(function () {
+                            form.render(null, 'layuiadmin-form-pbx-add');
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-pbx-add-submit)',
+                                function (data) {
+                                    var field = data.field; //获取提交的字段
+
+                                    admin.req({
+                                        type: "post",
+                                        url: layui.setter.configUrl +
+                                            'super_admin/pbx/add',
+                                        data: field,
+                                        success: function (res) {
+                                            if (res.data > 0) {
+                                                layer.msg("操作成功", {
+                                                    icon: 1
+                                                });
+                                                layer.close(
+                                                    index); //执行关闭 
+                                                table.reload(
+                                                    'LAY-user-manage-pbx'
+                                                );
+                                            } else {
+                                                layer.msg("操作失败", {
+                                                    icon: 1
+                                                });
+                                            }
+
+                                        }
+                                    })
+                                    console.log(field)
+
+
+                                    //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                    //$.ajax({});
+                                    // 
+                                });
+                        });
+                    }
+                });
+            },
+            reboot: function () {
+                var checkStatus = table.checkStatus("LAY-user-manage-pbx"); //获取选中行状态
+                checkData = checkStatus.data; //得到选中的数据
+                if (checkData.length == 0) {
+                    layer.msg("请选择一行数据", {
+                        icon: 2
+                    });
+                    return;
+                } else {
+                    layer.confirm('是否确定重启 <span style="color:green">' + checkData[0].hostname +
+                        "</span> 服务器", {
+                            icon: 3
+                        },
+                        function (index) {
+                            layer.load();
+                                admin.req({
+                                    type: "POST",
+                                    url: layui.setter.configUrl +
+                                        "super_admin/pbx/reboot",
+                                    //async: true,
+                                    dataType: "json",
+                                    data: {
+                                        id: checkData[0].id
+                                    },
+                                    success: function (objs) {
+                                        layer.closeAll('loading');
+                                        if (objs.data == 1) {
+                                            layer.msg("重启成功", {
+                                                icon: 1
+                                            });
+                                            return;
+                                        } else {
+                                            layer.msg("重启失败", {
+                                                icon: 2
+                                            });
+                                            return;
+                                        }
+                                    },
+                                    error: function (res) {
+                                        layer.msg("接口失败，请稍后重试", {
+                                                icon: 2
+                                            });
+                                        layer.closeAll('loading');
+                                        layer.close(index);
+                                        return;
+                                    }
+                                });
+                            
+
+                        })
+
+                }
+
+            }
+
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    })
+
+    function clickFormat(bindMsg) {
+        let jsonText = '' // 展示的数据
+        let josnTimer = null
+        if (bindMsg) {
+            jsonText = JSON.stringify(JSON.parse(bindMsg), null, '\t')
+        }
+        jsonText = jsonText + '0'
+        jsonText = jsonText.slice(0, -1)
+        return jsonText;
+
+    }
+</script>

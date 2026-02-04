@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+
+</head>
+<link type="text/css" rel="stylesheet" href="dist/droppicker.min.css">
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="dist/droppicker.min.js"></script>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<div class="layui-input-inline" style="width: 100px;">
+							<select id="timezidingyi" lay-filter="timezidingyi">
+								<option value="1">1小时</option>
+								<option value="6">6小时</option>
+								<option value="今天">今天</option>
+								<option value="上一天">上一天</option>
+								<option value="上两天">上两天</option>
+								<option value="上三天">上三天</option>
+								<option value="自定义">自定义</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline" id="ID-startend-datetime" style="margin-left: -20px;">
+						<div class="layui-input-inline" style="width: 350px;">
+							<input type="text" class="layui-input" id="newDateStamp" placeholder=" ~ "
+								autocomplete="off" />
+						</div>
+					</div>
+					<!-- <div class="layui-inline">
+						<div class="layui-input-inline">
+							<input type="text" id="r_start" name="start_stamp" placeholder="开始日期" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<input type="text" id="r_end" name="end_stamp" placeholder="结束日期" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div> -->
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="r_project" name="project_id" lay-search="" lay-filter="project_id_select">
+
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="r_task" name="task_id" lay-search="" lay-filter="r_task_select">
+								<option value="0">--任务--</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="layui-inline" id="r_status_div">
+						<div class="layui-input-inline">
+							<select id="r_status" name="status" lay-filter="r_status_select">
+								<option value="-1">--客户状态--</option>
+							</select>
+						</div>
+					</div>
+
+
+
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="r_qc" name="inspection">
+								<option value="-1">--质检状态--</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<input type="text" id="r_telephone" name="telephone" placeholder="客户号码" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-inline" id="r_extension_ids">
+						<div class="layui-input-inline">
+							<input type="text" id="r_extension" name="extno" placeholder="坐席工号" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<input type="text" id="r_gt_billsec" name="gt_billsec" placeholder="时长大于" autocomplete="off"
+								class="layui-input">
+						</div>
+
+					</div>
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" id="record_btn" lay-submit
+							lay-filter="LAY-user-front-search-record">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-useradmin" id="downloadInfo_r" style="display: none;"
+							onclick="record_tool.downloadInfo();" lay-submit lay-filter="LAY-user-front-import">
+							<i class="layui-icon layui-icon-upload-drag layuiadmin-button-btn"></i>导出信息
+						</button>
+						<button class="layui-btn layuiadmin-btn-useradmin" id="downloadRecord_r" style="display: none;"
+							onclick="record_tool.downloadRecord();" lay-submit lay-filter="LAY-user-front-del">
+							<i class="layui-icon layui-icon-layim-download layuiadmin-button-btn"></i>录音打包
+						</button>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-record" lay-filter="LAY-user-manage-record"></table>
+
+				<script type="text/html" id="barDemoRecord">
+					{{# if(layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["allow_down"]==true){ }}
+					<a class="layui-btn layui-btn-xs" lay-event="d_record">下载</a>
+					{{# } }}
+
+
+					<a class="layui-btn layui-btn-xs" lay-event="qc">质检</a>
+				</script>
+			</div>
+		</div>
+	</div>
+
+</body>
+<style>
+
+</style>
+<script src="/start/js/publicmethod.js"></script>
+<script>
+	//import { getStartTime } from "../start/js/publicmethod.js";
+	var status = "";
+	var recordUrl = layui.setter.configUrl + "sounds/"; //录音路径
+	var address_url = "";
+	layui.use(['admin', 'table', 'laydate', 'xmSelect'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		let laydate = layui.laydate;
+		xmSelect = layui.xmSelect;
+		var util = layui.util;
+
+		if (window.location.protocol == "https:") {
+			address_url = "https://addre.pscc.js.cn:8899/";
+		} else {
+			address_url = "http://addre.pscc.js.cn:8898/";
+		}
+		var date = new Date();
+		let newEndTime = formatDateToString(date);
+		date.setHours(date.getHours() - 1);
+		let newStartTime = formatDateToString(date);
+		let dateTimeChange = 0;
+		form.on('select(timezidingyi)', function (data) {
+			//let val = data.value;
+			newStartTime = getStartTime(data.value);
+			newEndTime = getEndTime(data.value);
+			laydate.render({
+				elem: '#newDateStamp',
+				type: 'datetime',
+				value: newStartTime + " ~ " + newEndTime,
+				range: "~",
+			});
+		})
+
+		laydate.render({
+			elem: '#newDateStamp',
+			type: 'datetime',
+			value: newStartTime + " ~ " + newEndTime,
+			range: "~",
+			change: function (value, date) { //日期被切换的回调
+				//layer.msg("日期切换")
+				dateTimeChange = 1;
+			},
+			done: function (value, date, endDate) {
+				//layer.msg("日期确定")
+				if (dateTimeChange == 1) {
+					$("#timezidingyi").val("自定义");
+					dateTimeChange = 0;
+					form.render("select")
+				}
+			}
+		});
+		var rias = [];
+
+		table.render({
+			method: 'POST',
+			elem: '#LAY-user-manage-record',
+			url: layui.setter.configUrl + "admin/customer_cdr/grid",
+			height: 'full-220',
+			where: {
+				project_id: 0,
+				status: -1,
+				start_stamp: newStartTime,
+				end_stamp: newEndTime,
+				inspection: $('#r_qc').val(),
+				telephone: $('#r_telephone').val(),
+				extno: $('#r_extension').val(),
+				task_id: 0,
+				gt_billsec: $('#r_gt_billsec').val(),
+				recording: 1
+			},
+			cols: [
+				[
+					// 	{
+					// 	type: 'checkbox'
+					// }, 
+					{
+						field: 'telephone',
+						title: '客户号码',
+						align: 'center',
+						minWidth: 150,
+						templet: function (d) {
+							if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] == "agent") {
+								return '<a href="javascript:;" title="点击拨号" onclick="record_tool.recordcall(' +
+									"'" + d.info_uuid + "'" +
+									');"><img src="../start/images/info_call.png""/> ' + d
+										.telephone + '</a>';
+							} else {
+								return d.telephone;
+							}
+						}
+					}, {
+						field: 'extno',
+						title: '坐席工号',
+						sort: true,
+						minWidth: 150,
+						align: 'center'
+					}, {
+						field: 'start_stamp',
+						title: '开始时间',
+						minWidth: 200,
+						align: 'center',
+						width: 180
+					}, {
+						field: 'billsec',
+						title: '客户时长',
+						minWidth: 100,
+						align: 'center'
+					}, {
+						field: 'statusName',
+						title: '客户状态',
+						minWidth: 150,
+						sort: true,
+						align: 'center'
+					}, {
+						field: 'inspectionName',
+						title: '质检状态',
+						minWidth: 150,
+						sort: true,
+						align: 'center'
+						// ,
+						// templet: function(d) {
+						// 	var text="";
+						// 	if (rias.length>0) {
+						// 		for (let i = 0; i < rias.length; i++) {
+						// 			if (d.inspection==i) {
+						// 				text= rias[i];
+						// 			}
+
+						// 		}
+						// 	}
+
+						// 	return text;
+
+						// }
+					}, {
+						title: '操作',
+						minWidth: 120,
+						fixed: 'right',
+						align: 'center',
+						toolbar: '#barDemoRecord'
+					}
+				]
+			],
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-record)', function (data) {
+			var field = data.field;
+			if (field.project_id == "")
+				field.project_id = 0;
+
+			if (field.status == "")
+				field.status = -1;
+			field.recording = 1;
+			let val = $("#timezidingyi").val();
+			if (val != "自定义") {
+				newStartTime = getStartTime(val);
+				newEndTime = getEndTime(val);
+				laydate.render({
+					elem: '#newDateStamp',
+					type: 'datetime',
+					value: newStartTime + " ~ " + newEndTime,
+					range: "~",
+				});
+			}
+
+
+			field.start_stamp = $('#newDateStamp').val().split(" ~ ")[0];
+			field.end_stamp = $('#newDateStamp').val().split(" ~ ")[1];
+			//执行重载
+			table.reload('LAY-user-manage-record', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+		var permission = layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["permission"];
+		$(function () {
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+
+				admin.req({ //项目下拉列表
+					type: "POST",
+					url: layui.setter.configUrl + "admin/customer_cdr/getProjectByCdr",
+					dataType: 'json',
+					success: function (res) {
+						$("#r_project").empty();
+						var result = res.data;
+						$("#r_project").append("<option value='0'>--项目--</option>");
+						for (var i = 0; i < result.length; i++) {
+							$("#r_project").append("<option value=" + result[i].id + ">" +
+								result[i].name + "</option>");
+						}
+						layui.form.render("select");
+					}
+				});
+
+				if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["allow_down"] == true) {
+					$("#downloadInfo_r").css("display", "");
+					$("#downloadRecord_r").css("display", "");
+				}
+
+				if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["permission"] == 4) {
+					$("#r_extension").val(window.sessionStorage.getItem("name"));
+					$("#r_extension_ids").css("display", "none");
+					$("#record_btn").click();
+				}
+			}
+		})
+
+
+
+
+		form.on('select(project_id_select)', function (data) { //监听项目下拉框,联动任务,客户状态下拉框
+			var project_id_s = data.value;
+			admin.req({ //任务下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/customer_cdr/getTaskByCdr",
+				dataType: 'json',
+				data: {
+					project_id: project_id_s
+				},
+				success: function (res) {
+					$("#r_task").empty();
+					var result = res.data;
+					$("#r_task").append("<option value='0'>--任务--</option>");
+					for (var i = 0; i < result.length; i++) {
+						$("#r_task").append("<option value=" + result[i].id + ">" + result[i]
+							.name + "</option>");
+					}
+					layui.form.render("select");
+				}
+			});
+			admin.req({ //客户状态下拉框
+				type: "POST",
+				url: layui.setter.configUrl + "admin/customer_cdr/getStatusByCdr",
+				dataType: 'json',
+				data: {
+					project_id: project_id_s
+				},
+				success: function (res) {
+					$("#r_status").empty();
+					status = res.data;
+					var result = JSON.parse(res.data);
+
+					$("#r_status").append("<option value='-1'>--客户状态--</option>");
+					for (var i = 0; i < result.length; i++) {
+						$("#r_status").append("<option value=" + i + ">" + result[i] +
+							"</option>");
+					}
+					layui.form.render("select");
+				}
+			});
+
+
+			admin.req({ //质检下拉框
+				type: "POST",
+				url: layui.setter.configUrl + "admin/customer_cdr/getInspByCdr",
+				async: false,
+				dataType: 'json',
+				data: {
+					project_id: project_id_s
+				},
+				success: function (res) {
+					rias = JSON.parse(res.data);
+					$("#r_qc").empty();
+					var result = JSON.parse(res.data);
+					$("#r_qc").append("<option value='-1'>--质检状态--</option>");
+					for (var i = 0; i < result.length; i++) {
+						$("#r_qc").append("<option value=" + i + ">" + result[i] +
+							"</option>");
+					}
+					layui.form.render("select");
+				}
+			});
+
+		})
+
+		//监听行工具事件
+		table.on('tool(LAY-user-manage-record)', function (
+			obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+
+			var datas = obj.data, //获得当前行数据
+				layEvent = obj.event; //获得 lay-event 对应的值
+			if (layEvent === 'qc') {
+				admin.popup({
+					title: '录音质检',
+					area: ['60%', '70%'],
+					id: 'LAY-popup-user-add',
+					btn: ['提交', '取消'],
+					success: function (layero, index) {
+						view(this.id).render('management/record/qc').done(function () {
+							form.render(null, 'layuiadmin-form-record-qc');
+							let expand = JSON.parse(datas.expand || "{}");
+
+
+							if (status == "") {
+								admin.req({ //客户状态下拉框
+									type: "POST",
+									url: layui.setter.configUrl + "admin/customer_cdr/getStatusByCdr",
+									dataType: 'json',
+									data: {
+										project_id: datas.project_id
+									},
+									success: function (res) {
+										status = res.data;
+									}
+								});
+							}
+
+							$("#rqc_fields").text(''); // 清空
+							//var info = get_info(datas.uuid,datas.start_stamp); //获取表单值
+							let info = expand.attr || {};
+							//if()
+
+							var crm_fields = get_fileds(datas.project_id); //获取表单
+
+							//datas.record_file = datas.record_file.replace()
+							if (datas.record_file !== "") {
+								if (datas.record_file.includes("http://", 0)) {
+									$('#audio_record').attr("src", layui.setter.configUrl + "proxy?url=" + datas.record_file); //引入录音路径
+								} else if (datas.record_file.includes("https://", 0)) {
+									$('#audio_record').attr("src", datas.record_file); //引入录音路径
+								} else {
+									$('#audio_record').attr("src", recordUrl + datas.record_file); //引入录音路径
+								}
+							}
+							//$('#audio_record').attr("src", recordUrl + datas.record_file); //引入录音路径
+
+
+							//$("#rqc_qc").val(info.inspection);
+							rqc_inspection(datas.inspection, datas.project_id);
+							$("#qc_action").append('<div class="layui-form-item">');
+							var address_old = ["", "", "", "", "", "", "", "", "", ""];
+
+							if (info.hasOwnProperty("乡镇地址"))
+								if (info['乡镇地址'] != "")
+									address_old = info['乡镇地址'].split('/');
+
+							for (i = 0; i < crm_fields.length; i++) {  //开始拼接表单
+								var field = crm_fields[i];
+								var value;
+								if (field.field_name == "客户姓名")
+									value = info.客户姓名 || "";
+								else if (field.field_name == "客户号码")
+									value = datas.telephone;
+								else if (field.field_name == "客户状态")
+									value = datas.status;
+								else {
+									value = info[field.field_name] || "";
+								}
+								var temp = "";
+								if (field.input_type == 1) {
+									if (permission == 4)
+										if (field.is_display == 1) //1显示
+											if (field.is_edit == 1) //1可修改
+												temp +=
+													'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' +
+													field.field_name +
+													'</label><div class="layui-input-inline"><input id="' +
+													field.field_name + '" name="' + field
+														.field_name +
+													'" type="text" autocomplete="off" style="width:210px" class="layui-input" value="' +
+													value + '"></div></div>';
+											else
+												temp +=
+													'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' +
+													field.field_name +
+													'</label><div class="layui-input-inline"><input id="' +
+													field.field_name + '" name="' + field
+														.field_name +
+													'" readonly="readonly" type="text" autocomplete="off" style="width:210px" class="layui-input" value="' +
+													value + '"></div></div>';
+										else
+											// if(field.field_name == "客户号码")
+											// 	temp+='<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' + field.field_name + '</label><div class="layui-input-inline"><input id="' + field.field_name + '" name="' + field.field_name + '" type="text" style="width:210px" class="layui-input" value="' + value + '"></div></div>';
+											// else
+											temp +=
+												'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label" style="display: none;">' +
+												field.field_name +
+												'</label><div class="layui-input-inline" style="display: none;"><input id="' +
+												field.field_name + '" name="' + field
+													.field_name +
+												'" autocomplete="off" type="text" style="width:210px" class="layui-input" value="' +
+												value + '"></div></div>';
+									else
+										temp +=
+											'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' +
+											field.field_name +
+											'</label><div class="layui-input-inline"><input id="' +
+											field.field_name + '" name="' + field
+												.field_name +
+											'" type="text" style="width:210px" autocomplete="off" class="layui-input" value="' +
+											value + '"></div></div>';
+								} else if (field.input_type == 2) {
+
+									if (permission == 4) {
+										if (field.is_display == 1)
+											if (field.is_edit == 1)
+												temp +=
+													'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' + field.field_name +
+													'</label><div class="layui-input-inline"><select id="' +
+													field.field_name + '" name="' + field.field_name + '" lay-search="" lay-filter="' + field.field_name + '" >';
+											else
+												temp +=
+													'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' +
+													field.field_name +
+													'</label><div class="layui-input-inline"><select id="' +
+													field.field_name + '" name="' + field
+														.field_name +
+													'" disabled="disabled" lay-filter="' +
+													field.field_name + '" >';
+										else
+											temp +=
+												'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label" style="display: none;">' +
+												field.field_name +
+												'</label><div class="layui-input-inline" style="display: none;"><select id="' +
+												field.field_name + '" name="' + field
+													.field_name +
+												'" lay-search="" lay-filter="' + field
+													.field_name + '" >';
+									} else {
+										temp +=
+											'<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' +
+											field.field_name +
+											'</label><div class="layui-input-inline"><select id="' +
+											field.field_name + '" name="' + field
+												.field_name +
+											'" lay-search="" lay-filter="' + field
+												.field_name + '" >';
+									}
+									var nodes = JSON.parse(field.field_json);
+									if (field.field_name == "客户状态") {
+										admin.req({ //客户状态下拉框
+											type: "POST",
+											url: layui.setter.configUrl + "admin/customer_cdr/getStatusByCdr",
+											dataType: 'json',
+											async: false,
+											data: {
+												project_id: datas.project_id
+											},
+											success: function (res) {
+												var result = JSON.parse(res
+													.data);
+												for (let i = 0; i < result
+													.length; i++) {
+													if (i > 2) {
+														if (i == value)
+															temp += '<option value="' + i + '" selected="">' + result[i] + '</option>';
+														else
+															temp += '<option value="' + i + '">' + result[i] + '</option>';
+													}
+												}
+											}
+										});
+									} else {
+										temp += '<option value="">请选择</option>';
+										for (k = 0; k < nodes.length; k++) {
+											if (nodes[k].name == value)
+												temp += '<option value="' + nodes[k].name + '" selected="">' + nodes[k].name + '</option>';
+											else
+												temp += '<option value="' + nodes[k].name + '">' + nodes[k].name + '</option>';
+										}
+									}
+									temp += '</select></div></div>';
+								} else if (field.input_type == 3) {
+									var nodes = JSON.parse(field.field_json);
+									var sub_datas = [];
+									var sub_lists = {};
+									var sub_checks = [];
+									for (var j = 0; j < nodes.length; j++) {
+										sub_lists = {};
+										if (value.indexOf(nodes[j].name) != -1) {
+											sub_checks.push(nodes[j].name);
+										}
+										sub_lists.name = nodes[j].name;
+										sub_lists.value = nodes[j].name;
+										sub_datas.push(sub_lists);
+									}
+
+									if (permission == 4) {
+										if (field.is_display == 1) {
+											temp = $([
+												'<div class="layui-inline" style="padding: 10px 0 0 0;">',
+												'<label class="layui-form-label">' +
+												field.field_name + '</label>',
+												'<div class="layui-input-inline">',
+												'<div class="hobbay" style="width:208px;"></div>',
+												'</div>',
+												'</div>',
+											].join(''))
+										} else {
+											temp = $([
+												'<div class="layui-inline" style="padding: 10px 0 0 0;display:none;">',
+												'<label class="layui-form-label">' +
+												field.field_name + '</label>',
+												'<div class="layui-input-inline">',
+												'<div class="hobbay" style="width:208px;"></div>',
+												'</div>',
+												'</div>',
+											].join(''))
+										}
+
+									} else {
+										temp = $([
+											'<div class="layui-inline" style="padding: 10px 0 0 0;">',
+											'<label class="layui-form-label">' +
+											field.field_name + '</label>',
+											'<div class="layui-input-inline">',
+											'<div class="hobbay" style="width:208px;"></div>',
+											'</div>',
+											'</div>',
+										].join(''))
+									}
+
+
+									var demos = temp.find(".hobbay")[0];
+
+
+									if (permission == 4) {
+										//1
+										//if(field.is_display == 1) {
+										//2
+
+										if (field.is_edit == 1) {
+											xmSelect.render({
+												el: demos,
+												toolbar: {
+													show: true
+												},
+												initValue: sub_checks,
+												name: field.field_name,
+												data: function () {
+													return sub_datas
+												}
+											})
+										} else {
+											xmSelect.render({
+												el: demos,
+												toolbar: {
+													show: true
+												},
+												disabled: true,
+												initValue: sub_checks,
+												name: field.field_name,
+												data: function () {
+													return sub_datas
+												}
+											})
+										}
+										//}else{
+
+										//}
+									} else {
+										xmSelect.render({
+											el: demos,
+											toolbar: {
+												show: true
+											},
+											initValue: sub_checks,
+											name: field.field_name,
+											data: function () {
+												return sub_datas
+											}
+										})
+									}
+								} else if (field.input_type == 4) {
+
+									if (permission == 4) {
+										if (field.is_display == 1) {
+											if (field.is_edit == 1)
+												temp += '<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' + field.field_name + '</label><div class="layui-input-inline"><input id="' + field.field_name + '" name="' + field.field_name + '" type="text" class="layui-input" style="width:534px" value="' + value + '"></div></div>';
+											else
+												temp += '<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' + field.field_name + '</label><div class="layui-input-inline"><input id="' + field.field_name + '" name="' + field.field_name + '" readonly="readonly" type="text" class="layui-input" style="width:534px" value="' + value + '"></div></div>';
+										} else {
+											temp += '<div class="layui-inline" style="padding: 20px 0 0 0;display: none;"><label class="layui-form-label" >' + field.field_name + '</label><div class="layui-input-inline" style="display: none;"><input id="' + field.field_name + '" name="' + field.field_name + '" type="text" class="layui-input" style="width:534px" value="' + value + '"></div></div>';
+										}
+									} else {
+										temp += '<div class="layui-inline" style="padding: 10px 0 0 0;"><label class="layui-form-label">' + field.field_name + '</label><div class="layui-input-inline"><input id="' + field.field_name + '" name="' + field.field_name + '" type="text" class="layui-input" style="width:534px" value="' + value + '"></div></div>';
+
+									}
+								}
+								$("#qc_action").append(temp);
+							}
+							$("#qc_action").append('</div>');
+							form.render();
+
+
+							$('#乡镇地址').droppicker({
+								placeholder: "请选择地址",
+								data: function (type, code, callback) {
+									if (type == 'droplevel1') {
+										var data;
+										$.ajax({
+											type: "post",
+											url: address_url +
+												"psccPlus/address/getProvince",
+											async: false,
+											dataType: "json",
+											success: function (
+												res) {
+												data = res
+													.data;
+											}
+										});
+										return callback(data);
+									} else if (type == 'droplevel2') {
+										var data_city;
+										$.ajax({
+											type: "post",
+											url: address_url +
+												"psccPlus/address/getRegion",
+											async: false,
+											dataType: "json",
+											data: {
+												code: code
+											},
+											success: function (
+												res) {
+												data_city = res
+													.data;
+											}
+										});
+										return callback(data_city);
+									} else if (type == 'droplevel3') {
+										var data_area;
+										$.ajax({
+											type: "post",
+											url: address_url +
+												"psccPlus/address/getRegion",
+											async: false,
+											dataType: "json",
+											data: {
+												code: code
+											},
+											success: function (res) {
+												data_area = res.data;
+											}
+										});
+										return callback(data_area);
+									} else if (type == 'droplevel4') {
+										var data_street;
+										$.ajax({
+											type: "post",
+											url: address_url + "psccPlus/address/getRegion",
+											async: false,
+											dataType: "json",
+											data: {
+												code: code
+											},
+											success: function (
+												res) {
+												data_street =
+													res.data;
+											}
+										});
+										return callback(data_street);
+									} else if (type == 'droplevel5') {
+										var data_vll;
+										$.ajax({
+											type: "post",
+											url: address_url +
+												"psccPlus/address/getRegion",
+											async: false,
+											dataType: "json",
+											data: {
+												code: code
+											},
+											success: function (
+												res) {
+												data_vll = res
+													.data;
+											}
+										});
+										return callback(data_vll);
+									}
+								},
+								droplevel1: {
+									name: "" + address_old[0] + "",
+									code: "" + address_old[5] + ""
+								},
+								droplevel2: {
+									name: "" + address_old[1] + "",
+									code: "" + address_old[6] + ""
+								},
+								droplevel3: {
+									name: "" + address_old[2] + "",
+									code: "" + address_old[7] + ""
+								},
+								droplevel4: {
+									name: "" + address_old[3] + "",
+									code: "" + address_old[8] + ""
+								},
+								droplevel5: {
+									name: "" + address_old[4] + "",
+									code: "" + address_old[9] + ""
+								},
+								callback: function (data) {
+									// 数据回调
+								}
+							});
+
+							//监听提交
+							form.on('submit(LAY-user-front-record-qc-submit)',
+								function (data) {
+									layer.load();
+									var field = data.field; //获取提交的字段
+									for (var key in field) {
+										if (key == "乡镇地址") {
+											var pros_code = $('#乡镇地址').data('droppicker').getCode('droplevel1');
+											var city_code = $('#乡镇地址').data('droppicker').getCode('droplevel2');
+											var area_code = $('#乡镇地址').data('droppicker').getCode('droplevel3');
+											var street_code = $('#乡镇地址').data('droppicker').getCode('droplevel4');
+											var village_code = $('#乡镇地址').data('droppicker').getCode('droplevel5');
+											var name_val = $('#乡镇地址').data('droppicker').getVal();
+											var s = [];
+											s = name_val.split("/");
+
+											if (name_val != undefined && pros_code != undefined && city_code != undefined && area_code != undefined) {
+												field.乡镇地址 = name_val + "/" + pros_code + "/" + city_code + "/" + area_code + "/" + street_code + "/" + village_code;
+											} else {
+												field.乡镇地址 = "";
+											}
+										}
+									}
+									//修改客户状态
+									admin.req({
+										type: 'POST',
+										//async: false,
+										url: layui.setter.configUrl +
+											"admin/customer_cdr/editStatus",
+										data: {
+											uuid: datas.uuid,
+											status: field.客户状态,
+											start_stamp: datas.start_stamp
+										},
+										success: function (obj) {
+
+										}
+									})
+
+									var statusName = field.客户状态;
+									//保存客户信息，删除json对象中的客户状态,以免出错
+									delete field.客户状态; //删除key属性
+									admin.req({
+										type: 'POST',
+										//async: false,
+										url: layui.setter.configUrl +
+											"admin/customer_cdr/editCdrInfo",
+										data: {
+											info_uuid: datas.info_uuid,
+											uuid: datas.uuid,
+											start_stamp: datas.start_stamp,
+											project_id: datas.project_id,
+											fields: JSON.stringify(field)
+										},
+										success: function (objs) {
+											layer.closeAll('loading');
+											if (objs.data != 0) {
+												layer.msg("提交成功", {
+													icon: 1
+												});
+												var result = JSON.parse(status);
+												for (let i = 0; i < result.length; i++) {
+													if (statusName == i) {
+														datas.statusName = result[i];
+														datas.status = i;
+														
+													}
+												}
+												if(datas.expand!=null && datas.expand !=""){
+													let expand = JSON.parse(datas.expand);
+													expand.attr = objs.data;
+													datas.expand = JSON.stringify(expand) ;
+												}
+												obj.update(datas);
+												layer.close(index);
+
+											} else {
+												layer.msg("错误", {
+													icon: 2
+												});
+											}
+
+										}
+									})
+
+								});
+
+							form.on('select(rqc_qc)', function (objs) {
+
+								layer.load();
+
+								admin.req({
+									type: 'POST',
+									//async: false,
+									url: layui.setter.configUrl +
+										"admin/customer_cdr/quality",
+									data: {
+										start_stamp: datas.start_stamp,
+										uuid: datas.uuid,
+										inspection: $('#rqc_qc').val()
+									},
+									success: function (res) {
+										layer.closeAll('loading');
+										if (res.data > 0) {
+											layer.msg(res.msg, {
+												icon: 1
+											});
+											//  var scoreId =  $(obj.elem).parent().parent().parent().find('[data-field="inspectionName"] div')
+											//  console.log(obj)
+											//   scoreId.text("123");
+											if (rias.length > 0) {
+												for (let i = 0; i < rias.length; i++) {
+													if ($('#rqc_qc').val() == i) {
+														datas.inspectionName = rias[i];
+														obj.update(datas);
+													}
+
+												}
+											}
+
+											//layui.table.reload('LAY-user-manage-record'); //重载表格
+
+										} else {
+											layer.msg("错误", {
+												icon: 2
+											});
+										}
+
+									}
+								})
+
+							})
+
+						});
+					},
+					yes: function (index, layero) {
+						layero.find('#LAY-user-front-record-qc-submit').click();
+
+					}
+				});
+
+			} else if (layEvent === 'd_record') {
+				var downUrl_d = layui.setter.configUrl + 'admin/record/download?uuid=' + datas.uuid + "&start_stamp=" + datas.start_stamp +
+					"&access_token=" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+				window.location = downUrl_d;
+			}
+		});
+
+		//事件
+		var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-record'),
+					checkData = checkStatus.data; //得到选中的数据
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+
+				layer.prompt({
+					formType: 1,
+					title: '敏感操作，请输入密码验证口令'
+				}, function (value, index) {
+					layer.close(index);
+
+					layer.confirm('确定删除吗？', function (index) {
+
+						table.reload('LAY-user-manage-record');
+						layer.msg('已删除', {
+							icon: 1
+						});
+					});
+				});
+			},
+
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+
+	record_tool = {
+		downloadInfo: function () { //导出客户信息
+			var downUrl = layui.setter.configUrl + 'admin/customer_cdr/download_info?project_id=' + $('#r_project').val() +
+				"&status=" + $('#r_status').val() + "&telephone=" + $('#r_telephone').val() +
+				"&extno=" + $('#r_extension').val() + "&start_stamp=" + $('#newDateStamp').val().split(" ~ ")[0] +
+				"&end_stamp=" + $('#newDateStamp').val().split(" ~ ")[1] + "&task_id=" + $('#r_task').val() + "&inspection=" + $('#r_qc')
+					.val() + "&recording=1" +
+				"&gt_billsec=" + $('#r_gt_billsec').val() + "&access_token=" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+			// if ($('#r_project').val() != 0) {
+			// 	window.location = downUrl;
+			// } else {
+			// 	layer.msg("请选择项目", {
+			// 		icon: 2
+			// 	});
+			// }
+			window.location = downUrl;
+		},
+		downloadRecord: function () { //批量下载录音
+
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl +
+					"admin/customer_cdr/download_record",
+				//async: true,
+				data: {
+					//zipName:field.zipName,
+					project_id: $("#r_project").val(),
+					status: $("#r_status").val(),
+					telephone: $("#r_telephone").val(),
+					extno: $("#r_extension").val(),
+					start_stamp: $('#newDateStamp').val().split(" ~ ")[0],
+					end_stamp: $('#newDateStamp').val().split(" ~ ")[1],
+					inspection: $("#r_qc").val(),
+					task_id: $("#r_task").val(),
+					gt_billsec: $("#r_gt_billsec").val(),
+					recording: 1
+
+				},
+				dataType: "json",
+
+				success: function (obj) {
+					layer.closeAll('loading');
+					if (obj.msg == "fail") {
+						layer.msg(obj.data, {
+							icon: 2
+						});
+
+					} else {
+						layer.msg("已加入下载队列,请到录音下载查看", {
+							icon: 1
+						});
+					}
+				}
+
+			});
+		},
+		recordcall: function (uuid) {
+			admin.req({
+				type: 'POST',
+				url: layui.setter.configUrl + 'admin/agent/clickCall',
+				data: {
+					info_uuid: uuid
+				},
+				success: function (data) {
+
+				}
+			});
+		}
+	}
+
+</script>
+
+</html>

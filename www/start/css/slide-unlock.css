@@ -1,0 +1,97 @@
+
+#slider {
+    margin-bottom: 18px;
+    width: 100%;
+    height: 60px;
+    position: relative;
+    border-radius: 5px;
+    background-color: #e8e8e8;
+    overflow: hidden;
+    text-align: center;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+#slider_bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+
+    background-color: #02d1a8;
+    z-index: 1;
+}
+
+#label {
+    width: 70px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 58px;
+    line-height: 58px;
+    background: url(../images/hk.png)no-repeat center;
+    -webkit-background-size: cover;
+    background-size: cover;
+    z-index: 3;
+    cursor: move;
+}
+
+#labelTip {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+    font-family: 'Microsoft Yahei', serif;
+    color: #787878;
+    line-height: 60px;
+    text-align: center;
+    z-index: 2;
+   /*字体样式从左到右移动移画*/
+    background: -webkit-gradient(linear,left top,right top,color-stop(0,#4d4d4d),color-stop(.4,#4d4d4d),color-stop(.5,#fff),color-stop(.6,#4d4d4d),color-stop(1,#4d4d4d));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-animation: slidetounlock 3s infinite;
+}
+
+@keyframes slidetounlock {
+    0% {
+        background-position: -100px 0;
+    }
+    100% {
+        background-position: 100px 0;
+    }
+}
+@media screen and (max-width: 1024px){
+
+
+    #slider {
+        margin-bottom:0.2rem;
+        height:0.76rem;
+        border-radius: 0.05rem;
+    }
+    #label {
+        width: 20%;
+        height: 0.76rem;
+        line-height:  0.74rem;
+
+    }
+    #labelTip {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 0.24rem;
+        font-family: 'Microsoft Yahei', serif;
+        color: #fff;
+        line-height: 0.76rem;
+       /*字体样式从左到右移动移画*/
+        background: -webkit-gradient(linear,left top,right top,color-stop(0,#4d4d4d),color-stop(.4,#4d4d4d),color-stop(.5,#fff),color-stop(.6,#4d4d4d),color-stop(1,#4d4d4d));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -webkit-animation: slidetounlock 3s infinite;
+    }
+
+
+}

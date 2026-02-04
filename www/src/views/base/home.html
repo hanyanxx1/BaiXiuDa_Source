@@ -1,0 +1,726 @@
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md4">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					公司
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+					<p class="layuiadmin-big-font" id="gsmc"></p>
+					<p>
+						公司名称
+						<span class="layuiadmin-span-color"><i class="layui-icon">&#xe650;</i></span>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-md2">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					账户
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+					<p class="layuiadmin-big-font" id="dlzh"></p>
+					<p>
+						账户名称
+						<span class="layuiadmin-span-color"><i class="layui-icon">&#xe650;</i></span>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-md2">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					数据保存
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="sjtime"></p>
+					<p>
+						数据保存时间(天)
+						<span class="layuiadmin-span-color"> <i class="layui-icon">&#xe650;</i></span>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-md2">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					实时会话数
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="actives"></p>
+					<p>
+						实时会话数
+						<span class="layuiadmin-span-color"> <i class="layui-icon">&#xe650;</i></span>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-md2">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					号码状态检测
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="ringListRate"></p>
+					<p>
+						命中数
+						<span class="layuiadmin-span-color"><button
+								class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" lay-submit
+								lay-filter="LAY-user-front-detect-report">图表</button></span>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-md6">
+			<div class="layui-card">
+				<div class="layui-card-header">账户消费</div>
+				<div class="layui-card-body">
+
+					<div class="layui-carousel layadmin-carousel layadmin-backlog">
+						<div carousel-item>
+							<ul class="layui-row layui-col-space10">
+
+								<li class="layui-col-xs4">
+									<a class="layadmin-backlog-body">
+										<h3>今日话费消费(元)</h3>
+										<p><cite id="todayshop" style="color:black;"></cite></p>
+									</a>
+								</li>
+
+								<li class="layui-col-xs4">
+									<a class="layadmin-backlog-body">
+										<h3>话费余额(元)</h3>
+										<p><cite id="zhye"></cite></p>
+									</a>
+								</li>
+
+								<li class="layui-col-xs4">
+									<a class="layadmin-backlog-body">
+										<h3>话费透支金额(元)</h3>
+										<p><cite id="overdraw"></cite></p>
+									</a>
+								</li>
+								<!-- <li class="layui-col-xs4">
+									<a class="layadmin-backlog-body">
+										<h3>今日AI消费(元)</h3>
+										<p><cite id="ai_cost" style="color:black;">0</cite></p>
+									</a>
+								</li>
+
+								<li class="layui-col-xs4">
+									<a class="layadmin-backlog-body">
+										<h3>AI余额(元)</h3>
+										<p><cite id="ai_balance">0</cite></p>
+									</a>
+								</li>
+								<li class="layui-col-xs4">
+									<a class="layadmin-backlog-body">
+										<h3>AI透支金额(元)</h3>
+										<p><cite id="ai_overdraw"></cite></p>
+									</a>
+								</li> -->
+
+							</ul>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-md6" id="quick_md">
+			<div class="layui-card">
+				<div class="layui-card-header">快捷方式</div>
+				<div class="layui-card-body">
+
+					<div class="layui-carousel layadmin-carousel layadmin-shortcut">
+						<div carousel-item>
+							<ul class="layui-row layui-col-space10">
+								<li class="layui-col-xs3" id="cust_info" style="display: none;">
+									<a lay-href="management/cust_info">
+										<i class="layui-icon layui-icon-template"></i>
+										<cite>客户信息</cite>
+									</a>
+								</li>
+								<li class="layui-col-xs3" id="project_task" style="display: none;">
+									<a lay-href="control/project_task">
+										<i class="layui-icon layui-icon-dialogue"></i>
+										<cite>外呼任务</cite>
+									</a>
+								</li>
+								<li class="layui-col-xs3" id="crms" style="display: none;">
+									<a lay-href="control/crm">
+										<i class="layui-icon layui-icon-edit"></i>
+										<cite>CRM自定义</cite>
+									</a>
+								</li>
+								<li class="layui-col-xs3" id="record" style="display: none;">
+									<a lay-href="management/record">
+										<i class="layui-icon layui-icon-vercode"></i>
+										<cite>质检</cite>
+									</a>
+								</li>
+								<li class="layui-col-xs3" id="active" style="display: none;">
+									<a lay-href="monitoring/active">
+										<i class="layui-icon layui-icon-console"></i>
+										<cite>监控</cite>
+									</a>
+								</li>
+
+								<li class="layui-col-xs3" id="blacklist" style="display: none;">
+									<a lay-href="base/blacklist">
+										<i class="layui-icon layui-icon-form"></i>
+										<cite>黑名单</cite>
+									</a>
+								</li>
+								<li class="layui-col-xs3" id="role" style="display: none;">
+									<a lay-href="config/role">
+										<i class="layui-icon layui-icon-group"></i>
+										<cite>角色设置</cite>
+									</a>
+								</li>
+
+								<li class="layui-col-xs3" id="sms_api" style="display: none;">
+									<a lay-href="control/sms_api">
+										<i class="layui-icon layui-icon-survey"></i>
+										<cite>短信配置</cite>
+									</a>
+								</li>
+
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-body">
+
+					<blockquote class="layui-elem-quote" id="recordMessage"
+						style="color:red;font-weight: 1000;font-size: 18px;"></blockquote>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-header"></div>
+				<div class="layui-card-body">
+
+					<div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
+						lay-filter="LAY-index-normcol">
+						<div carousel-item id="LAY-index-normcol" style="height: 500px;">
+							<div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<style>
+	/* 数据概览 */
+	.layadmin-dataview {
+		height: 500px !important;
+	}
+
+	.layadmin-dataview>*[carousel-item]:before {
+		display: none;
+	}
+
+	.layadmin-dataview>*[carousel-item]>div {
+		height: 500px;
+	}
+</style>
+<script>
+	var jump_list;
+	var $
+	//layui.use('senior', layui.factory('senior'));
+	//区块轮播切换
+	layui.use(['admin', 'carousel'], function () {
+		var $ = layui.$,
+			admin = layui.admin,
+			carousel = layui.carousel,
+			element = layui.element,
+			device = layui.device();
+
+	});
+	//layui.use('console', layui.factory('console'));
+	layui.use(['admin', 'form', 'carousel', 'echarts'], function () {
+		element = layui.element;
+		router = layui.router();
+		view = layui.view;
+		admin = layui.admin;
+		form = layui.form;
+		element.render();
+		$ = layui.$;
+		carousel = layui.carousel,
+			echarts = layui.echarts;
+		device = layui.device();
+
+		//轮播切换
+		$('.layadmin-carousel').each(function () {
+			var othis = $(this);
+			carousel.render({
+				elem: this,
+				width: '100%',
+				arrow: 'none',
+				height: "500px",
+				interval: othis.data('interval'),
+				autoplay: othis.data('autoplay') === true,
+				trigger: (device.ios || device.android) ? 'click' : 'hover',
+				anim: othis.data('anim')
+			});
+		});
+
+		element.render('progress');
+
+		let calls = 0;
+		let detects = 0;
+		let chartsRingList = [];
+		admin.req({
+			type: "post",
+			url: layui.setter.configUrl + 'admin/getRingList',
+			async: false,
+			success: function (res) {
+				calls = res.data.calls;
+				detects = res.data.detects;
+			}
+		})
+		let dom = '<span style="font-size:15px;">(' + GetPercent(detects, calls) + ')</span>'
+		$("#ringListRate").html(detects + dom);
+
+
+		form.on('submit(LAY-user-front-detect-report)', function (data) {
+			admin.popupRight({
+				title: '号码状态检测报表',
+				area: '1000px',
+				id: 'LAY-popup-detect-report',
+				success: function (layero, index) {
+					view(this.id).render('base/home/detect_report').done(function () {
+						form.render(null, 'layuiadmin-form-detect-report');
+						layui.use(['admin', 'carousel'], function () {
+							var $ = layui.$,
+								admin = layui.admin,
+								carousel = layui.carousel,
+								element = layui.element,
+								device = layui.device();
+
+							//轮播切换
+							$('.layadmin-carousel').each(function () {
+								var othis = $(this);
+								carousel.render({
+									elem: this,
+									width: '100%',
+									arrow: 'none',
+									interval: othis.data('interval'),
+									autoplay: othis.data('autoplay') === true,
+									trigger: (device.ios || device.android) ? 'click' : 'hover',
+									anim: othis.data('anim')
+								});
+							});
+
+							element.render('progress');
+
+						});
+						layui.use(['admin', 'form', 'carousel', 'echarts'], function () {
+							element = layui.element;
+							router = layui.router();
+							view = layui.view;
+
+							form = layui.form;
+							var $ = layui.$,
+								admin = layui.admin,
+								carousel = layui.carousel,
+								echarts = layui.echarts;
+							var data1 = [];
+							var data2 = [];
+							admin.req({
+								type: "post",
+								url: layui.setter.configUrl + 'admin/getRingList',
+								async: false,
+								success: function (res) {
+									calls = res.data.calls;
+									detects = res.data.detects;
+									if (res.data.detailsList != null) {
+										chartsRingList = res.data.detailsList;
+									}
+									for (let i = 0; i < chartsRingList.length; i++) {
+										const element = chartsRingList[i];
+										data1.push(element.name);
+										var s = {};
+										s['value'] = element.count;
+										s['name'] = element.name;
+										data2.push(s);
+									}
+								}
+							})
+							//生成饼状图
+							//渲染饼状图
+							var echartsApp1 = [],
+								options1 = [
+									{
+										title: {
+											text: '命中率：' + detects + "/" + calls + "(" + GetPercent(detects, calls) + ")",
+											x: 'center',
+											textStyle: {
+												fontSize: 14
+											}
+										},
+										tooltip: {
+											trigger: 'item',
+											formatter: "{a} <br/>{b} : {c} ({d}%)"
+										},
+										legend: {
+											orient: 'vertical',
+											x: 'left',
+											data: data1
+										},
+										series: [{
+											//name: '彩铃识别',
+											type: 'pie',
+											radius: '55%',
+											center: ['50%', '50%'],
+											data: data2
+										}]
+									}
+
+								],
+								elemDataView1 = $('#LAY-index-dataviews1').children('div'),
+								renderDataView1 = function (index) {
+									echartsApp1[index] = echarts.init(elemDataView1[index], layui.echartsTheme);
+									echartsApp1[index].setOption(options1[index]);
+									//window.onresize = echartsApp[index].resize;
+									admin.resize(function () {
+										echartsApp1[index].resize();
+									});
+								};
+							//没找到DOM，终止执行
+							if (!elemDataView1[0]) return;
+
+							renderDataView1(0);
+						})
+					})
+				}
+			})
+			return false;
+		})
+
+
+		$(function () {
+
+			var date_day = [];
+			var date_pay = [];
+			var calls = [];
+			var answers = [];
+			var loses = [];
+			var successes = [];
+			var transfers = [];
+			var ai_consume = [];
+
+			admin.req({
+				url: layui.setter.configUrl + 'admin/admin/charts',
+				//async: false,
+				type: 'post',
+				done: function (res) {
+
+					for (let i = 0; i < res.data.length; i++) {
+
+						date_day.push(res.data[i].date);
+						date_pay.push(res.data[i].consumes);
+						calls.push(res.data[i].calls);
+						answers.push(res.data[i].answers);
+						loses.push(res.data[i].loses);
+						successes.push(res.data[i].successes);
+						transfers.push(res.data[i].transfers);
+						if (res.data[i].hasOwnProperty("ai_consumes")) {
+							ai_consume.push(res.data[i].ai_consumes);
+						} else {
+							ai_consume.push(0);
+						}
+
+
+					}
+					if (res.data.length == 0) {
+						date_day = ['暂无数据'];
+						date_pay = [0];
+						calls = [0];
+						answers = [0];
+						loses = [0];
+						successes = [0];
+						transfers = [0];
+						ai_consume = [0];
+					}
+					var echnormcol = [],
+						normcol = [{
+							title: {
+								text: '账户近七日统计',
+								subtext: ''
+							},
+							tooltip: {
+								trigger: 'axis'
+							},
+							legend: {
+								data: ['呼叫总数', '应答数', '转接数', '呼损数', '成功数', '消费金额']
+							},
+							// grid:{
+							// 	height:400
+							// },
+							calculable: true,
+							xAxis: [{
+								type: 'category',
+								data: date_day
+							}],
+							yAxis: [{
+								type: 'value'
+							}],
+							series: [{
+								name: '呼叫总数',
+								type: 'bar',
+								data: calls,
+								markPoint: {
+									data: [{
+										type: 'max',
+										name: '最大值'
+									},
+									{
+										type: 'min',
+										name: '最小值'
+									}
+									]
+								},
+								markLine: {
+									data: [{
+										type: 'average',
+										name: '平均值'
+									}]
+								}
+							}, {
+								name: '应答数',
+								type: 'bar',
+								data: answers,
+								markPoint: {
+									data: [{
+										type: 'max',
+										name: '最大值'
+									},
+									{
+										type: 'min',
+										name: '最小值'
+									}
+									]
+								},
+								markLine: {
+									data: [{
+										type: 'average',
+										name: '平均值'
+									}]
+								}
+							}, {
+								name: '转接数',
+								type: 'bar',
+								data: transfers,
+								markPoint: {
+									data: [{
+										type: 'max',
+										name: '最大值'
+									},
+									{
+										type: 'min',
+										name: '最小值'
+									}
+									]
+								},
+								markLine: {
+									data: [{
+										type: 'average',
+										name: '平均值'
+									}]
+								}
+							}, {
+								name: '呼损数',
+								type: 'bar',
+								data: loses,
+								markPoint: {
+									data: [{
+										type: 'max',
+										name: '最大值'
+									},
+									{
+										type: 'min',
+										name: '最小值'
+									}
+									]
+								},
+								markLine: {
+									data: [{
+										type: 'average',
+										name: '平均值'
+									}]
+								}
+							}, {
+								name: '成功数',
+								type: 'bar',
+								data: successes,
+								markPoint: {
+									data: [{
+										type: 'max',
+										name: '最大值'
+									},
+									{
+										type: 'min',
+										name: '最小值'
+									}
+									]
+								},
+								markLine: {
+									data: [{
+										type: 'average',
+										name: '平均值'
+									}]
+								}
+							}, {
+								name: '消费金额',
+								type: 'bar',
+								data: date_pay,
+								markPoint: {
+									data: [{
+										type: 'max',
+										name: '最大值'
+									},
+									{
+										type: 'min',
+										name: '最小值'
+									}
+									]
+								},
+								markLine: {
+									data: [{
+										type: 'average',
+										name: '平均值'
+									}]
+								}
+							}]
+						}],
+						elemNormcol = $('#LAY-index-normcol').children('div'),
+						renderNormcol = function (index) {
+							echnormcol[index] = echarts.init(elemNormcol[index], layui
+								.echartsTheme);
+							echnormcol[index].setOption(normcol[index]);
+							window.onresize = echnormcol[index].resize;
+						};
+					if (!elemNormcol[0]) return;
+					renderNormcol(0);
+					//}
+				}
+			})
+
+
+
+			admin.req({
+				type: "post",
+				url: layui.setter.configUrl + 'admin/admin/get',
+				done: function (res) {
+					$("#gsmc").html(res.data.company);
+					$("#dlzh").html(res.data.name);
+					$("#zhye").html(res.data.balance);
+					$("#ai_cost").html(res.data.ai_cost);
+					$("#ai_balance").html(res.data.ai_balance);
+					$("#overdraw").html(res.data.overdraw);
+					$("#ai_overdraw").html(res.data.ai_overdraw);
+					$("#actives").html(res.data.actives);
+					if (res.data.balance <= 0) {
+						layer.msg("<span style='color:red'>话费余额不足,请及时充值</span>", {
+							offset: "50px",
+							icon: 7,
+							time: 10 * 1000
+						})
+					}
+					
+					$("#sjtime").html(res.data.stored_days);
+					$("#todayshop").html(res.data.consumes);
+					$("#recordMessage").html("录音及数据" + res.data.stored_days + "天自动删除，删除后无法恢复，请及时下载备份。")
+				}
+			})
+
+			admin.req({
+				url: layui.setter.configUrl + "/menu/get?own=null",
+				dataType: "json",
+				async: false,
+				success: function (obj) {
+					var jump;
+					var jumps;
+					jump_list = obj.data;
+					for (var i = 0; i < obj.data.length; i++) {
+						for (var j = 0; j < obj.data[i].list.length; j++) {
+
+							if (obj.data[i].list[j].jump.indexOf("management/cust_info") >=
+								0) {
+								$("#cust_info").css("display", "");
+								//	return;
+							}
+							if (obj.data[i].list[j].jump.indexOf("control/project_task") >=
+								0) {
+								$("#project_task").css("display", "");
+								//	return;
+							}
+							if (obj.data[i].list[j].jump.indexOf("control/crm") >= 0) {
+								$("#crms").css("display", "");
+								//	return;
+							}
+							if (obj.data[i].list[j].jump.indexOf("management/record") >= 0) {
+								$("#record").css("display", "");
+								//	return;
+							}
+							if (obj.data[i].list[j].jump.indexOf("monitoring/active") >= 0) {
+								$("#active").css("display", "");
+								//	return;
+							}
+							if (obj.data[i].list[j].jump.indexOf("base/blacklist") >= 0) {
+								$("#blacklist").css("display", "");
+								//	return;
+							}
+							if (obj.data[i].list[j].jump.indexOf("config/role") >= 0) {
+								$("#role").css("display", "");
+								//	return;
+							}
+							if (obj.data[i].list[j].jump.indexOf("control/sms_api") >= 0) {
+								$("#sms_api").css("display", "");
+								//	return;
+							}
+						}
+
+					}
+
+				}
+			})
+
+		})
+
+	});
+
+	function GetPercent(num, total) {
+		/// <summary>
+		/// 求百分比
+		/// </summary>
+		/// <param name="num">当前数</param>
+		/// <param name="total">总数</param>
+		num = parseFloat(num);
+		total = parseFloat(total);
+		if (isNaN(num) || isNaN(total)) {
+			return "-";
+		}
+		return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00) + "%";
+	}
+</script>

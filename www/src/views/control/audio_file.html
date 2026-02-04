@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist-greeting">
+					<div class="layui-form-item">
+
+						<label class="layui-form-label">名称</label>
+						<div class="layui-input-inline">
+							<input type="text" name="name" autocomplete="off" placeholder="请输入名称" class="layui-input">
+						</div>
+
+						<div class="layui-btn-group" style="float: right;">
+							<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit lay-filter="LAY-user-front-search-greeting">
+            					<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+          					</button>
+							<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加" data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+							<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger" title="删除" data-type="batchdel"> <i class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+						</div>
+					</div>
+				</div>
+
+				<div class="layui-card-body">
+
+					<table id="LAY-user-manage-greeting" lay-filter="LAY-user-manage-greeting"></table>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+
+	<script>
+		var $;
+		var recordUrl = layui.setter.configUrl.replace("api", ""); //欢迎语路径
+		layui.use(['admin', 'table', 'upload'], function() {
+			var table = layui.table;
+			form = layui.form;
+			$ = layui.$;
+			view = layui.view;
+			admin = layui.admin;
+			upload = layui.upload;
+
+			table.render({
+				method:"post",
+				elem: '#LAY-user-manage-greeting',
+				url: layui.setter.configUrl + 'admin/audioFile/grid',
+				height: 'full-180',
+				where:{
+					name:''
+				},
+				cols: [
+						[{
+							type: 'checkbox'
+						}, {
+							field: 'id',
+							title: '编号',
+							sort: true,
+							align: 'center',
+							hide: true
+						}, {
+							field: 'name',
+							title: '名称',
+							minWidth: 150,
+							align: 'center'
+						}, {
+							field: 'file_name',
+							title: '文件名',
+							minWidth: 250,
+							align: 'center'
+						}, {
+							field: 'status',
+							title: '审核状态',
+							sort: true,
+							minWidth: 150,
+							align: 'center',
+							templet: function(d) {
+								if(d.status == 0) {
+									return '未审核';
+								} else if(d.status == 1) {
+									return '<span style="color:OliveDrab;">审核通过</span>';
+								} else {
+									return '<span style="color:red;">不通过</span>';
+								}
+							}
+						}, {
+							field: 'description',
+							title: '备注',
+							minWidth: 150,
+							align: 'center'
+						}, {
+							field: 'caozuo',
+							title: '操作',
+							minWidth: 100,
+							fixed: 'right',
+							align: 'center',
+
+							templet: function(d) {
+
+								return '<a class="layui-btn layui-btn-xs" title="试听" onclick="greeting_tool.listen_greeting('+'\'' + d.file_name.replace(".wav", "") +'\''+ ')">试听</a>'
+
+							}
+						}]
+					]
+
+					,
+				page: true
+			});
+			form.render(null, 'layadmin-userfront-formlist-greeting');
+
+			//监听搜索
+			form.on('submit(LAY-user-front-search-greeting)', function(data) {
+				var field = data.field;
+
+				//执行重载
+				table.reload('LAY-user-manage-greeting', {
+					where: field,
+					page: {
+						curr: 1
+					}
+				});
+			});
+
+			//事件
+			var active = {
+				batchdel: function() {
+					var checkStatus = table.checkStatus('LAY-user-manage-greeting'),
+						checkData = checkStatus.data; //得到选中的数据
+
+					var ids = "";
+					for(var i = 0; i < checkData.length; i++) {
+						if(ids != "") {
+							ids = ids + "," + checkData[i].id;
+						} else
+							ids = checkData[i].id;
+					}
+
+					if(checkData.length === 0) {
+						return layer.msg('请选择数据', {
+							icon: 2
+						});
+					}
+
+					layer.confirm('确定删除吗？', {
+						icon: 3
+					}, function(index) {
+
+						//执行 Ajax 后重载
+						layer.load();
+						admin.req({
+							type:"post",
+							url: layui.setter.configUrl + 'admin/audioFile/remove',
+							//async: true,
+							//dataType: "json",
+							data: {
+								ids: ids
+							},
+
+							success: function(obj) {
+								layer.closeAll('loading');
+								if(obj.data > 0) {
+									layer.msg("已删除", {
+										icon: 1
+									});
+									table.reload('LAY-user-manage-greeting');
+								} else {
+									layer.msg("删除失败,请重试", {
+										icon: 2
+									});
+								}
+							}
+						});
+
+					});
+				},
+				add: function() {
+					admin.popup({
+						title: '新增欢迎语',
+						//area: ['45%', '57%'],
+						area: ['650px', '500px'],
+						
+						id: 'LAY-popup-user-add',
+						btn: ['提交', '取消'],
+						success: function(layero, index) {
+							view(this.id).render('control/audio_file/add').done(function() {
+								form.render(null, 'layuiadmin-form-greeting-add');
+
+								//监听提交
+								form.on('submit(LAY-user-front-greeting-add-submit)', function(data) {
+									var field = data.field; //获取提交的字段
+
+									//提交 Ajax 成功后，关闭当前弹层并重载表格
+									//$.ajax({});
+									
+									layer.close(index); //执行关闭 
+									
+								});
+							});
+						},
+						yes: function(index, layero) {
+							if($("#greeting_name").val()==""){
+								return layer.msg("名称不能为空", {
+									icon: 2
+								});
+							}
+							if($("#dtmf_type").val() == 2 && $("#dtmf").val() == "") {
+								layer.msg("新增失败,请输入按键值", {
+									icon: 2
+								});
+								return;
+							} else if($("#existnames").html() == "名称已存在") {
+								layer.msg("名称重复,请重试", {
+									icon: 2
+								});
+							} else {
+								layero.find('#greeting_add').click();
+								
+							}
+
+						}
+					});
+				}
+
+			};
+
+			$('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+				var type = $(this).data('type');
+				active[type] ? active[type].call(this) : '';
+			});
+
+		});
+		greeting_tool = {
+			listen_greeting: function(url) {
+				admin.popup({
+					title: '试听欢迎语',
+					area: ['400px', '230px'],
+					id: 'LAY-popup-user-listen',
+					btn: '关闭',
+					success: function(layero, index) {
+						view(this.id).render('control/audio_file/listen').done(function() {
+							form.render(null, 'layuiadmin-form-greeting-s');
+							var greeting_url = recordUrl + '' + 'sounds/' + url + ".wav";
+							$('#audio_greeting').attr("src", greeting_url); //引入录音路径
+						});
+					}
+				});
+			}
+		}
+	</script>
+
+</html>

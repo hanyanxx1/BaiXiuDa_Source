@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <!-- <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist-download">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                    <label class="layui-form-label">名称:</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" autocomplete="off" placeholder="请输入名称" class="layui-input">
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="start_stamp" id="start_stamp" lay-verify="start_stamp" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="end_stamp" id="end_stamp" lay-verify="end_stamp" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                
+
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit lay-filter="LAY-user-front-search-download">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                          </button>
+                       </div>
+                </div>
+            </div> -->
+
+            <div class="layui-card-body">
+                <script type="text/html" id="barDemoivr">
+					{{# if(d.status==1){ }}
+                    <a class="layui-btn layui-btn-xs" lay-event="download">下载</a>
+					{{# } }}
+
+					{{# if(d.status==0){ }}
+                    <a class="layui-btn layui-btn-warm layui-btn-xs">处理中</a>
+					{{# } }}
+                </script>
+
+                <table id="LAY-user-manage-download" lay-filter="LAY-user-manage-download"></table>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+<script>
+    layui.use(['admin', 'table', 'upload','laydate'], function() {
+        var table = layui.table;
+
+			form = layui.form;
+
+			 $ = layui.$;
+
+			view = layui.view;
+
+			admin = layui.admin;
+
+			upload = layui.upload;
+            var laydate = layui.laydate;
+
+            var starttime = new Date(); //当天时间,0点
+			starttime.setHours(00);
+			starttime.setMinutes(00);
+			starttime.setSeconds(00);
+
+			var endtime = new Date(); //当天时间,24点
+			endtime.setHours(23);
+			endtime.setMinutes(59);
+			endtime.setSeconds(59);
+
+			//日期
+			laydate.render({
+				elem: '#start_stamp',
+				type: 'datetime',
+				value: starttime
+			});
+			laydate.render({
+				elem: '#end_stamp',
+				type: 'datetime',
+				value: endtime
+			});
+
+            table.render({
+				method:"post",
+				elem: '#LAY-user-manage-download',
+				url: layui.setter.configUrl + 'admin/down_record/grid',
+				height: 'full-100',
+                // where:{
+                //     name:'',
+                //     start_stamp:$("#start_stamp").val(),
+                //     end_stamp:$("#end_stamp").val()
+                // },
+				cols: [
+						[{
+							type: 'checkbox'
+						}, {
+							field: 'id',
+							title: '编号',
+							sort: true,
+							align: 'center',
+							hide: true
+						},{
+							field: 'file',
+							title: '文件名称',
+							minWidth: 400,
+							align: 'center'
+						},  {
+							field: 'stamp',
+							title: '创建时间',
+							minWidth: 150,
+							align: 'center'
+						},
+                        {
+							field: 'total',
+							title: '文件数',
+							minWidth: 150,
+							align: 'center'
+						},{
+							field: 'size',
+							title: '文件大小',
+							minWidth: 150,
+							align: 'center'
+						}, {
+							field: 'times',
+							title: '下载次数',
+							minWidth: 200,
+							align: 'center'
+						},   {
+							field: 'caozuo',
+							title: '操作',
+							minWidth: 80,
+							fixed: 'right',
+                            toolbar: '#barDemoivr',
+							align: 'center'
+                            // ,
+							// templet: function(d) {
+
+							// 	return '<a class="layui-btn layui-btn-xs" title="试听" onclick="greeting_tool.listen_greeting(' + d.description.replace(".wav", "") + ')">试听</a>'
+
+							// }
+						}]
+					]
+
+					,
+				page: true
+			});
+			form.render(null, 'layadmin-userfront-formlist-download');
+
+			//监听搜索
+			form.on('submit(LAY-user-front-search-download)', function(data) {
+				var field = data.field;
+
+				//执行重载
+				table.reload('LAY-user-manage-download', {
+					where: field,
+					page: {
+						curr: 1
+					}
+				});
+			});
+
+            table.on('tool(LAY-user-manage-download)', function(obj) {
+				var data = obj.data,
+					layEvent = obj.event;
+				if(layEvent === 'download') {
+                    var downUrl = layui.setter.configUrl + 'record/downloadZip?id=' +data.id+'&access_token='+layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+				window.location = downUrl;
+				layui.table.reload('LAY-user-manage-download'); //重载表格
+                }
+
+            })
+
+
+
+    })
+</script>

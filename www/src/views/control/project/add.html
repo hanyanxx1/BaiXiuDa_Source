@@ -1,0 +1,315 @@
+<style>
+	.cascader_wrap {
+		position: relative;
+    display: flex;
+	align-items: center;
+}
+.cascader_wrap .layui-icon {
+	position: absolute;
+	top: 12px;
+	right: 6px;
+}
+.cascader_wrap .layui-icon-right {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+}
+</style>
+<form class="layui-form" lay-filter="layuiadmin-form-managementadd" style="padding: 20px;">
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" lay-verify="required|exist_project_name" autocomplete="off"
+				placeholder="请输入名称" class="layui-input">
+		</div>
+	</div>
+
+	<!-- <div class="layui-form-item">
+		<label class="layui-form-label">欢迎语:</label>
+		<div class="layui-input-inline">
+			<select id="greeting_id" name="greeting_file" lay-filter="" style="width: 50px;">
+
+			</select>
+		</div>
+		<div>
+			<label class="layui-form-label" style="width: 50px;">按键:</label>
+			<div class="layui-input-inline" style="width: 90px;">
+				<input type="text" id="greeting_digits" name="greeting_digits" autocomplete="off" placeholder="" class="layui-input">
+			</div>
+		</div>
+	</div> -->
+	<div class="layui-form-item">
+			<label class="layui-form-label">智能会话:</label>
+			<div class="layui-input-block cascader_wrap">
+				<input type="text" id="demo2_1" class="layui-input" autocomplete="off">
+			</div>
+		
+		
+		<!-- <div style="display: none;" id="digitsDiv">
+			<label class="layui-form-label" style="width: 50px;">按键:</label>
+			<div class="layui-input-inline" style="width: 90px;">
+				<input type="text" id="greeting_digits" name="greeting_digits" autocomplete="off" placeholder="" class="layui-input">
+			</div>
+		</div> -->
+	</div>
+	<div class="layui-form-item"  style="display: none;" id="digitsDiv">
+		<div class="layui-inline">
+			<label class="layui-form-label">按键:</label>
+			<div class="layui-input-inline" style="width: 90px;">
+				<input type="text" id="greeting_digits" name="greeting_digits" autocomplete="off" placeholder="" class="layui-input">
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">外呼类型:</label>
+			<div class="layui-input-inline">
+				<select name="outbound_type" id="outbound_type" lay-filter="outbound_type_select" style="width: 50px;">
+					<option value="1">预测外呼</option>
+					<option value="2">比例外呼</option>
+					<option value="3">自动外呼</option>
+					<option value="4">点击外呼</option>
+					<option value="5">预览外呼</option>
+
+				</select>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">参数:</label>
+			<div class="layui-input-inline">
+				<input type="text" id="parameter" name="parameter" lay-verify="required|number" value="1"
+					autocomplete="off" placeholder="请输入参数" class="layui-input" style="width: 100px;">
+
+			</div>
+			<div class="layui-form-mid layui-word-aux"><span style="margin-left: -98px;" id="parameter_text">外呼数 = 参数*签入坐席（参数自动调整）</span></div>
+		</div>
+
+	</div>
+
+	<!-- <div class="layui-form-item">
+		<label class="layui-form-label">参数:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="parameter" name="parameter" lay-verify="required|number" value="0.035"
+				autocomplete="off" placeholder="请输入参数" class="layui-input" style="width: 100px;">
+
+		</div>
+		// <div class="layui-form-mid layui-word-aux"><span style="margin-left: -98px;">*外呼系数,默认为0.035</span></div>
+	</div> -->
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">CRM:</label>
+		<div class="layui-input-inline">
+			<select id="crm_id" name="crm_id" lay-filter="aihao" style="width: 50px;">
+			</select>
+			<!-- <input name="crm_id" placeholder="选择或输入远程CRM连接" style="width: 250px;" autocomplete="off" class="layui-input" id="crm_id"> -->
+		</div>
+	</div>
+
+	<!-- <div class="layui-form-item">
+		<label class="layui-form-label">外呼号码:</label>
+		<div class="layui-input-inline">
+			<select id="getways_id" name="gateway_id" lay-filter="aihao" style="width: 50px;">
+			</select>
+		</div>
+	</div> -->
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">外呼线路:</label>
+		<div class="layui-input-block cascader_wrap">
+			<!-- <input id="demo2_2"/> -->
+			<input type="text" id="demo2_2" class="layui-input" autocomplete="off">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">坐席:</label>
+		<div class="layui-input-inline" style="width: 320px;">
+			<div id="agent_id" class="xm-select-demo"></div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">CRM超时(秒):</label>
+		<div class="layui-input-inline">
+			<input type="text" name="crm_timeout" lay-verify="required|number|crm_timeout" autocomplete="off"
+				placeholder="请输入" value="5" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">排队超时(秒):</label>
+		<div class="layui-input-inline">
+			<input type="text" name="waiting_timeout" lay-verify="required|number|crm_timeout" value="30"
+				autocomplete="off" placeholder="请输入" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="project-add" lay-submit lay-filter="LAY-user-front-managementadd-submit" value="提交"
+				class="layui-btn">
+		</div>
+	</div>
+</form>
+<style>
+	.layui-layer-content {
+		overflow: visible !important;
+	}
+</style>
+<script type="text/javascript">
+	
+	layui.use(['xmSelect', 'dropdown','cascader'], function () {
+
+		var $ = layui.$;
+		var form = layui.form,
+			xmSelect = layui.xmSelect;
+		dropdown = layui.dropdown;
+		var cascader = layui.cascader;
+
+		
+
+
+			//var options = [
+			// 	{
+			// 	value: 'zhinan',
+			// 	label: '欢迎语',
+			// 	children: [{
+			// 		value: 'shejiyuanze',
+			// 		label: '设计原则'
+			// 		}, {
+			// 		value: 'daohang',
+			// 		label: '导航'
+			// 	}]
+			// }, {
+			// 	value: 'ziyuan',
+			// 	label: '智能会话',
+			// 	children: [{
+			// 		value: 'axure',
+			// 		label: 'Axure Components'
+			// 		}, {
+			// 		value: 'sketch',
+			// 		label: 'Sketch Templates'
+			// 		}, {
+			// 		value: 'jiaohu',
+			// 		label: '组件交互文档'
+			// 	}]
+			// }
+		//];
+		
+	  
+	 
+	  $(function () {
+			admin.req({ //坐席下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/agent/list",
+				dataType: 'json',
+				success: function (res) {
+					var results = res.data;
+					var da = [];
+					for (var i = 0; i < results.length; i++) {
+						var rs = {};
+						rs.name = results[i].value;
+						rs.value = results[i].key;
+						da.push(rs);
+					}
+					xmSelect.render({
+						el: '#agent_id',
+						toolbar: {
+							show: true,
+						},
+						filterable: true,
+						tips: "请选择标签组或工号",
+						searchTips: '请输入标签组或工号',
+						data: da
+					})
+
+				}
+			});
+
+
+
+			// admin.req({ //中继下拉列表
+			// 	type: "POST",
+			// 	url: layui.setter.configUrl + "admin/project/gateways",
+			// 	dataType: 'json',
+			// 	success: function (res) {
+			// 		var result = res.data;
+			// 		$("#getways_id").append("<option value='0'>--请选择--</option>");
+			// 		for (var i = 0; i < result.length; i++) {
+			// 			if(result[i].name!=""){
+			// 				$("#getways_id").append("<option value=" + result[i].id + ">" + result[
+			// 				i].username+"("+result[i].name+")" + "</option>");
+			// 			}else{
+			// 				$("#getways_id").append("<option value=" + result[i].id + ">" + result[
+			// 				i].username + "</option>");
+			// 			}
+						
+			// 		}
+			// 		layui.form.render("select");
+			// 	}
+			// });
+
+			admin.req({ //crm下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/crm/list",
+				dataType: 'json',
+				success: function (res) {
+					var result = res.data;
+					$("#crm_id").append("<option value='0'>--请选择--</option>");
+					for (var i = 0; i < result.length; i++) {
+						$("#crm_id").append("<option value=" + result[i].id + ">" + result[i]
+							.name + "</option>");
+					}
+
+					layui.form.render("select");
+				}
+			});
+
+			
+
+			
+
+		})
+
+		form.on('select(outbound_type_select)', function () { //监听外呼类型下拉框
+			if ($("#outbound_type").val() == 1) {
+				$("#parameter").val('1');
+				$("#parameter_text").html("外呼数 = 参数*签入坐席（参数自动调整）");
+			}else if($("#outbound_type").val() == 2){
+				$("#parameter").val('1');
+				$("#parameter_text").html("外呼数 = 参数*签入坐席");
+			}else if($("#outbound_type").val() == 3){
+				$("#parameter").val('1');
+				$("#parameter_text").html("外呼数 = 参数")
+			}else if($("#outbound_type").val() == 4){
+				$("#parameter").val('0');
+				$("#parameter_text").html(" 0 - 公海，1 - 私海");
+			}else {
+				$("#parameter").val('0');
+				$("#parameter_text").html(" 0 - 公海，1 - 私海");
+			}
+		})
+
+
+	})
+
+	function statistics(bot_id) {
+        var state = "";
+        admin.req({
+            type: 'post',
+            async: false,
+            url: layui.setter.configUrl +
+                'admin/botRecord/statistics',
+            data: {
+                bot_id: bot_id
+            },
+            success: function (obj) {
+                state = obj.data.state;
+            }
+        })
+        return state;
+    }
+</script>

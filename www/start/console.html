@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<title>工作台</title>
+	<link rel="shortcut icon" href="favicon.ico" />
+	<script src="layui/layui.js"></script>
+	<link rel="stylesheet" href="layui/css/layui.css" media="all">
+	<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+	<link type="text/css" rel="stylesheet" href="dist/droppicker.min.css">
+	<script src="dist/droppicker.min.js"></script>
+	<script type="text/javascript" src="js/jssip.min.js"></script>
+	<script src="js/coolPhone-1.1.js"></script>
+</head>
+
+<body>
+	<div class="layui-form" lay-filter="layuiadmin-form-record-qc" style="padding: 20px;">
+		<blockquote class="layui-elem-quote">
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" id="phoneTel" style="border-radius: 15px;" placeholder="请输入手机号"
+						autocomplete="off" class="layui-input layui-input-search" />
+				</div>
+			</div>
+
+			<div class="layui-btn-group" style="margin-left:20px;">
+				<button type="button" id="phoneBtn" onclick="cool.action();" title="呼出、接听、挂断" class="layui-btn">
+					<i class="layui-icon layui-icon-service" style="font-size: 24px;"></i>
+				</button>
+
+				<button type="button" onclick="console_tool.nextCall();" title="下一个"
+					class="layui-btn layui-btn-primary">
+					<i class="layui-icon layui-icon-next" style="font-size: 22px;color:#009688;"></i>
+				</button>
+
+				<button type="button" title="通话保持" lay-submit lay-filter="LAY-user-front-hold"
+					class="layui-btn  layui-btn-primary">
+					<i class="layui-icon layui-icon-pause" style="font-size: 22px;color:#009688;"></i>
+				</button>
+
+
+				<button type="button" title="多方通话" lay-submit lay-filter="LAY-user-front-meeting"
+					class="layui-btn layui-btn-primary">
+					<i class="layui-icon layui-icon-user" style="font-size: 22px;color:#009688;"></i>
+				</button>
+
+
+
+				<button type="button" title="服务评分" lay-submit lay-filter="LAY-user-front-satisfaction"
+					class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-star"
+						style="font-size: 22px;color:#009688;"></i></button>
+
+				<!-- <button class="layui-btn layui-btn-primary  demo1">
+					<cite id="agent_name" style="font-size: 22px;color:#009688;">--</cite>
+					<i class="layui-icon layui-icon-down layui-font-12"></i>
+				</button> -->
+
+				<button class="layui-btn layui-btn-primary demo1">
+					<cite id="agent_status" style="font-size: 15px;color:#009688;">--</cite>
+					<i class="layui-icon layui-icon-down layui-font-12"></i>
+				</button>
+				<button id="agent_logons" class="layui-btn layui-btn-primary">
+					<span id="agent_logon" style="font-size: 22px;">00:00:00</span>
+				</button>
+			</div>
+		</blockquote>
+		<div style="display: none;">
+			<audio id="remoteStream"></audio>
+
+		</div>
+
+		<div class="layui-bg-gray" style="margin-top: 20px;">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-md12" id="info_div">
+					<div class="layui-card">
+						<div class="layui-card-header">
+							<a href="javascript:;"><span style="margin-left: 20px;" id="tel_phone" onclick="copyTelVal();"></span></a>
+							<!-- <a href="javascript:;" id="show_call_img" onclick="call();"
+								style="margin-left: 20px;display: none;"><img src="../start/images/call.png" /></a> -->
+								<input type="button" id="LAY-user-front-look-submit"  lay-submit lay-filter="LAY-user-front-look-submit"
+								 value="查看实号" class="layui-btn layui-btn-xs" style="display: none;">
+
+						</div>
+						<div class="layui-card-body">
+							<div class="layui-tab" id="customer_tab" lay-filter="demo"
+								style="height: 150px;display: none;">
+								<ul class="layui-tab-title" id="tab_ul">
+								</ul>
+								</h2>
+								<div class="layui-tab-content" id="tab_div" style="font-size: 20px;color: black;">
+								</div>
+							</div>
+							<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+								<ul class="layui-tab-title">
+									<li class="layui-this">客户信息</li>
+								</ul>
+								<div class="layui-tab-content">
+									<div class="layui-tab-item layui-show">
+										<form class="layui-form" id="qc_action_customer" action=""
+											lay-filter="qc_action_customer">
+											<div class="layadmin-tips" style="margin-top: 130px;">
+												<i class="layui-icon" face>&#xe664;</i>
+												<div class="layui-text" style="font-size: 20px;">
+													没有客户信息哟 ^_^
+												</div>
+											</div>
+										</form>
+										<div class="layui-form-item" style="margin-top: 20px;">
+											<div class="layui-btn-group">
+												<input type="button" id="LAY-user-front-customer-submit" lay-submit
+													lay-filter="LAY-user-front-customer-submit" value="保存信息"
+													class="layui-btn">
+											</div>
+											<div class="layui-btn-group">
+												<input type="button" id="LAY-user-front-call-submit" lay-submit
+													lay-filter="LAY-user-front-call-submit" value="立即呼叫"
+													class="layui-btn">
+											</div>
+											<div class="layui-btn-group">
+												<input type="button" id="LAY-user-front-cblack-submit" lay-submit
+													lay-filter="LAY-user-front-cblack-submit" value="加入黑名单"
+													class="layui-btn layui-btn-danger">
+											</div>
+
+
+											<div class="layui-btn-group" style="float: right;">
+												<input type="button" id="LAY-user-front-digits-submit"
+													style="display: none;" lay-submit
+													lay-filter="LAY-user-front-digits-submit" value="获取密码"
+													class="layui-btn">
+											</div>
+											<div class="layui-btn-group" style="float: right;">
+												<input type="button" id="LAY-user-front-10086" style="display: none;"
+													lay-submit lay-filter="LAY-user-front-10086" value="服务密码"
+													class="layui-btn">
+											</div>
+											<label class="layui-form-label"></label>
+										</div>
+										<!-- <hr class="layui-border-green"> -->
+
+
+										<div class="layui-form-item">
+
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+								<ul class="layui-tab-title">
+									<li class="layui-this">短信</li>
+								</ul>
+								<div class="layui-tab-content">
+									<div class="layui-tab-item layui-show">
+										<div class="layui-form-item">
+											<label class="layui-form-label"></label>
+											<div class="layui-input-block">
+												<textarea placeholder="请输入内容" id="send_msg" name="send_msg"
+													class="layui-textarea"></textarea>
+											</div>
+											<div class="layui-inline" style="padding: 10px;margin-left: -10px;">
+												<label class="layui-form-label"></label>
+												<div class="layui-input-inline">
+													<input type="button" id="LAY-user-front-send-submit" lay-submit
+														lay-filter="LAY-user-front-send-submit" value="立即发送"
+														class="layui-btn">
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="layui-col-md4" id="ai_div" style="display: none;">
+					<div class="layui-card">
+						<div class="layui-card-header">
+							AI助手
+							<input style="display: none;"  type="button" id="LAY-user-front-takeover-submit" lay-submit
+														lay-filter="LAY-user-front-takeover-submit" value="人工介入"
+														class="layui-btn layui-btn-xs">
+						</div>
+						<div class="layui-card-body">
+							<div class="layim-chat-main" style="height: 70vh;" id="outDiv">
+								
+								<ul id="LAY_view">
+									<!-- <li>
+										<div class="layim-chat-user">
+											<img src="../start/images/RobotOutline.png">
+										</div>
+										<div class="layim-chat-text" style="margin-top: 0px;">
+											喂，您好, （停顿2s）您好，我这边是专业办理银行信用贷款和抵押贷款的。月息在5，6厘左右，（语气高昂兴奋）请问您最近有没有资金周转的需求啊？
+										</div>
+									</li>
+									<li class="layim-chat-mine">
+										<div class="layim-chat-user">
+											<img src="../start/images/user.png">
+											<cite><i>1480897882000</i>纸飞机</cite>
+										</div>
+										<div class="layim-chat-text ">
+											喂，您好, （停顿2s）您好，我这边是专业办理银行信用贷款和抵押贷款的。月息在5，6厘左右，（语气高昂兴奋）请问您最近有没有资金周转的需求啊？
+										</div>
+
+									</li> -->
+								</ul>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+	</div>
+
+</body>
+<style>
+	.layim-chat-user {
+		display: inline-block;
+		*display: inline;
+		*zoom: 1;
+		vertical-align: top;
+		font-size: 14px
+	}
+
+	.layim-chat-user {
+		position: absolute;
+		left: 3px
+	}
+
+	.layim-chat-user img {
+		width: 40px;
+		height: 40px;
+		border-radius: 100%
+	}
+
+	.layim-chat-user cite {
+		position: absolute;
+		left: 60px;
+		top: -2px;
+		width: 500px;
+		line-height: 24px;
+		font-size: 12px;
+		white-space: nowrap;
+		color: #999;
+		text-align: left;
+		font-style: normal
+	}
+
+	.layim-chat-user cite i {
+		padding-left: 15px;
+		font-style: normal
+	}
+
+	.layim-chat-mine {
+		text-align: right;
+		padding-left: 0;
+		padding-right: 60px
+	}
+
+	.layim-chat-text {
+		padding-left: 0;
+		padding-right: 60px
+	}
+
+	.layim-chat-text {
+		max-width: 350px;
+		position: relative;
+		line-height: 22px;
+		margin-top: 25px;
+		padding: 8px 15px;
+		background-color: #e2e2e2;
+		border-radius: 3px;
+		color: #333;
+		word-break: break-all;
+		max-width: 462px\9
+	}
+
+	.layim-chat-text:after {
+		content: '';
+		position: absolute;
+		left: -10px;
+		top: 13px;
+		width: 0;
+		height: 0;
+		border-style: solid dashed dashed;
+		border-color: #e2e2e2 transparent transparent;
+		overflow: hidden;
+		border-width: 10px
+	}
+
+	.layim-chat-text a {
+		color: #33DF83
+	}
+
+	.layim-chat-text img {
+		max-width: 100%;
+		vertical-align: middle
+	}
+
+	.layim-chat-text .layui-layim-file,
+	.layui-layim-file {
+		display: block;
+		text-align: center
+	}
+
+	.layim-chat-text .layui-layim-file {
+		color: #333
+	}
+
+
+	.layim-chat-mine .layim-chat-text {
+		max-width: 350px;
+		margin-left: 0;
+		text-align: left;
+		background-color: #5FB878;
+		color: #fff
+	}
+
+	.layim-chat-mine .layim-chat-text:after {
+		left: auto;
+		right: -10px;
+		border-top-color: #5FB878
+	}
+
+	.layim-chat-mine .layim-chat-text a {
+		color: #fff
+	}
+</style>
+<script>
+	layui.link('../src/lib/extend/layim/layim-assets/layim.css', 'skinlayimcss') //加载 css
+	
+</script>
+
+<script>
+	layui.config({
+		base: '../src/',
+		version: new Date().getTime()
+	}).extend().use('index');
+
+	var url = '/../'
+	var address_url = "";
+	var field_name_select = [];
+	var field_name_xmselect = [];
+	var status;
+	var data_street = [];
+	var project_id = 0;
+	var project_fields; //表单字段
+	var project_status; //客户状态
+	var project_result = {}; //表单初始化值
+	var info_uuid = "";
+	var cdr_uuid;
+	var info_telephone;
+	var issue; //问卷
+	var getProvince; //五级地址，获取省份，此处保存，就不用每次请求了
+	var xiangzhenAddress = "";
+	var lockReconnect = false; //避免ws重复连接
+	var psccsocket = null; // 判断当前浏览器是否支持WebSocket
+	var wsUrl;
+	var cool;
+	var info_city;
+
+
+	var intervals;
+	layui.use(['dropdown', 'form', 'table', 'xmSelect', 'element'], function () {
+		table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		setter = layui.setter;
+		xmSelect = layui.xmSelect;
+		element = layui.element;
+		var dropdown = layui.dropdown;
+
+		var date = new Date();
+					var year = date.getFullYear();
+					var month = date.getMonth() + 1;
+					if (month < 10) {
+						month = "0" + month;
+					}
+					var day = date.getDate();
+					if (day < 10) {
+						day = "0" + day;
+					}
+					var starttime = year + "-" + month + "-" + day+" 00:00:00";
+
+		var permission = layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["permission"];
+		$("#phoneBtn").addClass("layui-btn layui-btn-disabled");
+
+		if (window.location.protocol == "https:") {
+			address_url = "https://addre.pscc.js.cn:8899/";
+			wsUrl = "wss://" + window.location.host + "/agent/monitor?" +layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+			//wsUrl = "wss://a.psyai.cn/agent/monitor?" +layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+		} else {
+			address_url = "http://addre.pscc.js.cn:8898/";
+			wsUrl = "ws://" + window.location.host + "/agent/monitor?" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+			
+			//wsUrl = "wss://a.psyai.cn/agent/monitor?" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+		}
+
+
+
+
+		//连接websocket
+		//createWebSocket(wsUrl);
+
+		//绑定签入签出
+		dropdown.render({
+			elem: '.demo1',
+			data: [{
+				title: '签入',
+				id: window.sessionStorage.getItem("name")
+			}, {
+				title: '签出',
+				id: window.sessionStorage.getItem("name")
+			}],
+			click: function (obj) {
+				if (obj.title == "签入") {
+					console_tool.logon(obj.id);
+				} else {
+					console_tool.logout(obj.id);
+				}
+			}
+		});
+		$(function () {
+			$.ajax({
+				type: "GET",
+				url: url + "menu/info",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				success: function (res) {
+					if (res.data.service_password == true) {
+						$("#LAY-user-front-digits-submit").css("display", "");
+						$("#LAY-user-front-10086").css("display", "");
+					} else {
+						$("#LAY-user-front-digits-submit").css("display", "none");
+						$("#LAY-user-front-10086").css("display", "none");
+					}
+				}
+			})
+		})
+		//查看号码
+		form.on('submit(LAY-user-front-look-submit)', function(data) {
+					if ($("#tel_phone").html()!="") {
+						layer.load();
+						$.ajax({
+							url: url + 'admin/agent/searchRealNumber',
+							type: 'post',
+							headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+							data: {
+								uuid: cdr_uuid,
+								start_stamp:starttime
+							},
+							success: function(obj) {
+								layer.closeAll('loading');
+								if(obj.msg!="查询成功！"){
+									layer.msg(obj.msg,{icon:2});
+								}
+								else{
+									info_telephone = formatTelephone(obj.data.realNumber);
+									$("#tel_phone").html(formatTelephone(obj.data.realNumber)  + "【" + info_city + "】");
+									layer.msg("限制查询次数："+obj.data.limit+" ，已使用次数："+ obj.data.count,
+									{icon:1,time:5000});
+								}
+
+							}
+						})
+					}
+				})
+
+
+		//通话保持
+		form.on('submit(LAY-user-front-hold)', function (data) {
+			$.ajax({
+				type: "post",
+				url: url + "/admin/agent/hold",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					rnd: Math.random()
+				},
+				success: function (res) {
+					layer.msg("操作成功", {
+						icon: 1
+					});
+				}
+			})
+		})
+
+
+		//服务评分
+		form.on('submit(LAY-user-front-satisfaction)', function (data) {
+			$.ajax({
+				type: "post",
+				url: url + "/admin/agent/satisfaction",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					rnd: Math.random()
+				},
+				success: function (res) {
+					layer.msg("操作成功", {
+						icon: 1
+					});
+				}
+			})
+		})
+
+
+		form.on('submit(LAY-user-front-10086)', function (data) {
+			$.ajax({
+				type: "post",
+				url: url + "admin/agent/customPlay",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					play_file: "10086.wav"
+				},
+				success: function (res) {
+					layer.msg("操作成功", {
+						icon: 1
+					});
+				}
+			})
+		})
+
+		//多方通话
+		form.on('submit(LAY-user-front-meeting)', function (data) {
+			layer.prompt({
+				title: '输入要通话的工号',
+				formType: 0
+			}, function (extno, index) {
+				layer.close(index);
+				$.ajax({
+					type: "post",
+					url: url + "/admin/agent/meeting",
+					headers: {
+						access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+					},
+					data: {
+						tel: extno,
+						rnd: Math.random()
+					},
+					success: function (res) {
+						layer.msg("操作成功", {
+							icon: 1
+						});
+					}
+				})
+			});
+		})
+
+		form.on('submit(LAY-user-front-takeover-submit)',function(data){
+			$.ajax({
+					type: "post",
+					url: url + "admin/agent/takeover",
+					headers: {
+						access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+					},
+					success: function (res) {
+						if(res.data == 0){
+							layer.msg("介入失败", {
+							icon: 2
+						});
+						}else{
+							layer.msg("介入成功", {
+							icon: 1
+						});
+						}
+						
+					}
+				})
+		})
+
+		form.on('submit(LAY-user-front-send-submit)', function (data) {
+			if ($("#send_msg").val() == "") {
+				layer.msg("短信内容不能为空", {
+					icon: 2
+				});
+				return;
+			}
+
+			layer.load();
+			$.ajax({
+				url: url + "/admin/sms_api/send",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				type: 'post',
+				data: {
+					telephone: info_telephone,
+					msg: $("#send_msg").val()
+				},
+				success: function (obj) {
+					layer.closeAll('loading');
+					if (obj.data == "fail") {
+						layer.msg("发送失败", {
+							icon: 2
+						});
+					} else {
+						layer.msg("发送成功", {
+							icon: 1
+						});
+					}
+
+				}
+			})
+		})
+
+		form.on('submit(LAY-user-front-cblack-submit)', function (data) {
+
+			layer.load();
+			$.ajax({
+				url: url +
+					"/admin/agent/addBlack",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				type: 'post',
+				data: {
+					info_uuid: info_uuid
+				},
+				success: function (obj) {
+					layer.closeAll('loading');
+					if (obj.data > 0) {
+						layer.msg("已添加黑名单", {
+							icon: 1
+						});
+					} else {
+						layer.msg("操作失败", {
+							icon: 2
+						});
+					}
+
+				}
+			})
+		})
+
+
+		form.on('submit(LAY-user-front-digits-submit)', function (data) {
+
+			layer.load();
+			$.ajax({
+				url: url +
+					"/admin/agent/getDigits",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				type: 'post',
+				success: function (obj) {
+					layer.closeAll('loading');
+					if (obj.data == "") {
+						layer.msg("没有设置按键", {
+							icon: 2
+						});
+					} else {
+						layer.msg(obj.data, {
+							icon: 1
+						});
+					}
+
+				}
+			})
+		})
+
+		form.on('submit(LAY-user-front-call-submit)', function (data) {
+			if (info_uuid == "") {
+				layer.msg("客户信息不能为空", {
+					icon: 2
+				});
+				return;
+			}
+			$.ajax({
+				type: 'POST',
+				url: layui.setter.configUrl + 'admin/agent/clickCall',
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					info_uuid: info_uuid
+				},
+				success: function (data) {
+					layer.msg("正在呼叫", {
+						icon: 1
+					});
+				}
+			});
+		})
+
+		//提交客户信息
+		form.on('submit(LAY-user-front-customer-submit)', function (data) {
+			var field = data.field; //获取提交的字段
+			$.ajax({ //告诉服务端，坐席已结束弹屏
+				type: "POST",
+				url: url + "admin/agent/playScreen",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					status: false
+				},
+				success: function (obj) {}
+			})
+			//修改客户状态
+			$.ajax({
+				type: 'POST',
+				//async: false,
+				url: url +
+					"admin/customer_cdr/editStatus",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					uuid: cdr_uuid,
+					status: field.客户状态,
+					start_stamp:starttime
+				},
+				success: function (obj) {
+
+				}
+			})
+			//保存客户信息，删除json对象中的客户状态,以免出错
+			delete field.客户状态; //删除key属性
+			delete field.send_msg;
+			if (field.hasOwnProperty("乡镇地址")) {
+				var pros_codes = $('#乡镇地址').data('droppicker').getCode('droplevel1');
+				var city_codes = $('#乡镇地址').data('droppicker').getCode('droplevel2');
+				var area_codes = $('#乡镇地址').data('droppicker').getCode('droplevel3');
+				var street_codes = $('#乡镇地址').data('droppicker').getCode('droplevel4');
+				var village_codes = $('#乡镇地址').data('droppicker').getCode('droplevel5');
+				var name_val = $('#乡镇地址').data('droppicker').getVal();
+				var s = [];
+				s = name_val.split("/");
+				if (name_val != undefined && pros_codes != undefined && city_codes != undefined &&
+					area_codes != undefined) {
+					address_new = name_val + "/" + pros_codes + "/" + city_codes + "/" + area_codes + "/" +
+						street_codes + "/" + village_codes;
+				} else {
+					address_new = "";
+				}
+				field.乡镇地址 = address_new;
+
+			}
+			$.ajax({
+				type: 'POST',
+				//async: false,
+				url: url +
+					"admin/customer_cdr/editCdrInfo",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					info_uuid: info_uuid,
+					uuid: cdr_uuid,
+					start_stamp: starttime,
+					project_id: project_id,
+					fields: JSON.stringify(field)
+				},
+				success: function (obj) {
+					layer.closeAll('loading');
+					if (obj.data != 0) {
+						layer.msg("提交成功", {
+							icon: 1
+						});
+
+					} else {
+						layer.msg("错误", {
+							icon: 2
+						});
+					}
+
+				}
+			})
+
+		})
+		var websocket = null;
+		//判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
+		if ('WebSocket' in window) {
+			websocket = new WebSocket(wsUrl);
+		} else {
+			alert('Not support websocket')
+		}
+		// //连接发生错误的回调方法
+		websocket.onerror = function () {
+			//setMessageInnerHTML("error");
+		};
+		// //连接成功建立的回调方法
+		websocket.onopen = function (event) {
+			console.log("webscoket open");
+			//setMessageInnerHTML("open");
+		}
+		//接收到消息的回调方法
+		websocket.onmessage = function (event) {
+			//setMessageInnerHTML(event.data);
+			var data = JSON.parse(event.data); //获取表单
+			if (data.method == "notice") {
+				//更改坐席计时时间
+				editStatus(data);
+				if (data.queue == false) {
+					$('#agent_status').html('已签出');
+				} else {
+					$('#agent_status').html('已签入');
+				}
+			} else if (data.method == "message") {
+				var showtime;
+				var date = new Date();
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				if (month < 10) {
+					month = "0" + month;
+				}
+				var day = date.getDate();
+				if (day < 10) {
+					day = "0" + day;
+				}
+				var hours = date.getHours();
+				if (hours < 10) {
+					hours = "0" + hours;
+				}
+				var minutes = date.getMinutes();
+				if (minutes < 10) {
+					minutes = "0" + minutes;
+				}
+				var second = date.getSeconds();
+				if (second < 10) {
+					second = "0" + second;
+				}
+				showtime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + second;
+				//弹出公告
+				layer.alert(showtime + "<br/>" + data.msg, {
+					title: "公告",
+					offset: 'rb',
+					area: '300px;',
+					btn: '关闭',
+					btnAlign: 'r',
+					shade: 0,
+					yes: function () {
+						layer.closeAll();
+					}
+				})
+			} else if (data.method == "info") {
+				$("#LAY-user-front-look-submit").show(); //显示查看号码按钮
+				cdr_uuid = data.sessionId;
+
+
+				$.ajax({
+					type: "post",
+					url: url + "admin/customer_cdr/get",
+					async: false,
+					headers: {
+						access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+					},
+					data: {
+						uuid: cdr_uuid,
+						start_stamp: starttime
+					},
+					success: function (obj) {
+						if (JSON.parse(obj.data.expand || '{}').hasOwnProperty("dialogues")) {
+
+							if(data.eavesdrop){
+								$("#LAY-user-front-takeover-submit").show();
+							}else{
+								$("#LAY-user-front-takeover-submit").hide();
+							}
+							$("#info_div").removeClass();
+							$("#info_div").addClass("layui-col-md8");
+							$("#ai_div").show();
+							
+							let expand = JSON.parse(obj.data.expand);
+							var temp = "";
+							let dialogues = expand.dialogues;
+							for (let i = 0; i < dialogues.length; i++) {
+								let every = dialogues[i];
+								if (every.role == "AI") {
+									if (every.hasOwnProperty("exec")) {
+										let execText = every.exec;
+										temp +='<li><div class="layim-chat-user"><img src="../start/images/RobotOutline.png">';
+										temp += '<cite>'+execText+'</cite>';
+										temp+='</div>';
+										temp += '<div class="layim-chat-text" >' + every.text +'</div></li>';
+									}else{
+										temp += '<li>';
+										temp += '<div class="layim-chat-user">';
+										temp += '<img src="../start/images/RobotOutline.png">';
+										temp += '</div>';
+										temp +='<div class="layim-chat-text" style="margin-top: 0px;">';
+										temp += every.text;
+										temp += '</div></li>';
+									}
+									
+								}  else {
+									//console.log(every)
+									let hit = every['hit'];
+									//console.log(hit)
+									if (hit == undefined || hit.hasOwnProperty("AI_UNKNOWN")) {
+										temp +=
+											'<li class="layim-chat-mine"><div class="layim-chat-user"><img src="../start/images/user.png"></div>';
+										temp +=
+											'<div class="layim-chat-text" style="margin-top: 0px;">' +
+											every.asrText + '</div></li>';
+									} else {
+										temp +=
+											'<li class="layim-chat-mine"><div class="layim-chat-user"><img src="../start/images/user.png">';
+										temp += '<cite><i>命中: ' + hit.word + '</i>意图: ' + hit
+											.intent + '【' + hit.belong + '】</cite></div>';
+										temp += '<div class="layim-chat-text" >' + every.asrText +
+											'</div></li>';
+									}
+								}
+							}
+							$("#LAY_view").empty();
+							$("#LAY_view").append(temp);
+						} else {
+							$("#LAY_view").empty();
+							$("#info_div").removeClass();
+							$("#info_div").addClass("layui-col-md12");
+							$("#ai_div").hide();
+						}
+					}
+				})
+
+
+				info_uuid = data.info.uuid;
+				info_telephone = data.info.telephone;
+				info_city=data.city;
+				$("#tel_phone").html(formatTelephone(data.info.telephone)  + "【" + data.city + "】");
+				form.val("qc_action_customer", project_result); //先重置表单
+				//客户信息
+				if (project_id == 0) {
+					project_id = data.info.project_id;
+					getIsuue(data.info.project_id);
+					getProjectStatus(data.info.project_id);
+					var fields = getForm(data.info.project_id);
+					//生成表单
+					createForm(fields, data.info, issue);
+					//短信内容
+					getSendMsg();
+				} else {
+					if (project_id !== data.info.project_id) {
+						project_id = data.info.project_id;
+						getIsuue(data.info.project_id);
+						getProjectStatus(data.info.project_id);
+						var fields = getForm(data.info.project_id);
+						//生成表单
+						createForm(fields, data.info, issue);
+						//短信内容
+						getSendMsg()
+					} else {
+						//生成表单
+						if (issue == true) {
+							element.tabChange('demo', 1); //tab 选项卡默认选择第一个
+						}
+						var data_street = ["", "", "", "", "", "", "", "", "", ""];
+						if (JSON.stringify(data.info.fields) != "{}" && data.info.fields != "" && data.info
+							.fields != "{}") {
+							var results = JSON.parse(data.info.fields);
+							if (results.hasOwnProperty("乡镇地址")) {
+								if (results['乡镇地址'] != "") {
+									data_street = results['乡镇地址'].split('/');
+								}
+								$('#乡镇地址').data('droppicker').destroy();
+								fiveAddress(data_street);
+							}
+							results["客户姓名"] = data.info.name;
+							results["客户号码"] = data.info.telephone;
+							results["客户状态"] = 3;
+							form.val("qc_action_customer", results);
+						} else {
+							var results = {};
+							if (xiangzhenAddress == "乡镇地址") {
+								$('#乡镇地址').data('droppicker').destroy();
+								fiveAddress(data_street);
+							}
+							results["客户姓名"] = data.info.name;
+							results["客户号码"] = data.info.telephone;
+							results["客户状态"] = 3;
+							form.val("qc_action_customer", results);
+						}
+					}
+				}
+				//多选框赋值
+				var fields_xm = ""; //表单值
+				if (JSON.stringify(data.info.fields) != "{}" && data.info.fields != "" && data.info.fields !=
+					"{}") {
+					fields_xm = JSON.parse(data.info.fields);
+				}
+				for (let i = 0; i < field_name_xmselect.length; i++) {
+					for (let j = 0; j < project_fields.data.length; j++) {
+						if (field_name_xmselect[i] == project_fields.data[j].field_name) {
+
+							var nodes = JSON.parse(project_fields.data[j].field_json);
+							var value = "";
+							if (fields_xm != "") {
+								value = fields_xm[field_name_xmselect[i]];
+							}
+							var sub_datas = [];
+							var sub_lists = {};
+							var sub_checks = [];
+							for (var k = 0; k < nodes.length; k++) {
+								sub_lists = {};
+								if (value != undefined) {
+									if (value.indexOf(nodes[k].name) != -1) {
+										sub_checks.push(nodes[k].name);
+									}
+								}
+								sub_lists.name = nodes[k].name;
+								sub_lists.value = nodes[k].name;
+								sub_datas.push(sub_lists);
+							}
+							//控制是否允许修改
+							if (permission == 4) {
+								if (project_fields.data[j].is_edit == 1) { //允许修改
+									var demo1 = xmSelect.render({
+										el: '#' + field_name_xmselect[i],
+										toolbar: {
+											show: true
+										},
+										initValue: sub_checks,
+										name: field_name_xmselect[i],
+										data: function () {
+											return sub_datas
+										}
+									})
+								} else {
+									var demo1 = xmSelect.render({
+										el: '#' + field_name_xmselect[i],
+										disabled: true,
+										toolbar: {
+											show: true
+										},
+										initValue: sub_checks,
+										name: field_name_xmselect[i],
+										data: function () {
+											return sub_datas
+										}
+									})
+								}
+							} else {
+								var demo1 = xmSelect.render({
+									el: '#' + field_name_xmselect[i],
+									toolbar: {
+										show: true
+									},
+									initValue: sub_checks,
+									name: field_name_xmselect[i],
+									data: function () {
+										return sub_datas
+									}
+								})
+							}
+						}
+					}
+				}
+			}else if (data.method == "clientSay") {
+				var temp = "";
+				temp +='<li class="layim-chat-mine"><div class="layim-chat-user"><img src="../start/images/user.png"></div>';
+				temp +='<div class="layim-chat-text" style="margin-top: 0px;">' +
+					data.msg + '</div></li>';
+				$("#LAY_view").append(temp);
+				var divs = document.getElementById('outDiv');
+				divs.scrollTop = divs.scrollHeight; 
+
+			}
+		}
+		//连接关闭的回调方法
+		websocket.onclose = function () {
+			// layer.alert("连接关闭，请刷新网页", {
+			// 	icon: 2
+			// })
+			websocket = new WebSocket(wsUrl);
+			//setMessageInnerHTML("close");
+		}
+		//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+		window.onbeforeunload = function () {
+			logout_web();
+			websocket.close();
+		}
+		//将消息显示在网页上
+		function setMessageInnerHTML(innerHTML) {
+			//document.getElementById('message').innerHTML += innerHTML + '<br/>';
+		}
+		//关闭连接
+		function closeWebSocket() {
+			websocket.close();
+		}
+		//发送消息
+		function send() {
+			var message = document.getElementById('text').value;
+			websocket.send(message);
+		}
+		//注册软电话
+		if (document.location.protocol == "https:") {
+			
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["webphone"] == true) {
+				cool = new coolPhone();
+				// $("#phoneBtn").removeClass("layui-btn layui-btn-disabled");
+				// $("#phoneBtn").addClass("layui-btn");
+				getUserMedia({
+					audio: true
+				}, onSuccess, onError);
+			}
+
+		}
+	})
+	//网页软电话
+	function getUserMedia(constrains, success, error) {
+		if (navigator.mediaDevices.getUserMedia) {
+			//最新标准API
+			navigator.mediaDevices.getUserMedia(constrains).then(success).catch(error);
+		} else if (navigator.webkitGetUserMedia) {
+			//webkit内核浏览器
+			navigator.webkitGetUserMedia(constrains).then(success).catch(error);
+		} else if (navigator.mozGetUserMedia) {
+			//Firefox浏览器
+			navagator.mozGetUserMedia(constrains).then(success).catch(error);
+		} else if (navigator.getUserMedia) {
+			//旧版API
+			navigator.getUserMedia(constrains).then(success).catch(error);
+		}
+	}
+
+	function onSuccess(stream) { //耳麦检测,成功
+		console.log("navigator.getUserMedia success!: ");
+		register(); //注册软电话
+		$("#phoneBtn").removeClass("layui-btn layui-btn-disabled");
+				$("#phoneBtn").addClass("layui-btn");
+		stream.getTracks().forEach(function (track) {
+			track.stop();
+		});
+	}
+
+	function onError(error) { //耳麦检测,失败
+		// layer.msg("未检测到音频设备", {
+		// 	offset: '15px',
+		// 	icon: 2
+		// });
+		layer.alert("未检测到音频设备", {
+					title: "网页软电话提示",
+					icon:2,
+					offset: 'rt',
+					area: '300px;',
+					btn: false,
+					//btnAlign: 'l',
+					shade: 0,
+					// yes: function () {
+					// 	layer.closeAll();
+					// }
+				})
+		$("#phoneBtn").removeClass("layui-btn");
+				$("#phoneBtn").addClass("layui-btn  layui-btn-disabled");
+		console.log("navigator.getUserMedia error: ", error);
+	}
+	//退出时进行注销
+	function logout_web() {
+		try {
+			layui.data(setter.tableName, {
+				key: "isOpen",
+				value: 0
+			});
+		} catch (error) {
+		//	console.log("isOpen未找到");
+		}
+
+		cool.terminateSession();
+		cool.stop();
+	}
+
+	function register() {
+		var ip = window.location.hostname;
+		var websocket = "wss://" + ip + ":7443";
+		var user = window.sessionStorage.getItem("name"); //分机号
+		var password = layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["user_pwd"];
+		var remoteStream = document.getElementById("remoteStream");
+		var phoneTel = document.getElementById("phoneTel");
+		var phoneBtn = document.getElementById("phoneBtn");
+		cool.register(websocket, ip, user, password, phoneTel, phoneBtn, remoteStream);
+	}
+	document.addEventListener("keydown", function (e) {
+		if (e.which === 27)
+			cool.terminateSession();
+	});
+
+
+
+	console_tool = {
+		nextCall: function () {
+			$.ajax({
+				type: "post",
+				url: url + "admin/agent/nextCall",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				success: function (obj) {
+					if (obj["msg"] != undefined) {
+						layer.msg("操作成功", {
+							icon: 1
+						});
+					}
+				}
+			})
+		},
+		logon: function (extno) {
+			$.ajax({
+				type: "post",
+				url: url + "admin/agent/logon",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					extno: extno,
+					rnd: Math.random()
+				},
+				success: function (obj) {
+					if (obj["msg"] != undefined) {
+						layer.msg("已签入", {
+							icon: 1
+						});
+					}
+				}
+			})
+		},
+		logout: function (extno) {
+			$.ajax({
+				type: "post",
+				url: url + "admin/agent/logout",
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					extno: extno,
+					rnd: Math.random()
+				},
+				success: function (obj) {
+					if (obj["msg"] != undefined) {
+						layer.msg("已签出", {
+							icon: 1
+						});
+					}
+				}
+			})
+		}
+	}
+	//改变计时时间
+	function editStatus(data) {
+		var status = data.status;
+		$("#agent_logon").html(data.time);
+		if (status == 0) {
+
+			$("#agent_logon").css("color", "silver");
+		} else if (status == 1) {
+			$("#agent_logon").css("color", "green");
+		} else if (status == 2) {
+			$("#agent_logon").css("color", "#FF5722");
+		} else if (status == 3) {
+			$("#agent_logon").css("color", "#ffb800");
+		}
+	}
+	//生成表单
+	function createForm(obj, info, issue) {
+		var info_fields = "";
+		if (info.fields != "") {
+			info_fields = JSON.parse(info.fields); //获取表单值
+		}
+		var permission = layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["permission"];
+		$("#qc_action_customer").empty();
+		crm_fields = obj.data; //获取表单
+		var data_street = ["", "", "", "", "", "", "", "", "", ""];
+		if (JSON.stringify(info.fields) != "{}" && info_fields != "") {
+			if (info_fields.hasOwnProperty("乡镇地址"))
+				if (info_fields['乡镇地址'] != "")
+					data_street = info_fields['乡镇地址'].split('/');
+		}
+		if (issue == true) { //显示问卷
+			$("#customer_tab").css("display", "");
+			$("#tab_ul").empty();
+			$("#tab_div").empty();
+		} else {
+			$("#customer_tab").css("display", "none");
+		}
+
+		$("#qc_action_customer").append('<div class="layui-form-item">');
+		field_name_select = [];
+		for (i = 0; i < crm_fields.length; i++) { //开始拼接表单
+			var field = crm_fields[i];
+			element.tabAdd('demo', { //自动生成tab选项卡
+				title: field.jump,
+				content: field.issue,
+				id: field.jump
+			})
+
+
+			var value;
+			if (field.field_name == "客户姓名")
+				value = info.name;
+			else if (field.field_name == "客户号码")
+				value = info.telephone;
+			else if (field.field_name == "客户状态")
+				value = info.status;
+			else {
+				var tfield = {};
+				tfield = info_fields;
+				if (tfield == null) {
+					value = "";
+				} else {
+					if (tfield[field.field_name] != undefined)
+						value = tfield[field.field_name];
+					else
+						value = "";
+				}
+			}
+			var temp = "";
+			var div_1 = '<div class="layui-inline" style="padding: 10px 0 0 0;">';
+			var kuangkuang = '';
+			if (field.input_type == 1) {
+				if (permission == 4) {
+					if (field.is_display == 1) { //1显示
+						if (field.is_edit == 1) { //1可修改
+							kuangkuang = '<input id="' + field.field_name + '" name="' + field
+								.field_name +
+								'" type="text" autocomplete="off" style="width:210px" class="layui-input" value="' +
+								value + '">'
+						} else {
+							kuangkuang = '<input id="' + field.field_name + '" name="' + field
+								.field_name +
+								'" type="text" readonly autocomplete="off" style="width:210px" class="layui-input" value="' +
+								value + '">'
+						}
+					} else {
+						div_1 = '<div class="layui-inline" style="padding: 10px 0 0 0;display:none">';
+						kuangkuang = '<input id="' + field.field_name + '" name="' + field
+							.field_name +
+							'" type="text" autocomplete="off" style="width:210px" class="layui-input" value="' +
+							value + '">'
+					}
+				} else {
+					kuangkuang = '<input id="' + field.field_name + '" name="' + field.field_name +
+						'" type="text" autocomplete="off" style="width:210px" class="layui-input" value="' +
+						value + '">'
+				}
+				temp = temp + div_1;
+				temp = temp + '<label class="layui-form-label">' + field.field_name + '</label>';
+				temp = temp + '<div class="layui-input-inline">';
+				temp = temp + kuangkuang;
+				temp = temp + '</div>';
+				temp = temp + '</div>';
+			} else if (field.input_type == 2) {
+				if (permission == 4) {
+					if (field.is_display == 1) { //1显示
+						if (field.is_edit == 1) { //1可修改
+							kuangkuang = '<select id="' + field.field_name + '" name="' + field
+								.field_name + '" lay-filter="' + field.field_name + '">';
+						} else {
+							kuangkuang = '<select id="' + field.field_name + '" name="' + field
+								.field_name + '" lay-filter="' + field.field_name +
+								'" disabled="disabled" >';
+						}
+					} else {
+						div_1 = '<div class="layui-inline" style="padding: 10px 0 0 0;display:none;">';
+						kuangkuang = '<select id="' + field.field_name + '" name="' + field
+							.field_name + '" lay-filter="' + field.field_name + '">';
+					}
+				} else {
+					kuangkuang = '<select id="' + field.field_name + '" name="' + field.field_name +
+						'" lay-filter="' + field.field_name + '">';
+				}
+				field_name_select.push(field.field_name);
+				temp = temp + div_1;
+				temp = temp + '<label class="layui-form-label">' + field.field_name + '</label>';
+				temp = temp + '<div class="layui-input-inline" style="width:210px">';
+				temp = temp + kuangkuang;
+				var nodes = JSON.parse(field.field_json);
+				if (field.field_name == "客户状态") {
+					status = project_status.data;
+					var result = JSON.parse(project_status.data);
+					for (let i = 0; i < result.length; i++) {
+						if (i > 2) {
+							if (i == value)
+								temp += '<option value="' + i + '" selected="">' + result[i] + '</option>';
+							else
+								temp += '<option value="' + i + '">' + result[i] + '</option>';
+						}
+					}
+				} else {
+					temp += '<option value="">请选择</option>';
+					for (k = 0; k < nodes.length; k++) {
+						if (nodes[k].name == value)
+							temp += '<option value="' + nodes[k].name +
+							'" selected="">' + nodes[k].name + '</option>';
+						else
+							temp += '<option value="' + nodes[k].name + '">' +
+							nodes[k]
+							.name + '</option>';
+					}
+				}
+				temp = temp + '</select>';
+				temp = temp + '</div>';
+				temp = temp + '</div>';
+			} else if (field.input_type == 3) {
+				field_name_xmselect.push(field.field_name);
+				if (permission == 4) {
+					if (field.is_display != 1) {
+						div_1 = '<div class="layui-inline" style="padding: 10px 0 0 0;display:none">';
+					}
+				}
+				temp = temp + div_1;
+				temp = temp + '<label class="layui-form-label">' + field.field_name + '</label>';
+				temp = temp + '<div class="layui-input-inline" style="width:208px;">';
+				temp = temp + '<div id="' + field.field_name + '" class="xm-select-demo"></div>';
+				temp = temp + '</div>';
+				temp = temp + '</div>';
+			} else if (field.input_type == 4) {
+				if (permission == 4) {
+					if (field.is_display == 1) {
+						if (field.is_edit == 1) {
+							kuangkuang = '<input id="' + field.field_name + '" name="' + field
+								.field_name +
+								'" type="text" autocomplete="off"  class="layui-input" style="width:534px" value="' +
+								value + '">';
+						} else {
+							kuangkuang = '<input id="' + field.field_name + '" name="' + field
+								.field_name +
+								'" type="text" autocomplete="off" readonly  class="layui-input" style="width:534px" value="' +
+								value + '">';
+						}
+					} else {
+						div_1 = '<div class="layui-inline" style="padding: 10px 0 0 0;display:none">';
+						kuangkuang = '<input id="' + field.field_name + '" name="' + field
+							.field_name +
+							'" type="text" autocomplete="off"  class="layui-input" style="width:534px" value="' +
+							value + '">';
+					}
+				} else {
+					kuangkuang = '<input id="' + field.field_name + '" name="' + field.field_name +
+						'" type="text" autocomplete="off"  class="layui-input" style="width:534px" value="' +
+						value + '">';
+				}
+				temp = temp + div_1;
+				temp = temp + '<label class="layui-form-label">' + field.field_name + '</label>';
+				temp = temp + '<div class="layui-input-inline">';
+				temp = temp + kuangkuang;
+				temp = temp + '</div>';
+				temp = temp + '</div>';
+			}
+			$("#qc_action_customer").append(temp);
+		}
+		$("#qc_action_customer").append('</div>');
+		element.tabChange('demo', 1);
+		for (var c = 0; c < field_name_select.length; c++) { //监听表单中的下拉框
+			(function (m) { //使用闭包,因for循环遍历后只监听最后一个
+				form.on('select(' + field_name_select[m] + ')', function (data) {
+					var objs = project_fields;
+					for (var p = 0; p < objs.data.length; p++) {
+
+						if (objs.data[p].field_json != undefined) {
+							var resu = JSON.parse(objs.data[p].field_json);
+							if (field_name_select[m] == "客户状态") {
+								var result = JSON.parse(status); //所有的客户状态
+								for (var o = 0; o < resu.length; o++) {
+									if (resu[o].name == result[$("#" + field_name_select[m])
+											.val()]) { //获取val值时1,2,3，不是成功客户，失败客户一类
+										var jjj = resu[o].next;
+										element.tabChange('demo', jjj);
+									}
+								}
+							}
+							for (var o = 0; o < resu.length; o++) {
+								if (field_name_select[m] == objs.data[p].field_name) {
+									if ($("#" + field_name_select[m]).val() == resu[o].name) {
+										var jjj = resu[o].next;
+										element.tabChange('demo', jjj);
+									}
+								}
+							}
+						}
+
+					}
+				})
+			})(c)
+		}
+		form.render();
+		fiveAddress(data_street);
+	}
+
+
+	//获取表单字段
+	function getForm(project_id) {
+		var form_project;
+		$.ajax({
+			type: "POST",
+			url: url + "/admin/crm_field/listProjectFields",
+			headers: {
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+			},
+			async: false,
+			data: {
+				project_id: project_id
+			},
+			success: function (obj) {
+				form_project = obj;
+				project_fields = obj;
+				project_result = {};
+				for (var i = 0; i < obj.data.length; i++) {
+					project_result[obj.data[i].field_name] = "";
+					if (obj.data[i].field_name == "乡镇地址") {
+						xiangzhenAddress = obj.data[i].field_name;
+					}
+
+				}
+			}
+		})
+		return form_project;
+	}
+	//短信内容
+	function getSendMsg() {
+		$.ajax({
+			url: url + "/admin/agent/getMsg",
+			type: 'post',
+			headers: {
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+			},
+			success: function (obj) {
+				$("#send_msg").val(obj.data);
+			}
+		})
+	}
+	//客户状态
+	function getProjectStatus(project_id) {
+		$.ajax({
+			type: "POST",
+			url: url + "admin/crm_field/listProjectStatus",
+			dataType: 'json',
+			headers: {
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+			},
+			async: false,
+			data: {
+				project_id: project_id
+			},
+			success: function (res) {
+				project_status = res;
+
+			}
+		})
+	}
+	//问卷是否跳转
+	function getIsuue(project_id) {
+		var crm_id;
+		if (issue == undefined) {
+			$.ajax({
+				type: "POST",
+				url: url + "admin/project/get",
+				dataType: 'json',
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				async: false,
+				data: {
+					id: project_id
+				},
+				success: function (res) {
+					crm_id = res.data.crm_id;
+
+				}
+			})
+			$.ajax({ //客户状态下拉框
+				type: "POST",
+				url: url + "admin/crm/get",
+				dataType: 'json',
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				async: false,
+				data: {
+					id: crm_id
+				},
+				success: function (res) {
+					if (res.data == null) {
+						issue = false;
+					} else {
+						issue = res.data.issue;
+					}
+
+				}
+			})
+		}
+	}
+	//生成五级地址
+	function fiveAddress(data_street) {
+		$('#乡镇地址').droppicker({
+			placeholder: "请选择地址",
+			data: function (type, code, callback) {
+				if (type == 'droplevel1') {
+					var data;
+					if (getProvince == undefined) {
+						$.ajax({
+							type: "post",
+							url: address_url + "psccPlus/address/getProvince",
+							async: false,
+							dataType: "json",
+							success: function (res) {
+								data = res.data;
+								getProvince = res.data;
+							}
+						});
+					} else {
+						data = getProvince;
+					}
+					return callback(data);
+				} else if (type == 'droplevel2') {
+					var datas;
+					$.ajax({
+						type: "post",
+						url: address_url + "psccPlus/address/getRegion",
+						async: false,
+						dataType: "json",
+						data: {
+							code: code
+						},
+						success: function (res) {
+							datas = res.data;
+						}
+					});
+
+					return callback(datas);
+				} else if (type == 'droplevel3') {
+					var data_area;
+					$.ajax({
+						type: "post",
+						url: address_url + "psccPlus/address/getRegion",
+						async: false,
+						dataType: "json",
+						data: {
+							code: code
+						},
+						success: function (res) {
+							data_area = res.data;
+							getArea = res.data;
+						}
+					});
+					return callback(data_area);
+				} else if (type == 'droplevel4') {
+					var data_streets;
+					$.ajax({
+						type: "post",
+						url: address_url + "psccPlus/address/getRegion",
+						async: false,
+
+						dataType: "json",
+						data: {
+							code: code
+						},
+						success: function (res) {
+							data_streets = res.data;
+							getStreet = res.data;
+						}
+					});
+					return callback(data_streets);
+				} else if (type == 'droplevel5') {
+					var data_vll;
+					$.ajax({
+						type: "post",
+						url: address_url + "psccPlus/address/getRegion",
+						data: {
+							code: code
+						},
+						async: false,
+						dataType: "json",
+						success: function (res) {
+							data_vll = res.data;
+							getVillage = res.data;
+						}
+					});
+					return callback(data_vll);
+				}
+			},
+			droplevel1: {
+				name: "" + data_street[0] + "",
+				code: "" + data_street[5] + ""
+			},
+			droplevel2: {
+				name: "" + data_street[1] + "",
+				code: "" + data_street[6] + ""
+			},
+			droplevel3: {
+				name: "" + data_street[2] + "",
+				code: "" + data_street[7] + ""
+			},
+			droplevel4: {
+				name: "" + data_street[3] + "",
+				code: "" + data_street[8] + ""
+			},
+			droplevel5: {
+				name: "" + data_street[4] + "",
+				code: "" + data_street[9] + ""
+			},
+			callback: function (data) {
+				// 数据回调
+			}
+		});
+	}
+
+	function formatTelephone(phone) {
+      let telArr = phone.split('')
+      if (telArr && telArr.length === 11) {
+        telArr.splice(3, 0 ,' ')
+        telArr.splice(8, 0, ' ')
+      }
+      return telArr.join('')
+    }
+
+	//复制手机号
+	function copyTelVal(){
+		//alert(info_telephone)
+		const input = document.createElement('textarea');
+				input.name = 'txtTel';
+				document.body.appendChild(input);
+				input.setAttribute('id', 'aa');
+				// input.setAttribute('value', '听说你想\n复制我');
+				var i = document.getElementById('aa');
+				i.innerHTML = info_telephone;
+				input.select();
+				if (document.execCommand('copy')) {
+					document.execCommand('copy');
+					layer.msg("复制成功", {
+						icon: 1
+					});
+				}
+				document.body.removeChild(input);
+	}
+</script>
+
+</html>

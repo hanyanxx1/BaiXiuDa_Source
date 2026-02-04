@@ -1,0 +1,95 @@
+<div class="layui-form" lay-filter="layuiadmin-form-project_task_import" style="padding: 0px 0 0 0;">
+
+	<label class="layui-form-label">导入CSV文件:</label>
+	<div class="layui-upload">
+		<button type="button" class="layui-btn" name="import_file" id="test8"><i class="layui-icon"></i>选择文件</button>
+	</div>
+
+	<div class="layui-form-item" style="margin-top: 20px;">
+		<div class="layui-inline">
+			<label class="layui-form-label">下载模板:</label>
+			<div class="layui-inline">
+				<div class="layui-upload">
+					<button type="button" class="layui-btn" id="test9" onclick="project_task_tool.downloadcsv();"><i class="layui-icon layui-icon-download-circle"></i>下载CSV模板</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">乱序导入:</label>
+			<div class="layui-input-inline">
+				<select id="import_order" name="import_order" lay-verify="required">
+					<option value="0" selected="selected">禁用</option>
+					<option value="1">启用</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">过滤重复号码:</label>
+			<div class="layui-input-inline">
+				<select id="import_filter" name="import_filter" lay-verify="required" lay-search="" lay-filter="import_filter_task">
+					<option value="0" selected="selected">禁用</option>
+					<option value="1">启用</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-inline" id="import_cover_task" style="margin-left: -70px;display: none;">
+			<label class="layui-form-label" >是否覆盖:</label>
+			<div class="layui-input-inline">
+			  <input type="checkbox" name="cover" id="cover" lay-filter="cover" lay-skin="primary" title="">
+			</div>
+		</div>
+	</div>
+
+	
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">过滤黑名单:</label>
+			<div class="layui-input-inline">
+				<select id="black" name="black" lay-verify="required">
+					<option value="0" selected="selected">禁用</option>
+					<option value="1">启用</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">导入方式:</label>
+			<div class="layui-input-inline">
+				<select id="asyn" name="asyn" lay-verify="required">
+					<option value="false" selected="selected">同步</option>
+					<option value="true">异步</option>
+				</select>
+			</div>
+		</div>
+	</div> -->
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="project_task_import" lay-submit lay-filter="LAY-user-front-project_task_import_submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+</div>
+<!-- <style>
+		
+		.layui-layer-content {
+			overflow: visible !important;
+		}
+	</style> -->
+
+<script>
+	layui.use('upload', function() {
+		var $ = layui.jquery,
+			upload = layui.upload;
+
+	})
+</script>

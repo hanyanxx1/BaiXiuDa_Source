@@ -1,0 +1,67 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+	
+	
+	<div class="layui-form-item">
+		<label class="layui-form-label">起始工号:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="startExt" lay-verify="required" autocomplete="off" placeholder="请输入起始分机号" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">工号个数:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="length" lay-verify="required|number|agentLength" autocomplete="off" placeholder="请输入分机个数" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">密码:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="passwd" lay-verify="required|extension_pwd|characters" autocomplete="off" placeholder="请输入密码" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">用户:</label>
+			<div class="layui-input-inline">
+				<select name="admin_id" id="admin_ids" lay-verify="required" lay-search="">
+					<!-- <option value="">--请选择--</option> -->
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="agents-add" lay-submit lay-filter="LAY-user-front-submit" value="确认" class="layui-btn">
+		</div>
+	</div>
+</div>
+<script>
+layui.use(['admin', 'form'], function(){
+  var $ = layui.$
+  ,form = layui.form;
+  
+  $(function() {
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl+"/super_admin/admin/list",
+					dataType: 'json',
+					success: function(res) {
+						function sortId(a,  b)  {                    
+							return  a.id  -  b.id;
+						}
+						var data = res.data.sort(sortId);
+						for(var i = 0; i < data.length; i++) {
+							$("#admin_ids").append("<option value=" + data[i].id + ">" + data[i].name + "</option>");
+						}
+
+						layui.form.render("select");
+					}
+				});
+			})
+  
+})
+</script>

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-collapse" lay-filter="component-panel">
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">授权配置<i class="layui-icon layui-colla-icon"></i></h2>
+                            <div class="layui-colla-content layui-show">
+                                <table class="layui-table">
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="35%">
+                                        <col width="15%">
+                                        <col>
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>属性</th>
+                                            <th>值</th>
+                                            <th>属性</th>
+                                            <th>值</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>序列号</td>
+                                            <td id="serial"></td>
+
+                                            <td>LOGO</td>
+                                            <td id="logo"></td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>系统并发</td>
+                                            <td id="concurrency"></td>
+                                            <td>服务期限</td>
+                                            <td id="service_period"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>授权坐席数</td>
+                                            <td id="authorization_seats"></td>
+                                            <td>使用期限</td>
+                                            <td id="use_period"></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>工号长度</td>
+                                            <td id="ext_length"></td>
+
+                                            <td>通话分钟限制</td>
+                                            <td id="minutes_limit"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>服务密码</td>
+                                            <td id="service_password"></td>
+                                            <td>号码状态检测</td>
+                                            <td><span id="detect_ring"></span>
+                                                <button class="layui-btn layui-btn-primary layui-btn-xs" lay-submit
+                                                    lay-filter="LAY-user-front-detect-report">报表</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+
+                                            <td>密钥</td>
+                                            <td>
+
+                                                <div class="layui-input-3">
+                                                    <input id="secret" name="secret" autocomplete="off"
+                                                        class="layui-input">
+                                                </div>
+                                                <button class="layui-btn" lay-submit
+                                                    lay-filter="LAY-user-front-secret-submit">授权</button>
+                                            </td>
+                                            <td>回调地址</td>
+                                            <td id="callback_url"></td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-collapse" lay-filter="component-panel2">
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">软交换配置<i class="layui-icon layui-colla-icon"></i></h2>
+                            <div class="layui-colla-content layui-show">
+                                <form class="layui-form" action="">
+                                    <div class="layui-card-body">
+                                        <table id="LAY-user-manage-sofia" lay-filter="LAY-user-manage-sofia"></table>
+                                        <script type="text/html" id="barDemo">
+                                            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">配置</a>
+                                        </script>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-collapse" lay-filter="component-panel1">
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">其他配置<i class="layui-icon layui-colla-icon"></i></h2>
+                            <div class="layui-colla-content layui-show">
+                                <form class="layui-form" action="">
+                                    <div class="layui-form-item">
+                                        <table class="layui-table">
+                                            <colgroup>
+                                                <col width="15%">
+                                                <col width="35%">
+                                                <col width="15%">
+                                                <col>
+                                            </colgroup>
+                                            <thead>
+                                                <!-- <tr>
+                                                    <th>属性</th>
+                                                    <th>值</th>
+                                                    <th>属性</th>
+                                                    <th>值</th>
+                                                </tr> -->
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <!-- <td>SIP防火墙</td>
+                                                    <td>
+                                                        <input type="radio" name="firewall" value="true" title="开启">
+                                                        <input type="radio" name="firewall" value="false" title="关闭">
+                                                    </td> -->
+                                                    <td>限制数据条数</td>
+                                                    <td>
+                                                        <input id="max_rows" name="max_rows" autocomplete="off"
+                                                            class="layui-input">
+                                                    </td>
+                                                    <td>限制查询实号次数</td>
+                                                    <td>
+                                                        <input id="real_number_limit" name="real_number_limit"
+                                                            autocomplete="off" class="layui-input">
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>定时重启服务器</td>
+                                                    <td>
+                                                        <input type="radio" name="auto_restart" value="true" title="允许">
+                                                        <input type="radio" name="auto_restart" value="false"
+                                                            title="禁止">
+                                                    </td>
+                                                    <td>临时文件保存天数</td>
+                                                    <td>
+                                                        <input id="zip_days" name="zip_days" autocomplete="off"
+                                                            class="layui-input">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>陌生拜访</td>
+                                                    <td>
+                                                        <input type="radio" name="unfamiliar_ban" value="false"
+                                                            title="允许">
+                                                        <input type="radio" name="unfamiliar_ban" value="true"
+                                                            title="禁止">
+                                                    </td>
+                                                    <td>允许工作时段</td>
+                                                    <td>
+                                                        <input id="working_time_limit" name="working_time_limit"
+                                                            autocomplete="off" class="layui-input">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>录音类型</td>
+                                                    <td>
+                                                        <input type="radio" name="recording_mode" value="mono"
+                                                            title="单声道">
+                                                        <input type="radio" name="recording_mode" value="stereo"
+                                                            title="立体声">
+                                                    </td>
+                                                    <td>网络黑名单</td>
+                                                    <td>
+                                                        <input id="blacklist_url" name="blacklist_url"
+                                                            autocomplete="off" class="layui-input">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>识别引擎</td>
+                                                    <td>
+                                                        <select id="asr_channel" name="asr_channel">
+
+                                                        </select>
+                                                    </td>
+                                                    <td>计费精度(时长)</td>
+                                                    <td>
+                                                        <input id="bill_accuracy" name="bill_accuracy"
+                                                            autocomplete="off" class="layui-input">
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                </form>
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="editConfig_api_submit">更新参数</button>
+                                <input type="button" class="layui-btn" lay-submit
+                                    lay-filter="LAY-user-front-reboot-submit" id="reboot" value="重启服务器">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-collapse" lay-filter="component-panel4">
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">余额预警<i class="layui-icon layui-colla-icon"></i></h2>
+                            <div class="layui-colla-content layui-show">
+                                <form class="layui-form" action="">
+                                    <div class="layui-form-item">
+                                        <table class="layui-table">
+                                            <colgroup>
+                                                <col width="15%">
+                                                <col width="35%">
+                                                <col width="15%">
+                                                <col>
+                                            </colgroup>
+                                            <thead>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>号码</td>
+                                                    <td id="telTd">
+
+                                                    </td>
+                                                    <td>余额阀值</td>
+                                                    <td id="rulesTd">
+
+                                                    </td>
+
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                </form>
+
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit
+                                    lay-filter="editConfig_smsSetting_submit">编辑规则</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+<body>
+
+</body>
+<style>
+    /**
+ * 自定义,文本框
+ */
+    .layui-input-3 {
+        margin-left: -1px;
+        float: left;
+        margin-right: 10px;
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+    }
+
+    .layui-input-3 {
+        width: 70%;
+    }
+</style>
+<script>
+    layui.use(['admin', 'form', 'laydate', 'table'], function () {
+        element = layui.element;
+        router = layui.router();
+        view = layui.view;
+        var laydate = layui.laydate;
+        form = layui.form;
+        var $ = layui.$,
+            admin = layui.admin;
+        var table = layui.table;
+
+        //时间范围
+        laydate.render({
+            elem: '#working_time_limit',
+            type: 'time',
+            range: true
+        });
+        admin.req({
+            type: 'post',
+            url: layui.setter.configUrl + "super_admin/asrChannels",
+            dataType: "json",
+            async: false,
+            success: function (obj) {
+
+                $("#asr_channel").empty();
+                for (let i = 0; i < obj.data.length; i++) {
+                    $("#asr_channel").append('<option value="' + obj.data[i].id + '">' + obj.data[i].name + '</option>')
+
+                }
+                form.render('select');
+            }
+        })
+
+        var calls = 0;
+        var detects = 0;
+        var chartsRingList = [];
+        // admin.req({
+        //     type: "post",
+        //     url: layui.setter.configUrl + 'super_admin/huangChart',
+        //     async: false,
+        //     success: function (res) {
+        //         calls = res.data.calls;
+        //         detects = res.data.detects;
+        //     }
+        // })
+        // $("#detect_ring").html("<span >命中 " + detects +"("+ GetPercent(detects, calls) +")"+ " </span>");
+
+
+
+        $(function () {
+            var sofias;
+            admin.req({
+                type: 'post',
+                url: layui.setter.configUrl + "super_admin/getSettings",
+                dataType: "json",
+                async: false,
+                success: function (obj) {
+                    sofias = obj.data.sofia;
+                    $("#serial").html(obj.data.serial);
+                    // if (obj.data.firewall == true) {
+                    //     $("input[name=firewall][value=true]").attr("checked", true);
+                    // } else {
+                    //     $("input[name=firewall][value=false]").attr("checked", true);
+                    // }
+                    if (obj.data.auto_restart == true) {
+                        $("input[name=auto_restart][value=true]").attr("checked", true);
+                    } else {
+                        $("input[name=auto_restart][value=false]").attr("checked", true);
+                    }
+                    if (obj.data.unfamiliar_ban == true) {
+                        $("input[name=unfamiliar_ban][value=true]").attr("checked", true);
+                    } else {
+                        $("input[name=unfamiliar_ban][value=false]").attr("checked", true);
+                    }
+
+                    if (obj.data.recording_mode == "mono") {
+                        $("input[name=recording_mode][value=mono]").attr("checked", true);
+                    } else {
+                        $("input[name=recording_mode][value=stereo]").attr("checked", true);
+                    }
+                    if (obj.data.service_password == true) {
+                        $("#service_password").html("支持");
+                    } else {
+                        $("#service_password").html("不支持");
+                    }
+
+
+                    if (obj.data.ringing_limit > 0) {
+                        $("#detect_ring").html("<span style='color:green;'>剩余 " + obj.data
+                            .ringing_limit + " 次</span>");
+                    } else {
+                        $("#detect_ring").html("<span style='color:red;'>剩余 " + obj.data
+                            .ringing_limit + " 次</span>");
+                    }
+
+
+                    // if(obj.data.minutes_limit){
+                    //     $("#minutes_limit").html(obj.data.minutes);
+                    // }
+                    if (obj.data.hasOwnProperty("minutes_limit")) {
+                        if (obj.data.minutes_limit > 0) {
+                            $("#minutes_limit").html("<span style='color:green;'>剩余 " + obj
+                                .data.minutes_limit + " 分钟</span>");
+                        } else {
+                            $("#minutes_limit").html("<span style='color:red;'>剩余 " + obj
+                                .data.minutes_limit + " 分钟</span>");
+                        }
+                    } else {
+                        $("#minutes_limit").html("不限制");
+                    }
+
+                    $("#asr_channel").val(obj.data.asr_channel);
+                    $("#working_time_limit").val(obj.data.working_time_limit);
+                    $("#logo").html(obj.data.logo);
+                    $("#concurrency").html(obj.data.concurrency);
+                    $("#authorization_seats").html(obj.data.authorization_seats);
+                    $("#use_period").html(obj.data.use_period);
+                    $("#service_period").html(obj.data.service_period);
+                    $("#max_rows").val(obj.data.max_rows);
+                    $("#zip_days").val(obj.data.zip_days);
+                    $("#ext_length").html(obj.data.ext_length);
+                    $("#callback_url").html(obj.data.callback_url);
+
+                    $("#blacklist_url").val(obj.data.blacklist_url);
+                    $("#real_number_limit").val(obj.data.real_number_limit);
+                    $("#bill_accuracy").val(obj.data.bill_accuracy);
+                    form.render();
+
+
+                    table.render({
+                        elem: '#LAY-user-manage-sofia',
+                        cols: [
+                            [{
+                                field: 'name',
+                                title: '名称',
+                                fixed: 'left',
+                                align: 'center',
+                                minWidth: 140
+                            }, {
+                                field: 'sip_ip',
+                                title: '绑定IP',
+                                align: 'center',
+                                minWidth: 95
+                            }, {
+                                field: 'sip_port',
+                                title: '绑定端口',
+                                align: 'center',
+                                minWidth: 150
+                            }, {
+                                field: 'ext_sip_ip',
+                                title: '外部IP',
+                                align: 'center',
+                                minWidth: 100
+                            }, {
+                                field: 'caozuo',
+                                title: '操作',
+                                toolbar: '#barDemo',
+                                fixed: 'right',
+                                align: 'center',
+                                minWidth: 180
+                            }]
+                        ],
+                        data: sofias
+
+                        ,
+                        page: false
+                    });
+
+
+                }
+
+            })
+
+            admin.req({
+                type: "POST",
+                url: layui.setter.configUrl + "super_admin/getSmsInfo",
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.data.rules != "") {
+                        var rules = obj.data.rules.split(",");
+                        for (let i = 0; i < rules.length; i++) {
+                            $("#rulesTd").append('<span style="margin-left:5px;" class="layui-badge layui-bg-green">' + rules[i] + '</span>');
+                        }
+                    }
+                    if (obj.data.tels != "") {
+                        var tels = JSON.parse(obj.data.tels);
+                        for (let i = 0; i < tels.length; i++) {
+                            $("#telTd").append('<span style="margin-left:5px;" class="layui-badge layui-bg-green">' + tels[i] + '</span>');
+                        }
+                    }
+                }
+
+            });
+
+        })
+
+
+        form.on('submit(LAY-user-front-secret-submit)', function (data) {
+
+            if ($("#secret").val() == "") {
+                return;
+            }
+
+            admin.req({
+                type: "post",
+                url: layui.setter.configUrl + 'super_admin/authorize',
+                data: {
+                    secret: $("#secret").val()
+                },
+                done: function (res) {
+                    layui.index.render();
+                    layer.msg("操作成功", {
+                        icon: 1
+                    });
+
+                }
+            })
+
+            return false;
+        })
+
+        form.on('submit(LAY-user-front-detect-report)', function (data) {
+            admin.popupRight({
+                title: '号码状态检测报表',
+                area: '1000px',
+                id: 'LAY-popup-detect-report',
+                success: function (layero, index) {
+                    view(this.id).render('plat/setting/detect_report').done(function () {
+                        form.render(null, 'layuiadmin-form-detect-report');
+                        layui.use(['admin', 'carousel'], function () {
+                            var $ = layui.$,
+                                admin = layui.admin,
+                                carousel = layui.carousel,
+                                element = layui.element,
+                                device = layui.device();
+
+                            //轮播切换
+                            $('.layadmin-carousel').each(function () {
+                                var othis = $(this);
+                                carousel.render({
+                                    elem: this,
+                                    width: '100%',
+                                    arrow: 'none',
+                                    interval: othis.data('interval'),
+                                    autoplay: othis.data('autoplay') === true,
+                                    trigger: (device.ios || device.android) ? 'click' : 'hover',
+                                    anim: othis.data('anim')
+                                });
+                            });
+
+                            element.render('progress');
+
+                        });
+                        layui.use(['admin', 'form', 'carousel', 'echarts'], function () {
+                            element = layui.element;
+                            router = layui.router();
+                            view = layui.view;
+
+                            form = layui.form;
+                            var $ = layui.$,
+                                admin = layui.admin,
+                                carousel = layui.carousel,
+                                echarts = layui.echarts;
+                            var data1 = [];
+                            var data2 = [];
+
+                            admin.req({
+                                type: "post",
+                                url: layui.setter.configUrl + 'super_admin/huangChart',
+                                async: false,
+                                success: function (res) {
+                                    calls = res.data.calls;
+                                    detects = res.data.detects;
+                                    if (res.data.detailsList != null) {
+                                        chartsRingList = res.data.detailsList;
+                                    }
+                                    for (let i = 0; i < chartsRingList.length; i++) {
+                                        const element = chartsRingList[i];
+                                        data1.push(element.name);
+                                        var s = {};
+                                        s['value'] = element.count;
+                                        s['name'] = element.name;
+                                        data2.push(s);
+                                    }
+
+                                }
+                            })
+                            //生成饼状图
+                            //渲染饼状图
+                            var echartsApp1 = [],
+                                options1 = [
+                                    {
+                                        title: {
+                                            text: '命中率：' + detects + "/" + calls + "(" + GetPercent(detects, calls) + ")",
+                                            x: 'center',
+                                            textStyle: {
+                                                fontSize: 14
+                                            }
+                                        },
+                                        tooltip: {
+                                            trigger: 'item',
+                                            formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                        },
+                                        legend: {
+                                            orient: 'vertical',
+                                            x: 'left',
+                                            data: data1
+                                        },
+                                        series: [{
+                                            //name: '彩铃识别',
+                                            type: 'pie',
+                                            radius: '55%',
+                                            center: ['50%', '50%'],
+                                            data: data2
+                                        }]
+                                    }
+
+                                ],
+                                elemDataView1 = $('#LAY-index-dataviews1').children('div'),
+                                renderDataView1 = function (index) {
+                                    echartsApp1[index] = echarts.init(elemDataView1[index], layui.echartsTheme);
+                                    echartsApp1[index].setOption(options1[index]);
+                                    //window.onresize = echartsApp[index].resize;
+                                    admin.resize(function () {
+                                        echartsApp1[index].resize();
+                                    });
+                                };
+                            //没找到DOM，终止执行
+                            if (!elemDataView1[0]) return;
+
+                            renderDataView1(0);
+
+                        })
+
+                    })
+                }
+            })
+
+
+
+            return false;
+        })
+
+
+
+
+        form.on('submit(editConfig_api_submit)', function (data) {
+            var field = data.field;
+
+
+            var bill_accuracy = $("#bill_accuracy").val();
+            if (bill_accuracy > 999 || bill_accuracy < 1) {
+                layer.msg("计费精度有效值1~999", { icon: 2 });
+                return;
+            }
+            admin.req({
+                type: "post",
+                url: layui.setter.configUrl + 'super_admin/editConfig',
+                data: {
+                    //config: JSON.stringify(json)
+                    zip_days: $("#zip_days").val(),
+                    //firewall: $('input[name="firewall"]:checked').val(),
+                    max_rows: $("#max_rows").val(),
+                    auto_restart: $('input[name="auto_restart"]:checked').val(),
+                    working_time_limit: $("#working_time_limit").val(),
+                    unfamiliar_ban: $('input[name="unfamiliar_ban"]:checked').val(),
+                    recording_mode: $('input[name="recording_mode"]:checked').val(),
+                    blacklist_url: $("#blacklist_url").val(),
+                    real_number_limit: $("#real_number_limit").val(),
+                    asr_channel: $("#asr_channel").val(),
+                    bill_accuracy: $("#bill_accuracy").val()
+                },
+                done: function (res) {
+                    layer.msg("操作成功", {
+                        icon: 1
+                    });
+
+                }
+            })
+        })
+
+
+
+
+        form.on('submit(LAY-user-front-reboot-submit)', function (data) {
+            //询问框
+            layer.confirm('重启操作可能导致现有通话中断，请确认操作？', function (index) {
+                layer.close(index)
+                admin.req({
+                    type: "post",
+                    url: layui.setter.configUrl + 'super_admin/restart',
+                    done: function (res) {
+                        layer.msg("操作成功", {
+                            icon: 1
+                        });
+
+                    }
+                })
+
+            })
+
+        })
+
+
+        form.on('submit(editConfig_smsSetting_submit)', function (data) {
+            admin.popup({
+                title: '添加告警规则',
+                area: ['800px', '500px'],
+                btn: ['提交', '取消'],
+                id: 'LAY-popup-smsSetting-edit',
+                success: function (layero, index) {
+                    view(this.id).render('plat/setting/smsSetting').done(function () {
+                        form.render(null, 'layuiadmin-form-smsSetting-edit');
+                        form.val('layuiadmin-form-sofia-edit', data); //表单初始赋值
+                        admin.req({
+                            type: "POST",
+                            url: layui.setter.configUrl + "super_admin/getSmsInfo",
+                            //async: true,
+                            dataType: "json",
+                            success: function (obj) {
+                                if (obj.data.rules != "") {
+                                    var rules = obj.data.rules.split(",");
+                                    for (let i = 0; i < rules.length; i++) {
+                                        $("#nodes_rule").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" value="' + rules[i] + '" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+                                    }
+                                }
+                                if (obj.data.tels != "") {
+                                    var tels = JSON.parse(obj.data.tels);
+                                    for (let i = 0; i < tels.length; i++) {
+                                        $("#nodes_tel").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" value="' + tels[i] + '" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+                                    }
+                                }
+                            }
+
+                        });
+
+
+                        //监听提交
+                        form.on('submit(LAY-user-front-smsSetting-submit)', function (datas) {
+                            var field = datas.field; //获取提交的字段
+
+                            var tels = "";
+                            var rules = "";
+                            $('#nodes_tel').children().each(function (i, n) {
+                                var obj = $(n).find('input');
+                                if (tels == "") {
+                                    tels = $(obj[0]).val();
+                                } else {
+                                    tels += "," + $(obj[0]).val();
+                                }
+                            });
+                            $('#nodes_rule').children().each(function (i, n) {
+                                var obj = $(n).find('input');
+                                if (rules == "") {
+                                    rules = $(obj[0]).val();
+                                } else {
+                                    rules += "," + $(obj[0]).val();
+                                }
+                            });
+                            console.log(tels);
+                            console.log(rules);
+                            layer.load();
+                            admin.req({
+                                type: "POST",
+                                url: layui.setter.configUrl + "super_admin/SmsSettings",
+                                //async: true,
+                                data: {
+                                    "telPhones": tels,
+                                    "rules": rules
+                                },
+                                dataType: "json",
+
+                                success: function (obj) {
+                                    layer.closeAll(
+                                        'loading');
+                                    if (obj.data > 0) {
+                                        layer.msg(
+                                            "操作成功", {
+                                            icon: 1
+                                        });
+
+                                        $("#telTd").empty();
+                                        $("#rulesTd").empty();
+                                        var telsR = tels.split(",");
+                                        var rulesR = rules.split(",");
+                                        if (rules!="") {
+                                            for (let i = 0; i < rulesR.length; i++) {
+                                                $("#rulesTd").append('<span style="margin-left:5px;" class="layui-badge layui-bg-green">' + rulesR[i] + '</span>');
+                                            }
+                                        }
+
+                                        if (tels!="") {
+                                            for (let i = 0; i < telsR.length; i++) {
+                                                $("#telTd").append('<span style="margin-left:5px;" class="layui-badge layui-bg-green">' + telsR[i] + '</span>');
+                                            }
+                                        }
+
+                                        layer.close(
+                                            index); //执行关闭 
+
+                                    } else {
+                                        layer.msg(
+                                            "操作失败,请重试", {
+                                            icon: 2
+                                        });
+                                    }
+                                }
+
+                            });
+
+                        });
+                    });
+                }, yes: function (index, layero) {
+                    layero.find('#smsSetting_add').click();
+                }
+            });
+
+        });
+
+
+        //行监听工具
+        table.on('tool(LAY-user-manage-sofia)', function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'edit') {
+                admin.popupRight({
+                    title: '配置',
+                    area: '500px',
+                    id: 'LAY-popup-sofia-edit',
+                    success: function (layero, index) {
+                        view(this.id).render('plat/setting/edit').done(function () {
+                            form.render(null, 'layuiadmin-form-sofia-edit');
+                            form.val('layuiadmin-form-sofia-edit', data); //表单初始赋值
+
+                            //监听提交
+                            form.on('submit(LAY-sofia-edit-submit)', function (
+                                datas) {
+                                var field = datas.field; //获取提交的字段
+                                layer.load();
+                                admin.req({
+                                    type: "POST",
+                                    url: layui.setter.configUrl +
+                                        "super_admin/editSofia",
+                                    //async: true,
+                                    data: field,
+                                    dataType: "json",
+
+                                    success: function (obj) {
+                                        layer.closeAll(
+                                            'loading');
+                                        if (obj.data > 0) {
+                                            layer.msg(
+                                                "操作成功,重启服务器生效", {
+                                                icon: 1
+                                            });
+
+                                            layer.close(
+                                                index); //执行关闭 
+                                            admin.req({
+                                                type: 'post',
+                                                url: layui
+                                                    .setter
+                                                    .configUrl +
+                                                    "super_admin/getSettings",
+                                                dataType: "json",
+                                                async: false,
+                                                success: function (
+                                                    objs
+                                                ) {
+                                                    table
+                                                        .render({
+                                                            elem: '#LAY-user-manage-sofia',
+                                                            cols: [
+                                                                [{
+                                                                    field: 'name',
+                                                                    title: '名称',
+                                                                    fixed: 'left',
+                                                                    align: 'center',
+                                                                    minWidth: 140
+                                                                },
+                                                                {
+                                                                    field: 'sip_ip',
+                                                                    title: '绑定IP',
+                                                                    align: 'center',
+                                                                    minWidth: 95
+                                                                },
+                                                                {
+                                                                    field: 'sip_port',
+                                                                    title: '绑定端口',
+                                                                    align: 'center',
+                                                                    minWidth: 150
+                                                                },
+                                                                {
+                                                                    field: 'ext_sip_ip',
+                                                                    title: '外部IP',
+                                                                    align: 'center',
+                                                                    minWidth: 100
+                                                                },
+                                                                {
+                                                                    field: 'caozuo',
+                                                                    title: '操作',
+                                                                    toolbar: '#barDemo',
+                                                                    fixed: 'right',
+                                                                    align: 'center',
+                                                                    minWidth: 180
+                                                                }]
+                                                            ],
+                                                            data: objs
+                                                                .data
+                                                                .sofia
+
+                                                            ,
+                                                            page: false
+                                                        });
+                                                }
+                                            })
+                                        } else {
+                                            layer.msg(
+                                                "修改失败,请重试", {
+                                                icon: 2
+                                            });
+                                        }
+                                    }
+
+                                });
+
+                            });
+                        });
+                    }
+                });
+            }
+        })
+
+    })
+    function GetPercent(num, total) {
+        /// <summary>
+        /// 求百分比
+        /// </summary>
+        /// <param name="num">当前数</param>
+        /// <param name="total">总数</param>
+        num = parseFloat(num);
+        total = parseFloat(total);
+        if (isNaN(num) || isNaN(total)) {
+            return "-";
+        }
+        return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00) + "%";
+    }
+</script>
+
+</html>

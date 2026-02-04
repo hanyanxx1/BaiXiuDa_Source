@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-project-report">
+				<div class="layui-form-item">
+
+					<div class="layui-inline">
+						<label class="layui-form-label">项目名称</label>
+						<div class="layui-input-inline">
+							<select id="pr_project" name="project_id" lay-filter="pr_project_select">
+
+							</select>
+						</div>
+					</div>
+
+					<div class="layui-inline" style="display: none;">
+						<label class="layui-form-label">任务名称</label>
+						<div class="layui-input-inline">
+							<div id="pr_task" class="xm-select-demo"></div>
+						</div>
+					</div>
+
+					<div class="layui-inline">
+
+						<label class="layui-form-label">日期范围</label>
+
+						<div class="layui-input-inline">
+
+							<input type="text" id="pr_date" placeholder="yyyy-MM-dd" autocomplete="off"
+								class="layui-input">
+
+						</div>
+
+					</div>
+
+
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" id="project_report_btn" lay-submit
+							lay-filter="LAY-user-front-search-manage_projectreport">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-card-body">
+				<div id="project_table">
+					<table id="LAY-user-manage_projectreport" lay-filter="LAY-user-manage_projectreport"></table>
+				</div>
+				<script type="text/html" id="barDemoProjectReport">
+					<a class="layui-btn layui-btn-xs" lay-event="statisticsByDate">时段统计</a>
+				</script>
+			</div>
+		</div>
+	</div>
+</body>
+
+<!--<style>
+	.layui-form-label {
+		width: 90px;
+	}
+</style>-->
+<script>
+	layui.use(['admin', 'table', 'laydate','xmSelect'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		laydate = layui.laydate;
+		xmSelect = layui.xmSelect;
+
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		if (month < 10)
+			month = "0" + month;
+		var day = date.getDate();
+		if (day < 10)
+			day = "0" + day;
+		var timestamp = year + "-" + month + "-" + day;
+		$("#pr_date").val(timestamp + " ~ " + timestamp);
+
+		var title = []; //存储表格的表头
+		$(function () {
+
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+				admin.req({ //执行项目下拉列表
+					type: "POST",
+					url: layui.setter.configUrl + "admin/project/list",
+					dataType: 'json',
+					success: function (res) {
+						var result = res.data;
+						$("#pr_project").empty();
+						$("#pr_project").append("<option value='0'>--请选择--</option>");
+						for (var i = 0; i < result.length; i++) {
+							$("#pr_project").append("<option value=" + result[i].id + ">" +
+								result[i].name + "</option>");
+						}
+						layui.form.render("select");
+					}
+				});
+
+				// admin.req({ //获取表头
+				// 	type: "post",
+				// 	url: layui.setter.configUrl + "admin/report/projectHeaders",
+				// 	async: true,
+				// 	success: function (res) {
+				// 		title.length = 0;
+				// 		for (var i = 0; i < res.data.length; i++) {
+				// 			title.push({
+				// 				field: res.data[i],
+				// 				title: res.data[i],
+				// 				minWidth: 150,
+				// 				sort: true,
+				// 				align: 'center'
+				// 			})
+				// 		}
+				// 		title.push({
+				// 			field: 'caozuo',
+				// 			title: '操作',
+				// 			toolbar: '#barDemoProjectReport',
+				// 			minWidth: 120,
+				// 			fixed: 'right',
+				// 			align: 'center'
+				// 		})
+				// 		$("#project_report_btn").click();
+
+				// 	}
+				// });
+			}
+		})
+
+		//日期
+		laydate.render({
+			elem: '#pr_date',
+			range: "~"
+		});
+		var xmSelectDemo = xmSelect.render({
+						el: '#pr_task',
+						toolbar: {
+							show: true,
+						},
+						filterable: true,
+						tips: "请选择任务",
+						searchTips: '请输入任务',
+						data: []
+					})
+
+		table.render({
+			method: 'POST',
+			elem: '#LAY-user-manage_projectreport',
+			url: layui.setter.configUrl + "admin/getProjectReport",
+			height: 'full-180',
+			toolbar: true,
+			defaultToolbar: ['filter', 'print', 'exports'],
+			where: {
+				project_id: 0,
+				startd: timestamp,
+				endd: timestamp,
+				task_ids:xmSelectDemo.getValue('valueStr')
+			},
+			cols: [function () {
+				var arr = [{
+					field: 'time',
+					title: '日期',
+					align: 'center',
+					minWidth: 150
+				}, {
+					field: 'total',
+					title: '呼叫总数',
+					sort: true,
+					minWidth: 150,
+					align: 'center'
+				}, {
+					field: 'inbound',
+					title: '呼入数',
+					minWidth: 200,
+					align: 'center',
+					width: 180
+				}, {
+					field: 'outbound',
+					title: '呼出数',
+					minWidth: 100,
+					align: 'center'
+				}, {
+					field: 'answer',
+					title: '应答数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'answerPercent',
+					title: '应答率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.answerPercent + "%";
+					}
+				}, {
+					field: 'transfer',
+					title: '转接数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'transferPercent',
+					title: '转接率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.transferPercent + "%";
+					}
+				}, {
+					field: 'loss',
+					title: '呼损数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'lossPercent',
+					title: '呼损率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.lossPercent + "%";
+					}
+				}, {
+					field: 'successfulNumber',
+					title: '成功数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'successfulPercent',
+					title: '成功率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.successfulPercent + "%";
+					}
+				}, {
+					field: 'ai_bill',
+					title: 'BOT消费(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'phone_bill',
+					title: '话费金额(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}
+					, {
+					field: 'costAccounting',
+					title: '成本核算(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'caozuo',
+					title: '操作',
+					toolbar: '#barDemoProjectReport',
+					minWidth: 120,
+					fixed: 'right',
+					align: 'center'
+				}];
+				//初始化筛选状态
+				var local = layui.data('table-filter-project-report');
+				layui.each(arr, function (index, item) {
+					if (item.field in local) {
+						item.hide = true;  // 在本地标识中则隐藏
+					}
+				});
+				return arr;
+			}()
+			], done: function () {
+				//记录筛选状态
+				var that = this;
+				that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
+					var input = $(this).prev()[0];
+					var input = $(this).prev()[0];
+					if (input.checked === true) {  // 复选框取消，则加入本地缓存标识
+						layui.data('table-filter-project-report', { key: input.name, value: !input.checked })
+					} else {  // 复选框勾上，则移除本地标识
+						layui.data('table-filter-project-report', { key: input.name, remove: true });
+					}
+				});
+			}
+		});
+
+		form.render(null, 'layadmin-userfront-formlist-project-report');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-manage_projectreport)', function (data) {
+			var field = data.field;
+			if (field.project_id == "") {
+				field.project_id = 0;
+			}
+			field['startd'] = $('#pr_date').val().split(" ~ ")[0];
+			field['endd'] = $('#pr_date').val().split(" ~ ")[1];
+			//field.task_ids="";
+			field.task_ids = field.select;
+			delete field.select;
+			//console.log(xmSelectDemo.getValue('valueStr'))
+			//执行重载
+			table.reload('LAY-user-manage_projectreport', {
+				where: field
+			});
+
+
+
+		});
+
+
+		//行监听工具
+		table.on('tool(LAY-user-manage_projectreport)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'statisticsByDate') {
+				admin.popup({
+					title: '时段统计',
+					area: ['80%', '70%'],
+					id: 'LAY-user-manage-project-report-lists',
+					success: function (layero, index) {
+						view(this.id).render('chart/projectreport/statisticsByDate').done(function () {
+
+							table.render({
+								method: "POST",
+								elem: '#LAY-user-manage-project-report-list',
+								url: layui.setter.configUrl + 'admin/timePeriodByDate',
+								//height: 'full-430',
+								where: {
+									project_id: $("#pr_project").val(),
+									date: data.time,
+									task_ids: xmSelectDemo.getValue('valueStr')
+								},
+								cols: [
+									[{
+										field: 'time',
+										title: '时段',
+										align: 'center',
+										minWidth: 130,
+										sort: true
+
+									}, {
+										title: '接通统计',
+										align: 'center',
+										minWidth: 230,
+										sort: true,
+										templet: function (d) {
+											return d.answer + "/" + d.total + " (" + GetPercent(d.answer, d.total) + ")";
+										}
+									}, {
+										title: '转接统计',
+										align: 'center',
+										minWidth: 200,
+										sort: true,
+										templet: function (d) {
+											if (d.transferPercent == "--") {
+												return d.transfer + "（" + d.transferPercent + "）";
+											} else {
+												return d.transfer + "（" + d.transferPercent + "%）";
+											}
+										}
+									}, {
+										title: '呼损数',
+										align: 'center',
+										minWidth: 150,
+										sort: true,
+										templet: function (d) {
+											if (d.lossPercent == "--") {
+												return d.loss + "（" + d.lossPercent + "）";
+											} else {
+												return d.loss + "（" + d.lossPercent + "%）";
+											}
+										}
+									}, {
+										title: '成功统计',
+										align: 'center',
+										minWidth: 150,
+										sort: true,
+										templet: function (d) {
+											if (d.successfulPercent == "--") {
+												return d.successfulNumber + "（" + d.successfulPercent + "）";
+											} else {
+												return d.successfulNumber + "（" + d.successfulPercent + "%）";
+											}
+										}
+									}, {
+							field: 'avg_transfer',
+							title: '平均通时(秒)',
+							align: 'center',
+							sort: true,
+							minWidth: 130
+						}, {
+					field: 'avg_progress',
+					title: '平均人工通时(秒)',
+					align: 'center',
+					sort: true,
+					minWidth: 160
+				}, {
+										field: 'phone_bill',
+										title: '消费金额（元）',
+										align: 'center',
+										sort: true,
+										minWidth: 150
+									}, {
+										field: 'costAccounting',
+										title: '成本核算（元）',
+										align: 'center',
+										sort: true,
+										minWidth: 150
+									}]
+								],
+								page: false
+							});
+
+						});
+					}
+				});
+			}
+		})
+
+
+		var pro_name;
+		form.on('select(pr_project_select)', function (data) { //layui获取项目下拉框的文本值
+			var elem = data.elem;
+			var textId = elem.getAttribute("pr_project");
+
+			pro_name = this.innerText;
+
+			let project_id = data.value;
+			admin.req({ //任务下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/project_task/getTaskByProject",
+				dataType: 'json',
+				data: {
+					project_id: project_id
+				},
+				success: function (res) {
+
+					var results = res.data;
+					var da = [];
+					for (var i = 0; i < results.length; i++) {
+						var rs = {};
+						rs.name = results[i].name;
+						rs.value = results[i].id;
+						da.push(rs);
+					}
+					xmSelect.render({
+						el: '#pr_task',
+						toolbar: {
+							show: true,
+						},
+						filterable: true,
+						tips: "请选择任务",
+						searchTips: '请输入任务',
+						data: da
+					})
+
+
+
+
+					// $("#pr_task").empty();
+					// var result = res.data;
+					// $("#pr_task").append("<option value=''>--任务--</option>");
+					// for (var i = 0; i < result.length; i++) {
+					// 	$("#pr_task").append("<option value=" + result[i].id + ">" + result[i]
+					// 		.name + "</option>");
+					// }
+					// layui.form.render("select");
+				}
+			});
+		})
+
+
+		table.on('toolbar(LAY-user-manage_projectreport)', function (obj) {
+			var tableData = layui.table.cache['LAY-user-manage_projectreport']; //表格数据
+			switch (obj.event) {
+				case 'LAYTABLE_EXPORT':
+
+					obj.config.title = "项目报表-" + pro_name + "-" + timestamp;  //更改默认文件名
+					table.exportFile(obj.config.id, tableData, 'csv'); // 参数依次：表格ID，数据，文件类型
+					break;
+			};
+		});
+
+	});
+	function GetPercent(num, total) {
+		/// <summary>
+		/// 求百分比
+		/// </summary>
+		/// <param name="num">当前数</param>
+		/// <param name="total">总数</param>
+		num = parseFloat(num);
+		total = parseFloat(total);
+		if (isNaN(num) || isNaN(total)) {
+			return "-";
+		}
+		return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00) + "%";
+	}
+</script>
+
+</html>

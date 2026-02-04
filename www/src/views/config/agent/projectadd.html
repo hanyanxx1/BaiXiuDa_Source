@@ -1,0 +1,47 @@
+<div class="layui-form" lay-filter="layuiadmin-form-agentprojectadd" style="padding: 0px 0 0 0;">
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">method:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="method" value="add" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">项目名称:</label>
+			<div class="layui-input-inline">
+				<select id="project_name_role_add" name="project_name"  lay-search="">
+
+				</select>
+
+			</div>
+			<input type="button" id="agent-projectadd" style="display: none;" lay-submit lay-filter="LAY-agentprojectadd-front-submit" value="提交" class="layui-btn">
+
+		</div>
+	</div>
+</div>
+<style>
+		.layui-layer-content {
+			overflow: visible !important;
+		}
+	</style>
+
+<script>
+	$(function() {
+		admin.req({
+			type: "POST",
+			url: layui.setter.configUrl + "admin/project/list",
+			dataType: 'json',
+			success: function(res) {
+				var data = res.data;
+				$("#project_name_role_add").append("<option value='0'>--请选择--</option>");
+				for(var i = 0; i < data.length; i++) {
+					$("#project_name_role_add").append("<option value=" + data[i].id + ">" + data[i].name + "</option>");
+				}
+
+				layui.form.render("select");
+			}
+		});
+	})
+</script>

@@ -1,0 +1,129 @@
+<form class="layui-form" lay-filter="layuiadmin-form-ivr-edit" style="padding: 20px;">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称:</label>
+        <div class="layui-input-block">
+            <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" placeholder="请输入名称"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">播放次数:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="tries" name="tries" lay-verify="required" autocomplete="off" placeholder="请输入"
+            class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">语音:</label>
+        <div class="layui-input-inline" style="width: 320px;">
+            <select id="file" name="file">
+            </select>
+
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">提示语音:</label>
+        <div class="layui-input-inline">
+            <select id="invalid_file" name="invalid_file">
+            </select>
+
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">类型:</label>
+            <div class="layui-input-block">
+                <table id="LAY-user-manage-ivr-edit" lay-filter="LAY-user-manage-ivr-edit"></table>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" id="ivr-ivr-edit" lay-submit lay-filter="LAY-user-front-ivr-edit-submit" value="提交"
+                class="layui-btn">
+        </div>
+    </div>
+</form>
+<style>
+    .layui-table-cell, .layui-table-tool-panel li{
+	    overflow:visible !important;
+    }
+    .layui-form-select dl{
+           z-index:9999;
+ 
+       }
+ 
+       .layui-table-cell{
+           overflow:visible;
+ 
+       }
+       .layui-table-box{
+           overflow:visible;
+ 
+       }
+       .layui-table-body{
+           overflow:visible;
+ 
+       }
+</style>
+<script>
+    layui.use(['laydate', 'form'], function () {
+        var laydate = layui.laydate;
+        var $ = layui.$;
+        var form = layui.form;
+
+        $(function () {
+            // admin.req({ //欢迎语下拉列表
+			// 	type: "POST",
+			// 	url: layui.setter.configUrl + "admin/audioFile/list",
+			// 	dataType: 'json',
+			// 	success: function(res) {
+            //         $("#invalid_file").empty();
+            //         $("#file").empty();
+			// 		var resultg = res.data;
+			// 		$("#invalid_file").append("<option value='0'>--请选择--</option>");
+            //         $("#file").append("<option value='0'>--请选择--</option>");
+			// 		for(var i = 0; i < resultg.length; i++) {
+			// 			$("#invalid_file").append("<option value=" + resultg[i].file_name + ">" + resultg[i].name + "</option>");
+            //             $("#file").append("<option value=" + resultg[i].file_name + ">" + resultg[i].name + "</option>");
+			// 		}
+			// 		layui.form.render("select");
+			// 	}
+			// });
+        })
+        
+    })
+
+    function file(file,invalid_file){
+        admin.req({ //欢迎语下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/audioFile/list",
+				dataType: 'json',
+				success: function(res) {
+                    $("#invalid_file").empty();
+                    $("#file").empty();
+					var resultg = res.data;
+					$("#invalid_file").append("<option value='0'>--请选择--</option>");
+                    $("#file").append("<option value='0'>--请选择--</option>");
+					for(var i = 0; i < resultg.length; i++) {
+						$("#invalid_file").append("<option value=" + resultg[i].file_name + ">" + resultg[i].name + "</option>");
+                        $("#file").append("<option value=" + resultg[i].file_name + ">" + resultg[i].name + "</option>");
+					}
+                    $("#invalid_file").val(invalid_file);
+                    $("#file").val(file);
+					layui.form.render("select");
+				}
+			});
+    }
+</script>

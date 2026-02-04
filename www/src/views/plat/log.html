@@ -1,0 +1,179 @@
+<div class="layui-fluid">
+	<div class="layui-card">
+		<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+			lay-filter="layadmin-userfront-formlist-log">
+			<div class="layui-form-item">
+
+				<div class="layui-inline">
+					<div class="layui-input-inline">
+						<input type="text" name="operator" placeholder="操作对象" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+
+				<div class="layui-inline">
+					<div class="layui-input-inline">
+						<input type="text" name="received" placeholder="地址" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+
+				<div class="layui-inline">
+					<div class="layui-input-inline" style="width: 350px;">
+						<input type="text" id="date" name="date" placeholder="日期范围"  autocomplete="off"
+							class="layui-input">
+					</div>
+				</div>
+
+				
+
+				<div class="layui-btn-group" style="float: right;">
+					<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+						lay-filter="LAY-user-front-search-log">
+						<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+					</button>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="layui-card-body">
+			<table id="LAY-user-manage-log" lay-filter="LAY-user-manage-log"></table>
+		</div>
+	</div>
+</div>
+
+<script>
+	layui.use(['admin', 'table', 'laydate'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		laydate = layui.laydate;
+
+		// var starttime = new Date(); //当天时间,0点
+		// starttime.setHours(00);
+		// starttime.setMinutes(00);
+		// starttime.setSeconds(00);
+
+		// var endtime = new Date(); //当天时间,24点
+		// endtime.setHours(23);
+		// endtime.setMinutes(59);
+		// endtime.setSeconds(59);
+
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		if (month < 10)
+			month = "0" + month;
+		var day = date.getDate();
+		if (day < 10)
+			day = "0" + day;
+
+		var timestamp = year + "-" + month + "-" + day;
+		$("#date").val(timestamp+" 00:00:00" + " ~ " + timestamp+ " 23:59:59");
+		//日期时间范围
+		laydate.render({
+			elem: '#date',
+			type: 'datetime',
+			range: "~"
+		});
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-log',
+			url: layui.setter.configUrl + "super_admin/log/grid",
+			height: 'full-180',
+			where: {
+				operator: "",
+				received: "",
+				start: timestamp+" 00:00:00",
+				end: timestamp+ " 23:59:59"
+			},
+			cols: [
+				[{
+						field: 'stamp',
+						title: '时间',
+						minWidth: 180,
+						align: 'center'
+					}, {
+						field: 'operator',
+						title: '操作对象',
+						minWidth: 150,
+						align: 'center'
+					}, {
+						field: 'received',
+						title: '地址',
+						minWidth: 180,
+						align: 'center'
+					},{
+						field: 'region',
+						title: '地区',
+						minWidth: 250,
+						align: 'center'
+					}, {
+						field: 'method',
+						title: '方法',
+						minWidth: 150,
+						align: 'center'
+					},
+					{
+						field: 'status',
+						title: '状态',
+						minWidth: 150,
+						align: 'center'
+					}, {
+						field: 'msg',
+						title: '信息',
+						minWidth: 300,
+						align: 'center'
+					}
+				]
+			],
+
+			page: true,
+		});
+
+		form.render(null, 'layadmin-userfront-formlist-log');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-log)', function (data) {
+			var field = data.field;
+			field['start'] = $('#date').val().split(" ~ ")[0];
+			field['end'] = $('#date').val().split(" ~ ")[1];
+			delete field.date;
+			//执行重载
+			table.reload('LAY-user-manage-log', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+	})
+
+	function tips(ip, id) {
+		var node = "#test" + id;
+		var addr = "";
+		admin.req({
+			type: "post",
+			url: layui.setter.configUrl + "common/ipAddr",
+			data: {
+				ip: ip
+			},
+			async: false,
+			success: function (res) {
+				addr = res.data;
+			}
+		})
+		layer.tips("<span>" + addr + "</span>", node, {
+			tips: [1, 'black'],
+			time: false
+		});
+	}
+
+	function closeTips() {
+		layer.closeAll('tips');
+	}
+</script>
+

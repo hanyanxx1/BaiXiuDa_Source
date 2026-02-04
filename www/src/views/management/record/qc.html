@@ -1,0 +1,137 @@
+<div class="layui-form" lay-filter="layuiadmin-form-record-qc" style="padding: 0px 0 0 0;">
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="text" id="rqc_uuid" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="text" id="rqc_crm_fields" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="text" id="rqc_cust_uuid" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<!--<audio src="" controlsList="nodownload" controls="controls" style="width:325px;" id="audio_record"></audio>-->
+			<audio src="" controls="controls" id="audio_record"></audio>
+		</div>
+
+		<div class="layui-inline" id="rqc_qc_select">
+			<label class="layui-form-label">质检状态:</label>
+			<div class="layui-input-inline">
+				<select id="rqc_qc" lay-verify="required" lay-filter="rqc_qc" lay-search="">
+					<!-- <option value="0">未质检</option>
+					<option value="1">合格</option>
+					<option value="2">不合格</option> -->
+					<!--<option value="3">未接</option>-->
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<fieldset class="layui-elem-field layui-field-title">
+		<legend>
+			<h6>客户信息</h6></legend>
+		<div class="layui-form" id="qc_action" lay-filter="qc_action">
+
+		</div>
+	</fieldset>
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="LAY-user-front-record-qc-submit" lay-submit lay-filter="LAY-user-front-record-qc-submit" value="确认" class="layui-btn">
+		</div>
+	</div>
+
+</div>
+<style>
+	/* audio::-webkit-media-controls {
+		overflow: hidden !important
+	}
+	
+	audio::-webkit-media-controls-enclosure {
+		width: calc(100% + 32px);
+		margin-left: auto;
+	} */
+</style>
+
+<script>
+	layui.use(['form', 'layedit', 'laydate'], function() {
+		var form = layui.form,
+			layer = layui.layer,
+			layedit = layui.layedit,
+			laydate = layui.laydate;
+		
+//隐藏质检下拉框
+		if(layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["allow_inspection"]==false){
+			$("#rqc_qc_select").css("display", "none");
+		}
+
+	});
+
+	function rqc_inspection(quality,project_id){
+		admin.req({ //质检下拉框
+					type: "POST",
+					url: layui.setter.configUrl + "admin/crm/listProjectInsp",
+					dataType: 'json',
+					data: {
+						project_id: project_id
+					},
+					success: function(res) {
+						$("#rqc_qc").empty();
+						var result = JSON.parse(res.data);
+						for(var i = 0; i < result.length; i++) {
+							$("#rqc_qc").append("<option value=" + i + ">" + result[i] + "</option>");
+						}
+						$("#rqc_qc").val(quality);
+						layui.form.render("select");
+					}
+				});
+	}
+
+	function get_info(uuid,start_Stamp) { //获取表单值
+		var temp = '';
+		admin.req({
+			async: false,
+			type: 'POST',
+			url: layui.setter.configUrl + "/admin/customer_cdr/getInfoByUUID",
+			data: {
+				uuid: uuid,
+				start_stamp:start_Stamp
+			},
+			success: function(obj) {
+				temp = obj.data;
+
+			}
+		})
+		//console.log("temp:"+temp);
+		return temp;
+	}
+
+	function get_fileds(project_id) { //获取表单
+		var temp = '';
+		admin.req({
+			type: 'POST',
+			async: false,
+			url: layui.setter.configUrl + "/admin/crm_field/listProjectFields",
+			data: {
+				project_id: project_id
+			},
+			success: function(obj) {
+				temp = obj.data;
+			}
+		})
+		return temp;
+	}
+</script>

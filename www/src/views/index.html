@@ -1,0 +1,41 @@
+<script type="text/html" template>
+	<link rel="stylesheet" href="{{ layui.setter.base }}style/template.css?v={{ layui.admin.v }}-1" media="all">
+</script>
+
+
+<script>
+	layui.use(['admin', 'form', 'table'], function () {
+		element = layui.element;
+		router = layui.router();
+		view = layui.view;
+		table = layui.table;
+
+		form = layui.form;
+		var $ = layui.$,
+			admin = layui.admin;
+
+
+
+
+		// 	admin.req({
+        //     type: 'get',
+        //     url: layui.setter.configUrl + "/menu/get?own=null",
+        //     dataType: "json",
+        //     success: function (obj) {
+        //       var jump;
+        //       var jumps;
+        //       if (obj.data != "") {
+
+        //         jump = obj.data[0].list[0].jump;
+
+        //         location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/' + jump;
+        //       }
+        //     }
+
+        //   })
+
+
+
+
+	});
+</script>

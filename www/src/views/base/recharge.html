@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-recharge">
+				<div class="layui-form-item">
+
+					<div class="layui-inline">
+						<label class="layui-form-label">类型：</label>
+						<div class="layui-input-inline">
+							<select id="type" name="type">
+								<option value="-1">请选择</option>
+								<option value="0">话费充值</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+							lay-filter="LAY-user-front-search-recharge">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+
+					</div>
+
+				</div>
+			</div>
+				<div class="layui-card-body">
+
+					<table id="LAY-user-manage-recharge" lay-filter="LAY-user-manage-recharge"></table>
+
+				</div>
+			
+
+
+		</div>
+	</div>
+
+</body>
+<script>
+	layui.use(['admin', 'table'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-recharge',
+			url: layui.setter.configUrl + 'admin/recharge/grid',
+			height: 'full-200',
+			//cellMinWidth: 130,
+			where:{
+				type:-1
+			},
+			cols: [
+					[{
+						type: 'checkbox'
+					}, {
+						field: 'type',
+						title: '充值类型',
+						align: 'center',
+						templet: function (d) {
+							if (d.type == 0) {
+								return "话费充值";
+							} else {
+								return "AI充值";
+							}
+						}
+					}, {
+						field: 'recharge_money',
+						title: '充值金额(元)',
+						align: 'center'
+					}, {
+						field: 'before_money',
+						title: '充值前余额(元)',
+						align: 'center'
+					}, {
+						field: 'datetime',
+						title: '充值时间',
+						align: 'center'
+					}, {
+						field: 'remark',
+						title: '备注',
+						sort: true,
+						align: 'center'
+					}]
+				]
+
+				,
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-recharge');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-recharge)', function (data) {
+			var field = data.field;
+
+
+			//执行重载
+			table.reload('LAY-user-manage-recharge', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+	});
+</script>
+
+</html>

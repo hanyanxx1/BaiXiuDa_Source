@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+                lay-filter="layadmin-userfront-formlist-ivr">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="name" autocomplete="off" placeholder="请输入名称" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+                            lay-filter="LAY-user-front-search-ivr">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                        </button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+                            data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+                            title="删除" data-type="batchdel"> <i
+                                class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <script type="text/html" id="barDemoivr">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                </script>
+
+                <table id="LAY-user-manage-ivr" lay-filter="LAY-user-manage-ivr"></table>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<style>
+    td .layui-form-select {
+        margin-top: -10px;
+        margin-left: -15px;
+        margin-right: -15px;
+    }
+
+    .layui-layer-content {
+        overflow: visible !important;
+    }
+</style>
+<script>
+    layui.use(['admin', 'table', 'upload', 'laydate'], function () {
+        var table = layui.table;
+
+        form = layui.form;
+
+        $ = layui.$;
+
+        view = layui.view;
+
+        admin = layui.admin;
+
+        upload = layui.upload;
+        var laydate = layui.laydate;
+
+        var audioFileList;
+        admin.req({ //欢迎语下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/audioFile/list",
+				dataType: 'json',
+                async:false,
+				success: function(res) {
+                    audioFileList = res.data;
+					
+				}
+			});
+
+        table.render({
+            method: "post",
+            elem: '#LAY-user-manage-ivr',
+            url: layui.setter.configUrl + 'admin/ivr/grid',
+            height: 'full-180',
+            where: {
+                name: '',
+            },
+            cols: [
+                    [{
+                            type: 'checkbox'
+                        }, {
+                            field: 'id',
+                            title: '编号',
+                            sort: true,
+                            align: 'center',
+                            hide: true
+                        }, {
+                            field: 'name',
+                            title: '名称',
+                            minWidth: 150,
+                            align: 'center'
+                        },
+                        {
+                            field: 'file',
+                            title: '语音',
+                            minWidth: 150,
+                            align: 'center',
+                            templet:function(d){
+                                var result="";
+                                for (let i = 0; i < audioFileList.length; i++) {
+                                    if (audioFileList[i].file_name == d.file) {
+                                        result = audioFileList[i].name;
+                                    }
+                                    
+                                }
+                                return result;
+                            }
+                        }, {
+                            field: 'invalid_file',
+                            title: '提示语音',
+                            minWidth: 200,
+                            align: 'center',
+                            templet:function(d){
+                                var result="";
+                                for (let i = 0; i < audioFileList.length; i++) {
+                                    if (audioFileList[i].file_name == d.invalid_file) {
+                                        result = audioFileList[i].name;
+                                    }
+                                    
+                                }
+                                return result;
+                            }
+                        }, {
+                            field: 'tries',
+                            title: '播放次数',
+                            minWidth: 150,
+                            align: 'center'
+                        }, {
+                            field: 'caozuo',
+                            title: '操作',
+                            minWidth: 100,
+                            fixed: 'right',
+                            toolbar: '#barDemoivr',
+                            align: 'center'
+                            // ,
+                            // templet: function(d) {
+
+                            // 	return '<a class="layui-btn layui-btn-xs" title="试听" onclick="greeting_tool.listen_greeting(' + d.description.replace(".wav", "") + ')">试听</a>'
+
+                            // }
+                        }
+                    ]
+                ]
+
+                ,
+            page: true
+        });
+        form.render(null, 'layadmin-userfront-formlist-ivr');
+
+        //监听搜索
+        form.on('submit(LAY-user-front-search-ivr)', function (data) {
+            var field = data.field;
+
+            //执行重载
+            table.reload('LAY-user-manage-ivr', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        table.on('tool(LAY-user-manage-ivr)', function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'edit') {
+                admin.popupRight({
+                    title: '修改',
+                    //area: ['45%', '57%'],
+                    area: '650px',
+                    id: 'LAY-popup-ivradd-edit',
+                    success: function (layero, index) {
+                        view(this.id).render('control/ivr/edit').done(function () {
+                            form.render(null, 'layuiadmin-form-ivr-edit');
+
+                            form.val('layuiadmin-form-ivr-edit', data); //表单初始赋值
+                            file(data.file,data.invalid_file);
+                            var result_actions=JSON.parse(data.actions)
+                            var t_data=[];
+                            for (let i = 0; i < result_actions.length; i++) {
+                                var s={};
+                                s['action_type']=result_actions[i].type;
+                                s['action_value']=result_actions[i].value;
+                                s['digits']=result_actions[i].digits;
+                                s['value']=i+1;
+                                t_data.push(s);
+                            }
+                            if (t_data.length<10) {
+                                
+                                var a = 11-t_data.length;
+                                for (let j = 1; j < a; j++) {
+                                    var s1={};
+                                    s1['action_type']="";
+                                    s1['action_value']="";
+                                    s1['digits']="";
+                                    s1['value']=t_data.length+1;
+                                    t_data.push(s1);
+                                    
+                                }
+                            }
+
+                            table.render({
+                                elem: '#LAY-user-manage-ivr-edit',
+                                cols: [
+                                    [{
+                                        field: 'digits',
+                                        title: '按键',
+                                        minWidth: 150,
+                                        edit:"text",
+                                        align: 'center'
+                                    }, {
+                                        field: 'action_type',
+                                        title: '类型',
+                                        minWidth: 150,
+                                        templet: function (d) {
+                                            var temp ='<select id="actions_type'+d.value+'" name="actions_type" lay-filter="actions_type'+d.value+'">';
+                                                    temp += '<option value="">--请选择--</option>';
+                                                    if (d.action_type == "ivr")
+                                                        temp += '<option value="ivr" selected>IVR</option>';
+                                                    else
+                                                        temp += '<option value="ivr">IVR</option>';
+                                                    if (d.action_type=="project") 
+                                                        temp += '<option value="project" selected>项目</option>';
+                                                    else
+                                                        temp += '<option value="project">项目</option>';
+                                                    if (d.action_type=="agent") 
+                                                        temp +='<option value="agent" selected>坐席</option>';
+                                                    else
+                                                        temp +='<option value="agent">坐席</option>';
+                                                 temp += '</select>';
+                                            return temp;
+                                        }
+                                    }, {
+                                        field: 'action_value',
+                                        title: '目的地',
+                                        minWidth: 150,
+                                        templet: function (d) {
+                                            var temp = '';
+                                            if (d.action_type == "ivr") {
+                                                admin.req({ //执行ivr下拉列表
+                                                    type: "POST",
+                                                    url: layui.setter.configUrl +"admin/ivr/list",
+                                                    dataType: 'json',
+                                                    async:false,
+                                                    success: function (res) {
+                                                        var result =res.data;
+                                                        temp +='<select id="actions_value'+d.value+'" name="actions_value" lay-filter="actions_value'+d.value+'">';
+                                                        temp +='<option value="">--请选择--</option>';
+                                                        for (var i = 0; i <result.length; i++) {
+                                                            if (result[i].id == d.action_value) {
+                                                                temp +='<option value=' +result[i].id +' selected>' +result[i].name +'</option>';
+                                                            }else{
+                                                                temp +='<option value=' +result[i].id +'>' +result[i].name +'</option>';
+                                                            }
+                                                            
+                                                        }
+                                                    
+                                                    }
+                                                });
+                                            }else if(d.action_type=="project"){
+                                                admin.req({ //执行项目下拉列表
+                                                    type: "POST",
+                                                    url: layui.setter .configUrl +"admin/project/list",
+                                                    dataType: 'json',
+                                                    async:false,
+                                                    success: function (res) {
+                                                        var result = res.data;
+                                                        temp +='<select id="actions_value'+d.value+'" name="actions_value" lay-filter="actions_value'+d.value+'">';
+                                                        temp +='<option value="">--请选择--</option>';
+                                                        for (var i = 0; i < result.length; i++) {
+                                                            if (result[i].id == d.action_value) {
+                                                                temp +='<option value=' +result[i].id +' selected>' +result[i].name +'</option>';
+                                                            }else{
+                                                                temp +='<option value=' +result[i].id +'>' +result[i].name +'</option>';
+                                                            }
+                                                        }
+                                                    }
+                                                });
+
+                                            }else if(d.action_type=="agent"){
+                                                admin.req({ //坐席下拉列表
+                                                    type: "POST",
+                                                    url: layui.setter.configUrl +"admin/agent/list",
+                                                    dataType: 'json',
+                                                    async:false,
+                                                    success: function (res) {
+                                                        var results = res.data;
+                                                        temp +='<select id="actions_value'+d.value+'" name="actions_value" lay-filter="actions_value'+d.value+'">';
+                                                        temp +='<option value="">--请选择--</option>';
+                                                        for (var i = 0; i < results.length; i++) {
+                                                            if (results[i].value.substring(0,4) == d.action_value) {
+                                                                temp +='<option value=' +results[i].value.substring(0,4) +' selected>' +results[i].value+'</option>';
+                                                            }else{
+                                                                temp +='<option value=' +results[i].value.substring(0,4) +'>' +results[i].value +'</option>';
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }else{
+                                                temp +='<select id="actions_value'+d.value+'" name="actions_value" lay-filter="actions_value'+d.value+'">';
+                                                temp +='<option value="">--请选择--</option>';
+                                            }
+                                            temp += '</select>';
+                                        return temp;
+                                        }
+                                    }]
+                                ],
+                                data: t_data
+                                ,done:function(res){
+                                    layui.form.render("select");
+                                }
+                            });
+
+                            for (let j = 1; j < 11; j++) {
+                                
+                                form.on('select(actions_type'+j+')',function (data) {
+                                                    var value = data.value;
+                                                    if (value =="ivr") {
+                                                        admin.req({ //执行ivr下拉列表
+                                                                type: "POST",
+                                                                url: layui.setter.configUrl +"admin/ivr/list",
+                                                                dataType: 'json',
+                                                                success: function (res) {
+                                                                    $("#actions_value"+j+"").empty();
+                                                                    var result = res.data;
+                                                                    $("#actions_value"+j+"").append("<option value=''>--请选择--</option>");
+                                                                    for (var i = 0; i < result.length; i++) {
+
+                                                                        $("#actions_value"+j+"").append("<option value=" + result[i].id + ">" +
+                                                                            result[i].name + "</option>");
+                                                                    }
+                                                                    layui.form.render("select");
+                                                                }
+                                                            });
+                                                    } else if (value == "project" ) {
+                                                        admin.req({ //执行项目下拉列表
+                                                                type: "POST",
+                                                                url: layui.setter .configUrl +"admin/project/list",
+                                                                dataType: 'json',
+                                                                success: function (res) {
+                                                                    $("#actions_value"+j+"").empty();
+                                                                    var result = res.data;
+                                                                    $("#actions_value"+j+"").append("<option value=''>--请选择--</option>");
+                                                                    for (var i = 0; i < result.length; i++) {
+
+                                                                        $("#actions_value"+j+"").append("<option value=" + result[i].id + ">" +
+                                                                            result[i].name + "</option>");
+
+                                                                    }
+                                                                    layui.form.render("select");
+                                                                }
+                                                            });
+                                                    } else if (value =="agent" ) {
+                                                        admin.req({ //坐席下拉列表
+                                                                type: "POST",
+                                                                url: layui.setter.configUrl +"admin/agent/list",
+                                                                dataType: 'json',
+                                                                success: function (res) {
+                                                                    $("#actions_value"+j+"").empty();
+                                                                    var results = res.data;
+                                                                    $("#actions_value"+j+"").append("<option value=''>--请选择--</option>");
+                                                                    for (var i = 0; i < results.length; i++) {
+
+                                                                        $("#actions_value"+j+"").append("<option value=" + results[i].value.substring(0,4) + ">" +
+                                                                            results[i].value + "</option>");
+
+                                                                    }
+                                                                    layui.form.render("select");
+                                                                    
+
+                                                                }
+                                                            });
+                                                    }
+                                                })
+                                
+                            }
+
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-ivr-edit-submit)',function (datas) {
+                                    var field = datas.field; //获取提交的字段
+
+                                    table_data = layui.table.cache['LAY-user-manage-ivr-edit'];
+                                    
+                                   var result =[];
+                                   for (let i =1; i < 10; i++) {
+                                   if ($('#actions_type'+i+'').val()!="" && $('#actions_value'+i+'').val()!="" && table_data[i-1].digits !="") {
+                                       result.push({type:$('#actions_type'+i+'').val(),value: $('#actions_value'+i+'').val(), digits: table_data[i-1].digits});
+                                     }
+                                   }
+
+                                    admin.req({
+                                        type: 'post',
+                                        url: layui.setter.configUrl +
+                                            'admin/ivr/edit',
+                                        data: {
+                                            id: data.id,
+                                            name: field.name,
+                                            tries: field.tries,
+                                            file: field.file,
+                                            invalid_file: field
+                                                .invalid_file,
+                                            actions: JSON.stringify(result)
+                                        },
+                                        success: function (obj) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            table.reload(
+                                                "LAY-user-manage-ivr"
+                                            );
+                                        }
+
+                                    })
+
+                                    //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                    //$.ajax({});
+                                    layer.close(index); //执行关闭 
+                                });
+                        });
+                    }
+                });
+            }
+
+        })
+
+
+        //事件
+        var active = {
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-user-manage-ivr'),
+                    checkData = checkStatus.data; //得到选中的数据
+
+                var ids = "";
+                for (var i = 0; i < checkData.length; i++) {
+                    if (ids != "") {
+                        ids = ids + "," + checkData[i].id;
+                    } else
+                        ids = checkData[i].id;
+                }
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据', {
+                        icon: 2
+                    });
+                }
+
+                layer.confirm('确定删除吗？', {
+                    icon: 3
+                }, function (index) {
+
+                    //执行 Ajax 后重载
+                    layer.load();
+                    admin.req({
+                        type: "post",
+                        url: layui.setter.configUrl + 'admin/ivr/remove',
+                        //async: true,
+                        //dataType: "json",
+                        data: {
+                            ids: ids
+                        },
+
+                        success: function (obj) {
+                            layer.closeAll('loading');
+                            if (obj.data > 0) {
+                                layer.msg("已删除", {
+                                    icon: 1
+                                });
+                                table.reload('LAY-user-manage-ivr');
+                            } else {
+                                layer.msg("删除失败,请重试", {
+                                    icon: 2
+                                });
+                            }
+                        }
+                    });
+
+                });
+            },
+            add: function () {
+                admin.popupRight({
+                    title: '新增',
+                    //area: ['45%', '57%'],
+                    area: '650px',
+                    id: 'LAY-popup-ivradd-add',
+                    success: function (layero, index) {
+                        view(this.id).render('control/ivr/add').done(function () {
+                            form.render(null, 'layuiadmin-form-ivr-add');
+                            table.render({
+                                elem: '#LAY-user-manage-ivr-add',
+                                cols: [
+                                    [{
+                                        field: 'digits',
+                                        title: '按键',
+                                        minWidth: 150,
+                                        edit:"text",
+                                        align: 'center'
+                                    }, {
+                                        field: 'action_type',
+                                        title: '类型',
+                                        minWidth: 150,
+                                        templet: function (d) {
+
+                                            var temp =
+                                                '<select id="actions_type'+d.action_type+'" name="actions_type" lay-filter="actions_type'+d.action_type+'">';
+                                            temp +='<option value="">--请选择--</option>';
+                                            temp +=
+                                                '<option value="ivr">IVR</option>';
+                                            temp +=
+                                                '<option value="project">项目</option>';
+                                            temp +=
+                                                '<option value="agent">坐席</option>';
+                                            temp += '</select>';
+                                            return temp;
+                                        }
+                                    }, {
+                                        field: 'action_value',
+                                        title: '目的地',
+                                        minWidth: 150,
+                                        templet: function (d) {
+                                            var temp ='<select id="actions_value'+d.action_type+'" name="actions_value" lay-filter="actions_value'+d.action_type+'">';
+                                                temp +='<option value="">--请选择--</option>';
+                                                temp += '</select>';
+                                            
+                                            
+                                            return temp;
+                                        }
+                                    }]
+                                ],
+                                data: [{
+                                    "action_type": "1",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "2",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "3",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "4",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "5",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "6",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "7",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "8",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "9",
+                                    "action_value": "",
+                                    "digits": "",
+                                }, {
+                                    "action_type": "10",
+                                    "action_value": "",
+                                    "digits": "",
+                                }],done:function(res){
+                                    layui.form.render("select");
+                                }
+                            });
+                            for (let j = 1; j < 11; j++) {
+                                
+                                form.on('select(actions_type'+j+')',function (data) {
+                                                    var value = data.value;
+                                                    // var scoreId =  $(data.elem).parent().parent().parent().find('[data-field="action_type"] div')
+                                                    //     scoreId.text(value);
+                                                    if (value =="ivr") {
+                                                        admin.req({ //执行ivr下拉列表
+                                                                type: "POST",
+                                                                url: layui.setter.configUrl +"admin/ivr/list",
+                                                                dataType: 'json',
+                                                                success: function (res) {
+                                                                    $("#actions_value"+j+"").empty();
+                                                                    var result = res.data;
+                                                                    $("#actions_value"+j+"").append("<option value=''>--请选择--</option>");
+                                                                    for (var i = 0; i < result.length; i++) {
+
+                                                                        $("#actions_value"+j+"").append("<option value=" + result[i].id + ">" +
+                                                                            result[i].name + "</option>");
+                                                                    }
+                                                                    layui.form.render("select");
+                                                                }
+                                                            });
+                                                    } else if (value == "project" ) {
+                                                        admin.req({ //执行项目下拉列表
+                                                                type: "POST",
+                                                                url: layui.setter .configUrl +"admin/project/list",
+                                                                dataType: 'json',
+                                                                success: function (res) {
+                                                                    $("#actions_value"+j+"").empty();
+                                                                    var result = res.data;
+                                                                    $("#actions_value"+j+"").append("<option value=''>--请选择--</option>");
+                                                                    for (var i = 0; i < result.length; i++) {
+
+                                                                        $("#actions_value"+j+"").append("<option value=" + result[i].id + ">" +
+                                                                            result[i].name + "</option>");
+
+                                                                    }
+                                                                    layui.form.render("select");
+                                                                }
+                                                            });
+                                                    } else if (value =="agent" ) {
+                                                        admin.req({ //坐席下拉列表
+                                                                type: "POST",
+                                                                url: layui.setter.configUrl +"admin/agent/list",
+                                                                dataType: 'json',
+                                                                success: function (res) {
+                                                                    $("#actions_value"+j+"").empty();
+                                                                    var results = res.data;
+                                                                    $("#actions_value"+j+"").append("<option value=''>--请选择--</option>");
+                                                                    for (var i = 0; i < results.length; i++) {
+
+                                                                        $("#actions_value"+j+"").append("<option value=" + results[i].value.substring(0,4) + ">" +
+                                                                            results[i].value + "</option>");
+
+                                                                    }
+                                                                    layui.form.render("select");
+                                                                    
+
+                                                                }
+                                                            });
+                                                    }
+                                                })
+                                
+                            }
+                          
+
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-ivr-add-submit)',
+                                function (data) {
+                                    var field = data.field; //获取提交的字段
+                                   table_data = layui.table.cache['LAY-user-manage-ivr-add'];
+                                    
+                                   var result =[];
+                                   for (let i =1; i < 10; i++) {
+                                   if ($('#actions_type'+i+'').val()!="" && $('#actions_value'+i+'').val()!="" && table_data[i-1].digits !="") {
+                                       result.push({type:$('#actions_type'+i+'').val(),value: $('#actions_value'+i+'').val(), digits: table_data[i-1].digits});
+                                     }
+                                   }
+                                   
+                                    admin.req({
+                                        type: "post",
+                                        url: layui.setter.configUrl +
+                                            'admin/ivr/add',
+                                        data: {
+                                            name: field.name,
+                                            tries: field.tries,
+                                            file: field.file,
+                                            invalid_file: field
+                                                .invalid_file,
+                                            actions: JSON.stringify(result)
+                                        },
+                                        success: function (res) {
+                                            if (res.data > 0) {
+                                                layer.msg("操作成功", {
+                                                    icon: 1
+                                                });
+                                                layer.close(
+                                                    index); //执行关闭 
+                                                table.reload(
+                                                    'LAY-user-manage-ivr'
+                                                );
+                                            } else {
+                                                layer.msg("操作失败", {
+                                                    icon: 1
+                                                });
+                                            }
+
+                                        }
+                                    })
+
+
+                                    //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                    //$.ajax({});
+                                    // 
+                                });
+                        });
+                    }
+                });
+            }
+
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    })
+</script>

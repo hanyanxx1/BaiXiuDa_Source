@@ -1,0 +1,70 @@
+<div class="layui-form" lay-filter="layuiadmin-form-sofia-edit" style="padding: 20px;">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" readonly="readonly" lay-verify="required" autocomplete="off"
+				placeholder="" class="layui-input">
+		</div>
+		
+	</div>
+
+	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">绑定IP</label>
+		<div class="layui-input-inline">
+			<input type="text" id="sip_ip" name="sip_ip" lay-verify="required" autocomplete="off" placeholder=""
+				class="layui-input">
+		</div>
+		
+		
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">绑定端口</label>
+		<div class="layui-input-inline">
+			<input type="text" id="sip_port" name="sip_port" autocomplete="off" lay-verify="required" placeholder="" class="layui-input">
+		</div>
+		
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">外部IP</label>
+		<div class="layui-input-inline">
+			<input type="text" id="ext_sip_ip" name="ext_sip_ip" lay-verify="required" autocomplete="off"
+				placeholder="" class="layui-input">
+			<!-- <select>
+				<option value=""></option>
+				<option value=""></option>
+			</select> -->
+		</div>
+		
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="LAY-sofia-edit-submit-btn" lay-submit lay-filter="LAY-sofia-edit-submit"
+				value="提交" class="layui-btn">
+		</div>
+	</div>
+
+	<fieldset class="layui-elem-field layui-field-title">
+		<legend>备注</legend>
+	</fieldset>
+	<div class="layui-form-mid layui-word-aux"><label class="layui-form-label"></label><span style="color: red;margin-left: -50px;">1. $${local_ip_v4}  - 自动获取IP</span></div>
+	<div class="layui-form-mid layui-word-aux"><label class="layui-form-label"></label><span style="color: red;margin-left: -50px;">2. $${internal_sip_port}  -默认5060 </span></div>
+		<div class="layui-form-mid layui-word-aux"><label class="layui-form-label"></label><span style="color: red;margin-left: -50px;">3. $${external_sip_port}  - 默认5080  </span></div>
+		<div class="layui-form-mid layui-word-aux"><label class="layui-form-label"></label><span style="color: red;margin-left: -50px;">4. $${external_sip_ip} - stun</span></div>
+		<div class="layui-form-mid layui-word-aux"><label class="layui-form-label"></label><span style="color: red;margin-left: -50px;">5. 配置后重启服务器生效</span></div>
+
+
+</div>
+<script>
+	layui.use(['laydate', 'form'], function () {
+		var laydate = layui.laydate;
+		var $ = layui.$;
+		var form = layui.form;
+
+	})
+</script>

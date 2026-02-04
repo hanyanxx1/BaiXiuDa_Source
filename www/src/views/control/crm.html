@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-crm">
+				<div class="layui-form-item">
+
+					<div class="layui-inline">
+						<label class="layui-form-label">CRM状态</label>
+						<div class="layui-input-inline">
+							<select name="status">
+								<option value="1">启用</option>
+								<option value="0">禁用</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+
+						<label class="layui-form-label">名称</label>
+
+						<div class="layui-input-inline">
+
+							<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+
+						</div>
+
+					</div>
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+							lay-filter="LAY-user-front-search-crm">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" data-type="add_c"
+							title="添加"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+						<!-- <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-normal"
+							data-type="bupdate_c" title="修改"> <i
+								class="layui-icon layui-icon-edit layuiadmin-button-btn"></i></button> -->
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-warm"
+							data-type="btnon_c" title="启用"><img src="../start/images/enable.png"></img></button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-primary"
+							data-type="btnoff_c" title="禁用"> <img src="../start/images/disable.png"></img></button>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-crm" lay-filter="LAY-user-manage-crm"></table>
+
+				<script id="switchTpl" type="text/html">
+					<input type="checkbox" name="issues" value={ {d.issue}} lay-skin="switch" lay-text="开启|关闭" lay-filter="issues" {{ d.issue==true ? 'checked' : '' }}>
+				</script>
+				<script type="text/html" id="barDemoCrm">
+					
+					<!-- {{# if(d.issue == false ) { }}
+				<input type="checkbox" lay-filter="issue" name="like[issue]" title="问卷跳转">
+				{{# } }}
+				{{# if(d.issue == true ) { }}
+				<input type="checkbox" lay-filter="issue" checked name="like[issue]" title="问卷跳转">
+				{{# } }} -->
+
+				<!-- <input type="checkbox" name="like[issue]" title="问卷跳转"> -->
+				<a class="layui-btn layui-btn-xs" lay-event="detail_feildes">编辑字段</a>
+
+				<a class="layui-btn layui-btn-xs" lay-event="quitity">质检编辑</a>
+
+				</script>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<script>
+	var $;
+	layui.use(['admin', 'table'], function () {
+		var table = layui.table;
+		form = layui.form;
+		$ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-crm',
+			url: layui.setter.configUrl + "admin/crm/grid",
+			height: 'full-180',
+			where: {
+				status: 1,
+				name:""
+			},
+			cols: [
+				[{
+						type: 'checkbox'
+					}, {
+						field: 'id',
+						title: '编号',
+						align: 'center',
+						hide: true
+					}, {
+						field: 'name',
+						title: '名称',
+						minWidth: 150,
+						align: 'center'
+					},
+					
+					// {
+					// 	field: 'gt_duration',
+					// 	title: '挂机短信时长',
+					// 	minWidth: 150,
+					// 	align: 'center'
+					// }, 
+					{
+						field: 'stamp',
+						title: '创建时间',
+						minWidth: 150,
+						align: 'center'
+					},{
+						//field: 'enable_issue',
+						title: '问卷话术',
+						minWidth: 150,
+						sort: true,
+						align: 'center',
+						templet: "#switchTpl"
+					}, {
+						field: 'caozuo',
+						title: '编辑字段',
+						minWidth: 100,
+						fixed: 'right',
+						toolbar: '#barDemoCrm',
+						align: 'center'
+					}
+				]
+			],
+			id: 'tableIns',
+			done: function() {
+				tableData = table.cache.tableIns;
+			},
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-crm');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-crm)', function (data) {
+			var field = data.field;
+
+			//执行重载
+			table.reload('tableIns', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+		//监听复选框
+		// form.on('checkbox(issue)', function (data) {
+		// 	var number = $('input[name="issue"]'),
+		// 		value = data.value;
+		// 	// console.log(data.elem); //得到checkbox原始DOM对象
+		// 	// console.log(data.elem.checked); //是否被选中，true或者false
+		// 	// console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+		// 	// console.log(data.othis); //得到美化后的DOM对象
+		// });
+
+		//监听指定开关
+		form.on('switch(issues)', function(data) {
+			var index = data.othis.parents('tr').attr("data-index");
+			var id = tableData[index].id;
+
+			if((this.checked ? 'true' : 'false') == 'true') {
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "admin/crm/editIssue",
+					dataType: "json",
+					data: {
+						id: id,
+						status: 1
+					},
+					success: function(obj) {
+						layer.msg("开启",{icon:1})
+					}
+				});
+			} else {
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "admin/crm/editIssue",
+					dataType: "json",
+					data: {
+						id: id,
+						status: 0
+					},
+					success: function(obj) {
+						layer.msg("关闭",{icon:2})
+					}
+				});
+			}
+		});
+
+		form.verify({
+			exist_crmName: function (value, item) { //value：表单的值、item：表单的DOM对象
+				var exist;
+				admin.req({
+					type: "POST",
+					async: false,
+					url: layui.setter.configUrl + "admin/crm/exist",
+					dataType: 'json',
+					data: {
+						name: $("#crmname").val()
+					},
+					success: function (res) {
+						exist = res.data;
+					}
+
+				})
+				if (exist == true) {
+					//layer.tips('该用户名已存在', '#name', {tips: [2, 'red']});
+					return "该名称已被使用,请重试";
+				}
+
+			}
+		})
+
+		//监听行工具栏
+		table.on('tool(LAY-user-manage-crm)', function (obj) {
+			var data = obj.data, //获得当前行的数据
+				layEvent = obj.event; //获得lay-event对应的值
+			if (layEvent === 'detail_feildes') {
+				admin.popup({
+					title: '编辑字段',
+					area: ['70%', '72%'],
+					id: 'LAY-popup-user-updateziduan_crm_fields',
+					btn: ['提交', '取消'],
+					success: function (layero, index) {
+						view(this.id).render('control/crm/crm_fields').done(function () {
+							form.render(null, 'layuiadmin-form-crm_fields');
+							form.val('layuiadmin-form-crm_fields', data); //表单初始赋值
+							//$("#control").val("");
+							table.render({ //子页面数据表格
+								method: "post",
+								elem: '#LAY-user-crm-fields',
+								url: layui.setter.configUrl +
+									"/admin/crm_field/grid",
+								//height: 'full-595',
+								toolbar: 'default',
+								defaultToolbar: ['filter', 'print'],
+								where: {
+									crm_id: data.id
+								},
+								cols: [
+									[{
+										type: 'checkbox',
+										fixed: 'left'
+									}, {
+										field: 'jump',
+										title: '编号',
+										align: 'center'
+									}, {
+										field: 'field_name',
+										title: '名称',
+										align: 'center'
+									}, {
+										field: 'status',
+										title: '排序',
+										align: 'center',
+										templet: function (d) {
+											return '<a onclick="field_tool.displacement(' +
+												d.id + ',-1,' + d
+												.jump +
+												');">上移</a>|<a onclick="field_tool.displacement(' +
+												d.id + ',1,' + d
+												.jump +
+												');">下移</a>';
+
+										}
+									}]
+								],
+								page: false
+							});
+
+							//监听提交
+							form.on('submit(LAY-user-front-crm_field-submit)',
+								function (datas) {
+									layer.load();
+									var field = datas.field; //获取提交的字段
+									var field_json =new Array();
+									//提交 Ajax 成功后，关闭当前弹层并重载表格
+									//$.ajax({});
+									if ($("#input_type").val() != 1) {
+										$('#nodes').children().each(function (i,n) {
+											var obj = $(n).find('input');
+											if (obj.length == 1)
+												field_json.push( {name:$(obj[0]).val(), next:""});
+											else if (obj.length == 2){
+												//var sa={"name": "3","next":""};
+												field_json.push( {name:$(obj[0]).val(), next: $(obj[1]).val()});
+												//field_json.push(sa)
+											}
+										});
+									}
+									if ($("#field_name").val() == "") {
+										return;
+									}
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +"/admin/crm/field",
+										//async: true,
+										data: {
+											id: $("#control").val(),
+											field_name: $("#field_name").val(),
+											issue: $("#issue_c").val(),
+											is_display: field.is_display,
+											is_edit: field.is_edit,
+											is_search:field.is_search,
+											input_type: $("#input_type").val(),
+											crm_id: data.id,
+											field_json:  JSON.stringify(field_json)
+										},
+										dataType: "json",
+
+										success: function (obj) {
+											layer.closeAll('loading');
+
+											if (obj.data > 0) {
+												$('#input_type').attr("disabled",false);
+												$('#control').val("0");
+												layer.msg("操作成功", {icon: 1});
+												layui.table.reload('LAY-user-crm-fields'); //重载表格
+												$("#on_type").css('display','none');
+												$("#fields-form")[0].reset();
+												$("#nodes").text('');
+											}else if(obj.data==-1) {
+												layer.msg("该字段已经存在 ", {
+													icon: 2
+												});
+											}
+											 else {
+												layer.msg("操作失败,请重试", {
+													icon: 2
+												});
+											}
+										}
+
+									});
+
+									/*layui.table.reload('LAY-user-manage-crm'); //重载表格
+									layer.close(index); //执行关闭 */
+								});
+						});
+					},
+					yes: function (index, layero) {
+						layero.find('#crm_field_add').click();
+					}
+				});
+			}else if(layEvent==="quitity"){
+				admin.popupRight({
+					title: '质检编辑',
+					//area: ['45%', '55%'],
+					area:'450px',
+					//btn: ['提交', '取消'],
+					id: 'LAY-popup-user-quitity',
+					success: function (layero, index) {
+						view(this.id).render('control/crm/quitity').done(function () {
+							form.render(null, 'layuiadmin-form-crm-quitity');
+							var inspections =JSON.parse(data.inspections);
+							for (let i = 0; i < inspections.length; i++) {
+								$("#node").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" value="' + inspections[i] + '" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+							}
+
+							//监听提交
+							form.on('submit(LAY-user-front-crm-quitity-submit)', function (datas) {
+								layer.load();
+								//var field = datas.field; //获取提交的字段
+
+
+								var field_json = new Array();
+								$('#node').children().each(function (i,n) {
+									var obj = $(n).find('input');
+									field_json.push( ""+$(obj[0]).val()+"");
+								});
+								
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										"admin/crm/editInsp",
+									//async: true,
+									data: {
+										id:data.id,
+										inspections:JSON.stringify(field_json) 
+									},
+									dataType: "json",
+
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("操作成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'tableIns'
+												); //重载表格
+											layer.close(
+											index); //执行关闭 
+										} else {
+											layer.msg("操作失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+
+								 });
+
+							});
+						});
+					}
+				});
+
+			}
+		})
+
+		//事件
+		var active = {
+
+			add_c: function () {
+				admin.popup({
+					title: '添加',
+					//area: ['45%', '55%'],
+					area:['450px','250px'],
+					btn: ['提交', '取消'],
+					id: 'LAY-popup-user-add',
+					success: function (layero, index) {
+						view(this.id).render('control/crm/add').done(function () {
+							form.render(null, 'layuiadmin-form-crm_add');
+
+							//监听提交
+							form.on('submit(LAY-user-front-crm_add-submit)', function (
+								data) {
+								layer.load();
+								var field = data.field; //获取提交的字段
+
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										"admin/crm/add",
+									//async: true,
+									data: field,
+									dataType: "json",
+
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("添加成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'tableIns'
+												); //重载表格
+											layer.close(
+											index); //执行关闭 
+										} else {
+											layer.msg("添加失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+
+								});
+
+							});
+						});
+					},yes: function(index, layero) {
+							layero.find('#crm_add').click();
+						}
+				});
+			},
+			//修改
+			// bupdate_c: function () {
+			// 	var checkStatus = table.checkStatus('LAY-user-manage-crm'),
+			// 		checkData = checkStatus.data; //得到选中的数据
+			// 	console.log(checkData.length)
+			// 	if (checkData.length === 0) {
+			// 		return layer.msg('请选择数据', {
+			// 			icon: 2
+			// 		});
+			// 	} else if (checkData.length > 1) {
+			// 		return layer.msg('请选择1条数据进行编辑', {
+			// 			icon: 2
+			// 		});
+			// 	} else {
+			// 		admin.popupRight({
+			// 			title: '修改',
+			// 			//area: ['45%', '55%'],
+			// 			area: '550px',
+			// 			id: 'LAY-popup-user-update',
+			// 			success: function (layero, index) {
+			// 				view(this.id).render('control/crm/edit').done(function () {
+			// 					form.render(null, 'layuiadmin-form-crm_edit');
+			// 					form.val('layuiadmin-form-crm_edit', checkData[
+			// 					0]); //表单初始赋值
+
+			// 					//监听提交
+			// 					form.on('submit(LAY-user-front-crm_edit-submit)',
+			// 						function (data) {
+			// 							layer.load();
+			// 							var field = data.field; //获取提交的字段
+
+			// 							//提交 Ajax 成功后，关闭当前弹层并重载表格
+			// 							admin.req({
+			// 								type: "POST",
+			// 								url: layui.setter.configUrl +
+			// 									"admin/crm/edit",
+			// 								//async: true,
+			// 								data: {
+			// 									id: checkData[0].id,
+			// 									name: field.name,
+			// 									enable_issue: field
+			// 										.enable_issue,
+			// 									gt_duration: field
+			// 										.gt_duration,
+			// 									sms_content: field
+			// 										.sms_content
+			// 								},
+			// 								dataType: "json",
+
+			// 								success: function (obj) {
+			// 									layer.closeAll(
+			// 										'loading');
+			// 									if (obj.data > 0) {
+			// 										layer.msg("修改成功", {
+			// 											icon: 1
+			// 										});
+			// 										sms_content = field
+			// 											.sms_content;
+			// 										layui.table.reload(
+			// 											'LAY-user-manage-crm'
+			// 											); //重载表格
+			// 										layer.close(
+			// 										index); //执行关闭 
+			// 									} else {
+			// 										layer.msg(
+			// 											"修改失败,请重试", {
+			// 												icon: 2
+			// 											});
+			// 									}
+			// 								}
+
+			// 							});
+
+			// 						});
+			// 				});
+			// 			}
+			// 		});
+			// 	}
+
+			// },
+			//启用
+			btnon_c: function () {
+				var checkStatus = table.checkStatus('tableIns'),
+					checkData = checkStatus.data; //得到选中的数据
+
+				var ids = "";
+				var checklen = checkData.length;
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				} else {
+					layer.load();
+					//提交 Ajax 成功后，关闭当前弹层并重载表格
+					admin.req({
+						type:'post',
+						url: layui.setter.configUrl + 'admin/crm/enable',
+						//async: true,
+						data: {
+							ids: ids,
+							status: 1
+						},
+						dataType: "json",
+
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("已启用", {
+									icon: 1
+								});
+								layui.table.reload('tableIns'); //重载表格
+							} else {
+								layer.msg("操作失败,请重试", {
+									icon: 2
+								});
+							}
+
+						}
+
+					});
+				}
+
+			},
+			//禁用
+			btnoff_c: function () {
+				var checkStatus = table.checkStatus('tableIns'),
+					checkData = checkStatus.data; //得到选中的数据
+
+				var ids = "";
+				var checklen = checkData.length;
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				} else {
+					layer.load();
+					//提交 Ajax 成功后，关闭当前弹层并重载表格
+					admin.req({
+						type:'post',
+						url: layui.setter.configUrl + 'admin/crm/enable',
+						//async: true,
+						data: {
+							ids: ids,
+							status: 0
+						},
+						dataType: "json",
+
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("已禁用", {
+									icon: 1
+								});
+								layui.table.reload('tableIns'); //重载表格
+							} else {
+								layer.msg("操作失败,请重试", {
+									icon: 2
+								});
+							}
+
+						}
+
+					});
+				}
+
+			}
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+</script>
+
+</html>

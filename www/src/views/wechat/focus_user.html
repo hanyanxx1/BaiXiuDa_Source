@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-focus-user">
+				<div class="layui-form-item">
+
+					<label class="layui-form-label">微信名称</label>
+					<div class="layui-input-inline">
+						<input type="text" name="wechatName" autocomplete="off" placeholder="请输入微信名称"
+							class="layui-input">
+					</div>
+
+					<label class="layui-form-label">工号</label>
+					<div class="layui-input-inline">
+						<input type="text" id="jobNumber" name="jobNumber" autocomplete="off" placeholder="请输入工号"
+							class="layui-input">
+					</div>
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+							lay-filter="LAY-user-front-search-focus-user">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin  layui-btn-danger"
+							title="删除" data-type="batchdel"> <i
+								class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-focus-user" lay-filter="LAY-user-manage-focus-user"></table>
+
+				<script type="text/html" id="barDemo">
+					<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="editupdate">修改</a>
+					<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="refreshWechat">同步信息</a>
+				</script>
+				<script type="text/html" id="barDemos">
+
+				</script>
+			</div>
+		</div>
+	</div>
+
+</body>
+<style>
+	/* .layui-form-label {
+		width: 90px;
+	} */
+
+	.layui-layer-content {
+		overflow: visible !important;
+	}
+
+	/* 自动适应高度 */
+	/* .layui-table .layui-table-cell {
+		height: auto;
+		word-break: normal;
+		display: block;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		overflow: hidden;
+		padding: 0 10px !important;
+	} */
+	.layui-table-cell {
+		height: 50px;
+		/* 设置行高为50px */
+		line-height: 60px;
+	}
+</style>
+<script>
+	layui.use(['admin', 'table', 'util'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		setter = layui.setter;
+		router = layui.router(),
+			search = router.search;
+		util = layui.util;
+
+		table.render({
+			method: 'post',
+			elem: '#LAY-user-manage-focus-user',
+			url: layui.setter.configUrl + 'admin/wechat/getUserPage',
+			where: {
+				name: ""
+			},
+			height: 'full-180',
+			escape: true,
+			cols: [
+				[{
+					type: 'checkbox',
+					fixed: 'left'
+				}, {
+					title: '微信头像',
+					fixed: 'left',
+					align: 'center',
+					minWidth: 80,
+					templet: function (d) {
+						if (d.userInfo != null) {
+							var userInfo = JSON.parse(d.userInfo);
+							if (userInfo.hasOwnProperty("headimgurl")) {
+								return '<img style="width:50px;height:50px;" src="' + userInfo.headimgurl + '" />';
+							}
+						}
+						return "";
+					}
+				}, {
+					field: 'consumes',
+					title: '微信名称',
+					align: 'center',
+					minWidth: 100,
+					templet: function (d) {
+						if (d.userInfo != null) {
+							var userInfo = JSON.parse(d.userInfo);
+							if (userInfo.hasOwnProperty("nickname")) {
+								return userInfo.nickname;
+							}
+						}
+						return "";
+					}
+				}, {
+					field: 'customerName',
+					title: '账户',
+					align: 'center',
+					minWidth: 140
+				}, {
+					field: 'jobNumber',
+					title: '工号',
+					align: 'center',
+					minWidth: 100
+				}, {
+					field: 'todayCount',
+					title: '今日推送条数',
+					align: 'center',
+					minWidth: 130
+				}, {
+					field: 'allow',
+					title: '允许推送',
+					align: 'center',
+					minWidth: 95,
+					templet: function (d) {
+						if (d.allow == 1) {
+							return '<span style="color: green;">允许</span>';
+						} else {
+							return '<span style="color: red;">禁止</span>';
+						}
+					}
+				}, {
+					field: 'pushType',
+					title: '推送方式',
+					edit: true,
+					align: 'center',
+					minWidth: 140,
+					templet: function (d) {
+						if (d.pushType == 1) {
+							return '<span style="color: #2db7f5;">轮询</span>';
+						} else {
+							return '<span style="color: #87d068;">全推送</span>';
+						}
+					}
+				}, {
+					field: 'status',
+					title: '状态',
+					align: 'center',
+					minWidth: 150,
+					templet: function (d) {
+						if (d.status == 1) {
+							return '<span style="color: #87d068;">签入 </span>';
+						} else if (d.status == 2) {
+							return '<span style="color: #f45e5e;">签出 </span>';
+						}
+						else {
+							return '<span style="color: #3894ff;">长签</span>';
+						}
+					}
+				}, {
+					field: 'remark',
+					title: '备注',
+					align: 'center',
+					minWidth: 150
+				}, {
+					field: 'createTime',
+					title: '创建时间',
+					align: 'center',
+					minWidth: 150
+				}, {
+					field: 'caozuo',
+					title: '操作',
+					toolbar: '#barDemo',
+					fixed: 'right',
+					align: 'center',
+					minWidth: 180
+				}]
+			]
+			,
+			// done: function (res, curr, count) {
+			// 				$(".layui-table-main tr").each(function (index, val) {
+			// 					$($(".layui-table-fixed .layui-table-body tbody tr")[index]).height($(val).height());
+			// 				});
+			// 			},
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-focus-user');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-focus-user)', function (data) {
+			var field = data.field;
+
+			//执行重载
+			table.reload('LAY-user-manage-focus-user', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+		//行监听工具
+		table.on('tool(LAY-user-manage-focus-user)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'editupdate') {
+
+				admin.popupRight({
+					title: '修改用户信息',
+					area: '650px',
+					id: 'LAY-popup-user-update',
+					success: function (layero, index) {
+						view(this.id).render('wechat/focusUser/edit').done(function () {
+							form.render(null, 'layuiadmin-form-focusUser-edit');
+							form.val('layuiadmin-form-focusUser-edit', data);
+
+							if (data.status == 1) {
+								$("#status_span_msg").html("开启话单数据推送，需每日在公众号签入");
+							} else if (data.status == 2) {
+								$("#status_span_msg").html("关闭话单数据推送");
+							} else {
+								$("#status_span_msg").html("开启话单数据推送，无需每日重复操作签入");
+							}
+
+							form.on('radio(status_fu)', function (datasa) {
+								var thisVal = datasa.value;
+								if (thisVal == 1) {
+									$("#status_span_msg").html("开启话单数据推送，需每日在公众号签入");
+								} else if (thisVal == 2) {
+									$("#status_span_msg").html("关闭话单数据推送");
+								} else {
+									$("#status_span_msg").html("开启话单数据推送，无需每日重复操作签入");
+								}
+							})
+
+							//监听提交
+							form.on('submit(LAY-focusUser-edit-front-submit)', function (
+								datas) {
+								var field = datas.field; //获取提交的字段
+								field.id = data.id;
+								field.ipAddre = data.ipAddre;
+								field.recordUrl = data.recordUrl;
+								field.customerName = data.customerName;
+								field.adminId = data.adminId;
+								console.log(field);
+
+								layer.load();
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										"admin/wechat/updateUser",
+									//async: true,
+									data: field,
+									dataType: "json",
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("操作成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-focus-user'
+											); //重载表格
+											layer.close(
+												index); //执行关闭 
+										} else {
+											layer.msg("修改失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+								});
+
+							});
+						});
+					}
+				});
+
+			} else if (layEvent == 'refreshWechat') {
+				$.ajax({
+					url: layui.setter.configUrl + "admin/wechat/getInfoQRCode",
+					type: 'POST',
+					xhrFields: {
+						responseType: 'arraybuffer'
+					},
+					headers: {
+						access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+					},
+					success: function (response) {
+						var blob = new Blob([response], { type: 'image/jpeg' });
+						var imageUrl = URL.createObjectURL(blob);
+
+						layer.open({
+							title: "扫码同步微信用户信息",
+							type: 1,
+							offset: '110px',
+							skin: 'layui-layer-demo', //样式类名
+							closeBtn: 1, //不显示关闭按钮,0:不显示，1:显示
+							anim: 2,
+							// area:['200px','200px'],
+							shadeClose: true, //开启遮罩关闭
+							content: '<img style="width:350px;height:350px;" src="' + imageUrl + '" />'
+						});
+					}
+				})
+			}
+		})
+
+		//事件
+		var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-focus-user'),
+					checkData = checkStatus.data; //得到选中的数据
+				var idss = "";
+				for (var i = 0; i < checkData.length; i++) {
+					if (idss == "")
+						idss += checkData[i].id;
+					else
+						idss += "," + checkData[i].id;
+				}
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+
+				layer.confirm('确定删除吗？', {
+					icon: 3
+				}, function (index) {
+					layer.load();
+					//执行 Ajax 后重载
+
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + "admin/wechat/batchDeleteById",
+						data: {
+							ids: idss
+						},
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("删除成功", {
+									icon: 1
+								});
+								table.reload('LAY-user-manage-focus-user');
+							} else {
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+					});
+				});
+			}
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+</script>
+
+</html>

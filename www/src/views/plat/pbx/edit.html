@@ -1,0 +1,73 @@
+<form class="layui-form" lay-filter="layuiadmin-form-pbx-edit" style="padding: 20px;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称:</label>
+        <div class="layui-input-block">
+            <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" placeholder="请输入名称"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">主机:</label>
+        <div class="layui-input-block">
+            
+            <input type="text" id="hostname" name="hostname" lay-verify="required" autocomplete="off" placeholder="请输入"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">端口:</label>
+        <div class="layui-input-inline">
+            
+            <input type="text" id="port" name="port" lay-verify="required" autocomplete="off" placeholder="请输入"
+                class="layui-input">
+        </div>
+    </div>
+    
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码:</label>
+        <div class="layui-input-inline">
+            
+            <input type="text" id="passwd" name="passwd" autocomplete="off" placeholder="请输入"
+                class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">管理地址:</label>
+        <div class="layui-input-block">
+            
+            <input type="text" id="url" name="url" autocomplete="off" placeholder="请输入"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">超时(秒):</label>
+        <div class="layui-input-inline">
+            
+            <input type="text" id="timeout" name="timeout" value="3" lay-verify="required" autocomplete="off" placeholder="请输入"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态:</label>
+        <div class="layui-input-inline">
+            <select id="status" name="status">
+                <option value="1">启用</option>
+                <option value="0">禁用</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" id="pbx-edit" lay-submit lay-filter="LAY-user-front-pbx-edit-submit" value="提交"
+                class="layui-btn">
+        </div>
+    </div>
+</form>

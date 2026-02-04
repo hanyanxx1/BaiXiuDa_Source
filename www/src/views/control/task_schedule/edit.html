@@ -1,0 +1,216 @@
+<div class="layui-form layui-layout-admin" lay-filter="layuiadmin-form-project_task_schedule_edit"
+    style="padding: 20px 20px 0 0;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">重复周期</label>
+        <div class="layui-input-inline" style="width: 360px;">
+            <div id="weekDays" class="xm-select-demo"></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">呼叫时段</label>
+            <div class="layui-input-inline">
+                <button type="button" onclick="addnode(0,1)"
+                    class="layui-btn layui-btn-primary layui-btn-sm">添加时段</button>
+            </div>
+        </div>
+
+    </div>
+    <div id="nodes">
+
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注:</label>
+        <div class="layui-input-block">
+            <textarea id="task_desc" name="task_desc" readonly placeholder="请输入备注" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" id="project_task_timer" lay-submit
+                lay-filter="LAY-user-front-project-task-schedule-edit-submit" value="提交" class="layui-btn">
+        </div>
+    </div>
+</div>
+
+<style>
+    .layui-layer-content {
+        overflow: visible !important;
+    }
+    .layui-laydate .layui-laydate-list>li{
+        width: 50% !important;
+    }
+    .layui-laydate-list>li:last-child {
+        display: none;
+    }
+    .layui-laydate .layui-laydate-main {
+        width: 210px !important;
+    }
+    .layui-laydate-range {
+        width: 422px;
+    }
+</style>
+<script src="/start/js/publicmethod.js"></script>
+<script type="text/javascript">
+    var targetEdit = { days: "", time: "" };
+    var handlerEdit = {
+        set: function (obj, prop, value) {
+            // if (prop === 'days') {
+            //     console.log(`变量 days 的值从 ${obj[prop]} 变为 ${value}`);
+            // }
+            // if (prop === 'time') {
+            //     console.log(`变量 time 的值从 ${obj[prop]} 变为 ${value}`);
+            // }
+            obj[prop] = value;
+
+            $("#task_desc").val(targetEdit.days + targetEdit.time)
+            return true;
+        }
+    };
+    var proxy = new Proxy(targetEdit, handlerEdit);
+
+
+
+    var timerId = 0;
+    var laydate;
+    var xmSelect;
+    layui.use(['laydate', 'form', 'xmSelect'], function () {
+        laydate = layui.laydate;
+        var $ = layui.$;
+        var form = layui.form;
+        xmSelect = layui.xmSelect;
+        //时间范围
+        laydate.render({
+            elem: '#time',
+            type: 'time',
+            range: true
+        });
+
+
+
+
+
+
+    })
+
+    function days(p) {
+
+        var data = [{
+            name: '周一',
+            value: 1
+        },
+        {
+            name: '周二',
+            value: 2
+        },
+        {
+            name: '周三',
+            value: 3
+        },
+        {
+            name: '周四',
+            value: 4
+        },
+        {
+            name: '周五',
+            value: 5
+        },
+        {
+            name: '周六',
+            value: 6
+        },
+        {
+            name: '周日',
+            value: 7
+        },
+        ];
+        xmSelect.render({
+            el: '#weekDays',
+            toolbar: {
+                show: true,
+            },
+            name: 'task_week',
+            initValue: p,
+            layVerify: 'required',
+            layVerType: 'tips',
+            autoRow: true,
+            tips: "请选择工作日",
+            data: data,
+            on: function (data) {
+                //arr:  当前多选已选中的数据
+                var arr = data.arr;
+                //change, 此次选择变化的数据,数组
+                //var change = data.change;
+                //isAdd, 此次操作是新增还是删除
+                //var isAdd = data.isAdd;
+
+                //可以return一个数组, 代表想选中的数据
+                //return []
+                let days = [];
+                for (let i = 0; i < arr.length; i++) {
+                    const element = arr[i];
+                    days.push(element.value);
+                }
+                //console.log(formatweekToLabel(days));
+                proxy.days = formatweekToLabel(days);
+            }
+        })
+        proxy.days = formatweekToLabel(p);
+
+    }
+
+    function addnode(flag, ti) {
+        timerId++;
+        if (flag == 0) {
+            $("#nodes").append(
+                '<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" id="timer' +
+                timerId +
+                '" autocomplete="off" value="07:00 - 19:59" class="layui-input" placeholder=" - "></div></div><button type="button" onclick="$(this).parent().remove();resetTimes();" class="layui-btn layui-btn-xs layui-btn-danger">删除</button></div>'
+            );
+            //form.render();
+        } else {
+            $("#nodes").append(
+                '<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" id="timer' +
+                timerId + '" value="' + ti + '" autocomplete="off" class="layui-input" placeholder=" - "></div></div><button type="button" onclick="$(this).parent().remove();resetTimes();" class="layui-btn layui-btn-xs layui-btn-danger">删除</button></div>'
+            );
+        }
+        resetTimes()
+        //时间范围
+        laydate.render({
+            elem: '#timer' + timerId,
+            type: 'time',
+            range: true,
+            format: 'HH:mm',
+            min: '07:00:00'
+            , max: '20:59:59'
+            , btns: ['clear', 'confirm'],
+            done: function (value, date) { //监听日期被选中
+                $('#' + this.elem[0].id).val(value); //done事件触发时，dom还没赋值
+                resetTimes();
+            }
+        });
+    }
+
+    //重置数据
+    function resetTimes() {
+        let times = "";
+        $('#nodes').children().each(function (i, n) {
+            var obj = $(n).find('input');
+            if ($(obj[0]).val() != "") {
+                if (times == "") {
+                    times = $(obj[0]).val().split(" - ")[0].substring(0, 5) + "-" + $(obj[0]).val().split(" - ")[1].substring(0, 5)
+                } else {
+                    times = times + ", " + $(obj[0]).val().split(" - ")[0].substring(0, 5) + "-" + $(obj[0]).val().split(" - ")[1].substring(0, 5)
+                }
+            }
+        });
+        proxy.time = times == "" ? "" : "(" + times + ")";
+    }
+</script>

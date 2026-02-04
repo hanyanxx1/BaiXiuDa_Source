@@ -1,0 +1,93 @@
+<div class="layui-form" lay-filter="layuiadmin-form-project_task_recovery" style="padding: 0px 0 0 0;">
+    <!-- <div class="layui-form-item">
+        <label class="layui-form-label">接听类型</label>
+        <div class="layui-input-block">
+          <input type="radio" lay-filter="r_type" name="r_type" value="0" title="未接电话" checked="">
+          <input type="radio" lay-filter="r_type" name="r_type" value="1" title="已接电话">
+        </div>
+      </div> -->
+    <div id="recovery_noCall_id">
+
+    </div>
+    <div id="recovery_id">
+
+    </div>
+    <div class="layui-inline" id="recovery_billsec" style="display: none;">
+
+        <label class="layui-form-label"></label>
+
+        <div class="layui-input-inline">
+
+            <input type="text" id="rec_billsec" name="billsec" placeholder="接听时长大于多少秒" autocomplete="off" class="layui-input">
+
+        </div>
+
+    </div>
+    <!-- <div class="layui-form-item">
+        <label class="layui-form-label">创建新任务：</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="type" lay-skin="primary" title="">
+        </div>
+        <div class="layui-form-mid layui-word-aux">勾选后，系统会自动创建一个任务，并把数据回收至新任务</div>
+    </div> -->
+    <div class="layui-form-item" style="margin-top: 10px;">
+        <label class="layui-form-label">任务类型</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="type" title="创建新任务">
+        </div>
+    </div>
+    <div id="ringCauses_id">
+        <div class="layui-form-item">
+
+            <label class="layui-form-label">剔除通话状态</label>
+            <div style="display: flex; width: 500px; flex-wrap: wrap;">
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[ai_ass]" lay-skin="primary" title="AI助手">
+                </div>
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[hold_on]" lay-skin="primary" title="正在通话">
+                </div>
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[busy_now]" lay-skin="primary" title="用户正忙">
+                </div>
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[not_answer]" lay-skin="primary" title="无人接听">
+                </div>
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[power_off]" lay-skin="primary" title="关机" checked>
+                </div>
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[voicemail]" lay-skin="primary" title="智能助理">
+                </div>
+
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[does_not_exits]" lay-skin="primary" title="空号" checked>
+                </div>
+                <div class="layui-input-inline" style="width: 130px;">
+                    <input type="checkbox" name="ringStatus[out_of_service]" lay-skin="primary" title="停机" checked>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="ringStatus[not_in_service]" lay-skin="primary" title="暂停服务" checked>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+
+        </div>
+    </div>
+
+
+    <div class="layui-form-item" style="display: none;">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" id="project_task_recovery" lay-submit
+                lay-filter="LAY-user-front-project_task-recovery-submit" value="提交" class="layui-btn">
+        </div>
+    </div>
+
+</div>

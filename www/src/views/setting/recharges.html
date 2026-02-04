@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist">
+					<div class="layui-form-item">
+
+						<div class="layui-inline">
+							<label class="layui-form-label">用户名</label>
+							<div class="layui-input-inline">
+								<select name="id" id="admin_id_recharges">
+									<option value="0">--请选择--</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="layui-btn-group" style="float: right;">
+							<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit lay-filter="LAY-user-front-search-recharges">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+          </button>
+						</div>
+					</div>
+				</div>
+
+				<div class="layui-card-body">
+
+					<table id="LAY-user-manage-recharges" lay-filter="LAY-user-manage-recharges"></table>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<script>
+		layui.use(['admin', 'table'], function() {
+			var table = layui.table;
+			form = layui.form;
+			var $ = layui.$;
+			view = layui.view;
+			admin = layui.admin;
+
+			$(function() {
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "super_admin/admin/list",
+					dataType: 'json',
+					success: function(res) {
+						var data = res.data;
+						for(var i = 0; i < data.length; i++) {
+							$("#admin_id_recharges").append("<option value=" + data[i].id + ">" + data[i].name + "</option>");
+						}
+
+						layui.form.render("select");
+					}
+				});
+			})
+
+			table.render({
+				method:"post",
+				elem: '#LAY-user-manage-recharges',
+				url: layui.setter.configUrl + 'super_admin/recharge/grid',
+				height: 'full-180',
+				where:{
+					id:0
+				},
+				cols: [
+						[{
+							type: 'checkbox'
+						}, {
+							field: 'type',
+							title: '充值类型',
+							align: 'center',
+							templet:function(d){
+								if(d.type==0){
+									return "话费充值";
+								}else{
+									return "AI充值";
+								}
+							}
+						},  {
+							field: 'recharge_money',
+							title: '充值金额(元)',
+							sort: true,
+							align: 'center'
+						},{
+							field: 'before_money',
+							title: '充值前余额(元)',
+							align: 'center'
+						}, {
+							field: 'datetime',
+							title: '充值时间',
+							align: 'center'
+						}, {
+							field: 'admin_name',
+							title: '用户',
+							align: 'center'
+						}, {
+							field: 'remark',
+							title: '备注',
+							sort: true,
+							align: 'center'
+						}]
+					]
+
+					,
+				page: true
+			});
+			form.render(null, 'layadmin-userfront-formlist');
+
+			//监听搜索
+			form.on('submit(LAY-user-front-search-recharges)', function(data) {
+				var field = data.field;
+
+				//执行重载
+				table.reload('LAY-user-manage-recharges', {
+					where: field,
+					page: {
+						curr: 1
+					}
+				});
+			});
+
+		});
+	</script>
+
+</html>

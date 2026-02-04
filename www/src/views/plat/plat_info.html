@@ -1,0 +1,1020 @@
+<script type="text/html" template>
+	<link rel="stylesheet" href="{{ layui.setter.base }}style/template.css?v={{ layui.admin.v }}-1" media="all">
+</script>
+<!-- <script type="text/javascript" src="js/echarts.js"></script> -->
+<!--<div class="layui-card layadmin-header">
+	<div class="layui-breadcrumb" lay-filter="breadcrumb">
+		<a lay-href="">平台设置</a>
+		<a><cite>平台</cite></a>
+	</div>
+</div>-->
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15" id="hone_all">
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-cyan layuiadmin-badge">系统并发
+					</span>
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+					<p class="layuiadmin-big-font" id="zdbf"></p>
+					<p>
+						总并发
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-blue layuiadmin-badge">授权坐席数(个)</span>
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+					<p class="layuiadmin-big-font" id="sqzx"></p>
+					<p>
+						坐席数量
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<div class="layui-card-header">
+					<span class="layui-badge layui-bg-green layuiadmin-badge">有效日期</span>
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="yxrq"></p>
+					<p>
+						使用期限
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-orange layuiadmin-badge">服务有效期</span>
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="fwrq"></p>
+					<p>
+						服务期限
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<!--<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-orange layuiadmin-badge">每秒钟会话数(个)</span>
+				</div>-->
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="registrations"></p>
+					<p>
+						在线坐席数
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<!--<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-orange layuiadmin-badge">每秒钟会话数(个)</span>
+				</div>-->
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="actives"></p>
+					<p>
+						实时会话
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<!--<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-orange layuiadmin-badge">每秒钟会话数(个)</span>
+				</div>-->
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="totals"></p>
+					<p>
+						累计会话
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<!--<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-orange layuiadmin-badge">每秒钟会话数(个)</span>
+				</div>-->
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<p class="layuiadmin-big-font" id="caps"></p>
+					<p>
+						每秒并发数
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-sm6 layui-col-md3">
+			<div class="layui-card">
+				<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-blue layuiadmin-badge">CPU使用率</span>
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+					<p class="layuiadmin-big-font" id="use_cpu"></p>
+					<p>
+
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-sm6 layui-col-md9">
+			<div class="layui-card">
+				<div class="layui-card-header">
+
+					<span class="layui-badge layui-bg-green layuiadmin-badge">运行时间</span>
+				</div>
+				<div class="layui-card-body layuiadmin-card-list">
+
+					<!-- <h2><span id="runTime"></span></h2> -->
+					<p class="layuiadmin-big-font" id="runTime"></p>
+					<p>
+
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- <div class="layui-col-md3">
+			<div class="layui-card">
+				<div class="layui-card-header">内存占用</div>
+				<div class="layui-card-body layadmin-takerates" id="memory">
+				</div>
+			</div>
+		</div> -->
+
+		<!-- <div class="layui-col-md3">
+			<div class="layui-card">
+				<div class="layui-card-header">磁盘</div>
+				<div class="layui-card-body layadmin-takerates" id="disk">
+				</div>
+			</div>
+		</div> -->
+
+
+
+	</div>
+</div>
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class=" layui-col-md6" style="margin-top: 0px;">
+			<div class="layui-card" style="height: 380px;overflow: hidden;">
+				<div class="layui-card-header">今日消费</div>
+				<div class="layui-card-body">
+
+					<table id="LAY-user-manage-plat-recharge" lay-filter="LAY-user-manage-plat-recharge"></table>
+
+					<script type="text/html" id="rechargeDemo">
+						<a class="layui-btn layui-btn-xs" lay-event="quick_login">登陆</a>
+					</script>
+
+				</div>
+			</div>
+		</div>
+
+		<div class=" layui-col-md6">
+			<div class="layui-card">
+				<div class="layui-card-body">
+
+					<div class="wrap">
+						<div style="width: 100%; display: flex; align-items: center; margin-bottom: 10px;">
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+	</div>
+</div>
+<style>
+	.layui-layout-body {
+		overflow-y: auto;
+	}
+
+	.layui-form-label {
+		width: 90px;
+	}
+
+	.adiv {
+		line-height: 16px;
+		text-align: center;
+		padding: 3px;
+		border-radius: 4px;
+		border: 0px solid;
+		cursor: pointer;
+	}
+
+	.wrap {
+		width: 100%;
+		/* height: 100%; */
+		display: flex;
+		flex-wrap: wrap;
+		overflow: auto;
+	}
+
+	/* //隐藏分页条 */
+	.active6_gateway_table {
+		.layui-table-page {
+			display: none;
+		}
+	}
+
+	.oneTdClass {
+		.layui-input-block {
+			margin-left: 0px;
+		}
+	}
+
+	.twoTdClass {
+		display: flex;
+		border: 0;
+	}
+
+	.active4Class .layui-table .layui-table-cell {
+		height: auto;
+		word-break: normal;
+		display: block;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		overflow: hidden;
+		padding: 0 10px !important;
+	}
+</style>
+<script>
+	var echarts2 = echarts;
+	var intervalControlAllData;
+	var echartsMapData = [];
+	var active6IsHaveData = 0; //判断实时监控网关是否有数据
+	var echartsTitleMap = {
+		concurrencyList: '今日话务'
+	}
+	var colors = ['#5a6fc0', '#9eca7f', '#f2ca6b', '#de6e6a', '#85bedb']
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = date.getMonth() + 1;
+	if (month < 10) {
+		month = "0" + month;
+	}
+	var day = date.getDate();
+	if (day < 10) {
+		day = "0" + day;
+	}
+	timestamp = year + "-" + month + "-" + day;
+	layui.use(['admin', 'form', 'carousel', 'table'], function () {
+		element = layui.element;
+		router = layui.router();
+		view = layui.view;
+		table = layui.table;
+
+		form = layui.form;
+		var $ = layui.$,
+			admin = layui.admin,
+			carousel = layui.carousel,
+		device = layui.device();
+
+		// 监听页面关闭事件
+		var admin = layui.admin;
+
+		// 监听页面关闭事件
+		admin.events.beforeTabClose = function (obj) {
+			// 在页面关闭前执行的操作
+			// 比如保存数据、提示用户等
+			console.log('页面即将关闭:', obj.title);
+			// 返回false可以阻止页面关闭
+			// return false;
+		};
+
+		// 绑定页面关闭事件
+		admin.on('beforeTabClose', function (obj) {
+			admin.events.beforeTabClose(obj);
+		});
+		// 		$(window).on('beforeunload', function() {
+		// 			claerAllDomAndInterval()
+		// });
+		claerAllDomAndInterval()
+		echarts_init();
+
+		//$(function () {
+		var service_period = "";
+
+		let isTo = 0;
+		if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] == 'super_admin') {
+			isTo = 1;
+		} else {
+			if (window.sessionStorage.getItem("own") == 'super_admin') {
+				isTo = 1;
+			}
+		}
+		if (isTo == 1) {
+
+
+			admin.req({
+				type: "post",
+				url: layui.setter.configUrl + 'super_admin/message',
+				async: false,
+				done: function (res) {
+					//console.log(res);
+					service_period = res.data.service_period;
+					$("#zdbf").html(res.data.concurrency);
+					$("#sqzx").html(res.data.authorization_seats);
+					$("#yxrq").html(res.data.use_period);
+					$("#fwrq").html(res.data.service_period);
+
+					$("#registrations").html(res.data.registrations);
+					$("#actives").html(res.data.actives);
+					$("#totals").html(res.data.totals);
+					$("#caps").html(res.data.caps);
+
+
+					//$("#use_cpu").html(res.data.idleCpu);
+					let use = res.data.cpuUsage;
+					var cpuNum = parseInt(use);
+					if (cpuNum >= 60) {
+						$("#use_cpu").html(use + "%").attr("style", "color: red;");
+					} else {
+						$("#use_cpu").html(use + "%").attr("style", "color: green;");
+					}
+					// $("#runTime").html(res.data.runTime.replace("years", "年").replace("days",
+					// 		"日").replace("hours", "时").replace("minutes", "分").replace(
+					// 		"seconds", "秒").replace("day", "日").replace("hour", "时")
+					// 	.replace("minute", "分").replace("second", "秒"));
+
+					$("#runTime").html(res.data.runTime)
+					$("#xlh").html(res.data.serial);
+					$("#osName").html(res.data.osName);
+
+					var disks = res.data.disk; //磁盘
+					var memory = res.data.memory; //内存
+					var m_usable = 0; //内存使用
+					var m_total = 0; //内存总量
+					if (memory.usable.indexOf("G") != -1) {
+						m_usable = (memory.usable).replace("G", "") * 1024;
+					} else {
+						m_usable = memory.usable.replace("M", "");
+					}
+
+					if (memory.total.indexOf("G") != -1) {
+						m_total = (memory.total).replace("G", "") * 1024;
+					} else {
+						m_total = memory.total.replace("M", "");
+					}
+
+					// $("#memory").empty();
+					// $("#memory").append('<div class="layui-progress" lay-showPercent="yes">' +
+					// 	'<h3>' + memory.usable + ' / ' + memory.total +
+					// 	'</h3>' +
+					// 	'<div class="layui-progress-bar layui-bg-red" lay-percent="' + ((
+					// 		m_usable / m_total) * 100).toFixed(2) + '%"></div></div>');
+
+					// <div class="layui-col-md3">
+					// 	<div class="layui-card">
+					// 		<div class="layui-card-header">内存占用</div>
+					// 		<div class="layui-card-body layadmin-takerates" id="memory">
+					// 		</div>
+					// 	</div>
+					// </div>
+					var temp = "";
+						if (disks.length > 1) {
+							temp += '<div class="layui-col-md3">';
+						} else {
+							temp += '<div class="layui-col-md6">';
+						}
+						temp += '<div class="layui-card"><div class="layui-card-header">内存占用</div><div class="layui-card-body layadmin-takerates">';
+							temp += '<div class="layui-progress" lay-showPercent="yes">' +
+						'<h3>' + memory.usable + ' / ' + memory.total +
+						'</h3>' +
+						'<div class="layui-progress-bar layui-bg-red" lay-percent="' + ((
+							m_usable / m_total) * 100).toFixed(2) + '%"></div></div>';
+							temp += '</div></div></div>';
+						$("#hone_all").append(temp);
+
+					var d_usable = 0; //磁盘使用
+					var d_total = 0; //磁盘总量
+					var d_parent = 0;
+					// $("#disk").empty();
+					//	$("#disk_div").empty();
+					for (var i = 0; i < disks.length; i++) {
+						if (disks[i].usable.indexOf("G") != -1) {
+							d_usable = (disks[i].usable).replace("G", "") * 1024;
+						} else {
+							d_usable = disks[i].usable.replace("M", "");
+						}
+
+						if (disks[i].total.indexOf("G") != -1) {
+							d_total = (disks[i].total).replace("G", "") * 1024;
+						} else {
+							d_total = disks[i].total.replace("M", "");
+						}
+
+						// <div class="layui-col-md3">
+						// 	<div class="layui-card">
+						// 		<div class="layui-card-header">磁盘</div>
+						// 		<div class="layui-card-body layadmin-takerates" id="disk">
+						// 		</div>
+						// 	</div>
+						// </div>
+
+						var temp = "";
+						if (disks.length > 1) {
+							temp += '<div class="layui-col-md3">';
+						} else {
+							temp += '<div class="layui-col-md6">';
+						}
+						temp += '<div class="layui-card"><div class="layui-card-header">磁盘( ' + disks[i].path + ' )</div><div class="layui-card-body layadmin-takerates">';
+						temp +=
+							'<div class="layui-progress" lay-showPercent="yes">' +
+							'<h3>' + disks[i].path + '（' + disks[i].usable + ' / ' +
+							disks[i].total +
+							'<span lay-tips="增长" lay-offset="-15"></span>）</h3>' +
+							'<div class="layui-progress-bar layui-bg-red" lay-percent="' +
+							((d_usable / d_total) * 100).toFixed(2) + '%"></div></div>';
+						temp += '</div></div></div>';
+						$("#hone_all").append(temp);
+
+
+
+						d_parent = ((d_usable / d_total) * 100).toFixed(2);
+						if (d_parent > 90) {
+							layer.msg("<span style='color:red'>磁盘使用空间不足，请注意</span>", {
+								offset: "50px",
+								icon: 7,
+								time: 10 * 1000
+							})
+						}
+
+					}
+					element.render();
+
+
+					if (day_time(res.data.use_period) <= 7) {
+						layer.msg("<span style='color:red'>授权即将到期，请注意</span>", {
+							offset: "50px",
+							icon: 7,
+							time: 10 * 1000
+						})
+					}
+
+
+
+
+				}
+			})
+
+			//超管时,提示服务到期提醒
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] == "super_admin") {
+				var showtime;
+				var date = new Date();
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				if (month < 10) {
+					month = "0" + month;
+				}
+				var day = date.getDate();
+				if (day < 10) {
+					day = "0" + day;
+				}
+
+				var timestamp = year + "/" + month + "/" + day;
+				if (service_period != "") {
+					showtime = service_period.replace("-", "/").replace("-", "/");
+					if (timestamp > showtime) {
+						layer.open({
+							type: 1,
+							title: false //不显示标题栏
+							,
+							//closeBtn: false,
+							area: '400px;',
+							shade: 0.8,
+							id: 'LAY_layuipro', //设定一个id，防止重复弹出
+
+							btn: ['获取联系方式'],
+							btnAlign: 'c',
+							moveType: 1, //拖拽模式，0或者1
+							content: '<div style="padding: 20px; line-height: 40px; background-color: #393D49; color: #fff;font-size:15px; font-weight: 300;">注意 ! ! !<br>亲爱的用户您好：<br>  &nbsp;&nbsp;&nbsp;您的系统已于：' +
+								service_period + '日技术服务到期，请您联系服务商续费获得技术支持服务。</div>',
+							success: function (layero) {
+								var btn = layero.find('.layui-layer-btn');
+								btn.find('.layui-layer-btn0').attr({
+									href: 'http://www.psycall.cn',
+									target: '_blank'
+								});
+							}
+						});
+					}
+
+				}
+			}
+		}
+		//})
+
+		table.render({
+			method: 'post',
+			elem: '#LAY-user-manage-plat-recharge',
+			url: layui.setter.configUrl + 'super_admin/admin/getToday',
+			height: "310",
+			// parseData: function (res) {
+			// 	var l_data = [];
+			// 	var result;
+			// 	for (let i = 0; i < res.data.length; i++) {
+			// 		if (res.data[i].consumes > 0 || res.data[i].actives>0) {
+			// 			result = {};
+			// 			result['id'] = res.data[i].id;
+			// 			result['name'] = res.data[i].name;
+			// 			result['consumes'] = res.data[i].consumes;
+			// 			result['balance'] = res.data[i].balance;
+			// 			result['company'] = res.data[i].company;
+			// 			result['actives'] = res.data[i].actives;
+			// 			l_data.push(result);
+			// 		}
+			// 	}
+
+			// 	return {
+			// 		"code": 0, //解析接口状态
+			// 		"msg": "success", //解析提示文本
+			// 		"count": l_data.length, //解析数据长度
+			// 		"data": l_data //解析数据列表
+			// 	};
+			// },
+			cols: [
+				[{
+					field: 'name',
+					title: '用户名',
+					fixed: 'left',
+					align: 'center',
+					minWidth: 140,
+					templet: function (d) {
+						return '<a href="javaScript:;" title="' + d.company + '">' + d.name +
+							'</a>'
+					}
+				}, {
+					field: 'consumes',
+					title: '今日消费(元)',
+					align: 'center',
+					minWidth: 100,
+					templet: function (d) {
+						if (d.consumes > 0) {
+							return '<span style="color: red;">' + d.consumes + '</span>';
+						} else {
+							return d.consumes;
+						}
+					}
+				}, {
+					field: 'balance',
+					title: '余额(元)',
+					align: 'center',
+					minWidth: 95,
+					templet: function (d) {
+						if (d.balance > 0) {
+							return '<span style="color: green;">' + d.balance + '</span>';
+						} else {
+							return '<span style="color: red;">' + d.balance + '</span>';
+						}
+					}
+				}, {
+					field: 'actives',
+					title: '实时会话',
+					align: 'center',
+					minWidth: 140
+				}, {
+					field: 'caozuo',
+					title: '操作',
+					toolbar: '#rechargeDemo',
+					fixed: 'right',
+					align: 'center',
+					minWidth: 90
+				}]
+			]
+		});
+
+
+		//行监听工具
+		table.on('tool(LAY-user-manage-plat-recharge)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'quick_login') { //登陆
+				layer.load();
+				admin.req({
+					type: "post",
+					url: layui.setter.configUrl + 'super_admin/admin/quick_login' //实际使用请改成服务端真实接口
+					,
+					data: {
+						id: data.id
+					},
+					done: function (res) {
+						layer.closeAll('loading');
+						let result = res.data;
+						result.name = data.name;
+						result.allow_down = true;
+						result.allow_inspection = true;
+						result.permission = 1;
+						//新方式的存储token
+						layui.data(setter.tableName, {
+							key: data.name,
+							value: result
+						});
+
+						// //请求成功后，写入 access_token
+						// layui.data(setter.tableName, {
+						// 	key: setter.request.tokenName,
+						// 	value: res.data.access_token
+						// });
+						// //保存角色,用于判断坐席与管理员
+						// layui.data(setter.tableName, {
+						// 	key: "role",
+						// 	value: res.data.role
+						// });
+
+						window.sessionStorage.removeItem("loads");
+						//window.sessionStorage.setItem("role_names", res.data.role);
+						window.sessionStorage.removeItem("own");
+						window.sessionStorage.setItem("routerName", data.name);
+						setTimeout(() => {
+							window.sessionStorage.removeItem("routerName");
+						}, 1000);
+						window.open("../start/index.html#/base/home");
+						window.sessionStorage.setItem("own", 'super_admin');
+						layui.setter.name = layui.setter.name;
+					}
+
+				});
+			}
+
+		})
+
+
+
+
+
+		form.on('submit(LAY-user-front-secret-submit)', function (data) {
+			admin.req({
+				url: layui.setter.configUrl + 'super_admin/authorize',
+				data: {
+					secret: $("#secret").val()
+				},
+				done: function (res) {
+					layer.msg("操作成功", {
+						icon: 1
+					});
+
+				}
+			})
+		})
+
+
+		//服务器
+		$("#pngsd").click(function () {
+			layer.confirm('重启操作可能导致现有通话中断，请确认操作？', function (index) {
+
+				admin.req({
+					type: "post",
+					url: layui.setter.configUrl + '/super_admin/restart',
+					done: function (res) {
+						layer.msg("正在重启中，请稍后", {
+							icon: 1
+						});
+					}
+				})
+
+			})
+
+		})
+
+	});
+
+	function day_time(data) {
+		var minutes = 1000 * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+
+		var d = new Date();
+		var t = d.getTime();
+		var x = new Date(data).getTime()
+
+		var y = Math.round((x - t) / days);
+		return y;
+	}
+
+
+	//渲染实时监控图
+	function echarts_init() {
+		const date1 = new Date()
+		date1.setMinutes(date1.getMinutes() - 1440)
+		const date2 = new Date()
+		$.ajax({
+			type: 'post',
+			url: layui.setter.configUrl + "super_admin/getAllActives",
+			dataType: 'json',
+			async: true,
+			headers: {
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+			},
+			data: {
+				startTime: timestamp + " 00:00:00",
+				endTime: formatDateToString(date2)
+			},
+			success: function (res) {
+
+				// 清除图表自适应监听
+				echartsMapData.forEach(echartsMapItem => {
+					echartsMapItem.resizeObserver && echartsMapItem.resizeObserver.disconnect()
+				})
+				const allMonitorData = formDataAllMonitorData(res.data.map(item => {
+					console.log(item.statNewVOS, '11111');
+					item.statNewVOS = [item.statNewVOS.concurrencyList]
+					return item
+				}))
+
+				echartsMapData = initEchartsMap(allMonitorData)
+				const appDom = echartsMapData.reduce((acc, curr) => acc + `<div id="${curr.domId}" style="width: 100%; height: 350px;"></div>`, '')
+				$(".wrap").append(appDom);
+				const nowTime = new Date().getTime();
+				echartsMapData.forEach((item) => {
+					item.data.forEach(lineItem => {
+						!lineItem.data && (lineItem.data = [])
+						const lineLastTime = lineItem.data[lineItem.data.length - 1][0]
+						if (nowTime - lineLastTime > 30000 || lineItem.data.length === 0) {
+							lineItem.data.push([nowTime, 0])
+						}
+					})
+					initEcharts(item)
+				})
+				realTimeRendering()
+			}
+		});
+
+
+	}
+
+
+	//实时渲染赛数据
+	function realTimeRendering() {
+		if (intervalControlAllData) {
+			clearInterval(intervalControlAllData)
+		}
+		let allMonitorData;
+		intervalControlAllData = setInterval(async () => {
+			$.ajax({
+				type: 'post',
+				url: layui.setter.configUrl + "super_admin/getNewAllActive",
+				dataType: 'json',
+				async: false,
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				data: {
+					project_id: $("#project_active").val()
+				},
+				success: function (res) {
+
+					// allMonitorData = formDataAllMonitorData(res.data)
+					allMonitorData = formDataAllMonitorData(res.data.map(item => {
+						console.log(item.statNewVOS, '11111');
+						item.statNewVOS = [item.statNewVOS.concurrencyList]
+						return item
+					}))
+				}
+			});
+
+			// 数据处理----------------------------------------
+
+			echartsMapData.forEach(echartsMapDataItem => {
+				echartsMapDataItem.data.forEach(gateItem => {
+					let nowDateFromDB = new Date().getTime();
+					if (!echartsMapDataItem.domId) {
+						return;
+					}
+					const findGateWay = allMonitorData[echartsMapDataItem["domId"]].find((allMonitorDataItem) => {
+						allMonitorDataItem.data && (nowDateFromDB = allMonitorDataItem.data[0][0] || nowDateFromDB)
+						return allMonitorDataItem.gateway_id === gateItem.gateway_id && allMonitorDataItem.gatewayName === gateItem.gatewayName
+					})
+					if (findGateWay) {
+						gateItem.data.push(...findGateWay.data)
+					} else {
+						gateItem.data.push([nowDateFromDB, 0])
+					}
+				})
+			})
+			// 数据渲染------------------------------------------
+			echartsMapData.forEach(item => {
+				item.dom.setOption({
+					series: item.data
+				})
+			})
+		}, 10000)
+		window.sessionStorage.setItem("platInfo_interval",intervalControlAllData);
+	}
+
+
+	// 渲染单表
+	function initEcharts(echartsMapItem) {
+		const echartsDom = document.getElementById(echartsMapItem.domId)
+		echartsMapItem.dom = echarts2.init(echartsDom)
+		echartsMapItem.resizeObserver = new ResizeObserver(() => {
+			echartsMapItem.dom.resize()
+		})
+		echartsMapItem.resizeObserver.observe(echartsDom)
+
+		const now = new Date()
+		const startOfDay = new Date()
+		startOfDay.setHours(0, 0, 0, 0)
+		const timeDiff = now - startOfDay
+		const minutesDiff = Math.floor(timeDiff / 1000 / 60)
+		const dataZoomRate = 100 - (30 / minutesDiff) * 100
+		const option = {
+			title: {
+				text: echartsMapItem.title,
+				left: 'center'
+			},
+			grid: {
+				left: 50,
+				right: 40
+			},
+			tooltip: {
+				trigger: 'axis',
+				axisPointer: {
+					animation: false
+				}
+			},
+			dataZoom: [
+				{
+					type: 'inside',
+					start: dataZoomRate,
+					end: 100
+				},
+				{
+					start: 0,
+					end: 100
+				}
+			],
+			legend: {
+				data: echartsMapItem.data.map((item) => item.name),
+				top: '28px',
+				type: 'scroll',
+				pageButtonPosition: 'inside',
+				textStyle: {
+					fontSize: 12
+				}
+			},
+			xAxis: {
+				type: 'time',
+				splitLine: {
+					show: true
+				},
+				axisLabel: {
+					rotate: 15,
+					formatter: function (value) {
+						return `${new Date(value).toLocaleString().split(' ')[1]}`
+					}
+				}
+			},
+			yAxis: {
+				type: 'value',
+				boundaryGap: [0, '100%'],
+				splitLine: {
+					show: true
+				}
+			},
+			series: echartsMapItem.data
+		}
+		echartsMapItem.dom.setOption(option, true)
+	}
+
+
+	// 格式化后端数据 表包裹线
+	function formDataAllMonitorData(allMonitorData) {
+		return allMonitorData.reduce((acc, curr) => {
+			for (const key in curr.statNewVOS) {
+				if (acc[key]) {
+					acc[key].push({
+						gateway_id: curr.gateway_id,
+						gatewayName: curr.gatewayName,
+						gatewayUserName: curr.gatewayUserName,
+						data: curr.statNewVOS[key]
+					})
+				} else {
+					acc[key] = [
+						{
+							gateway_id: curr.gateway_id,
+							gatewayName: curr.gatewayName,
+							gatewayUserName: curr.gatewayUserName,
+							data: curr.statNewVOS[key]
+						}
+					]
+				}
+			}
+			return acc
+		}, {})
+	}
+
+	// 初始化折线表折线映射数据
+	function initEchartsMap(allMonitorData) {
+		const echartsMapData = Object.entries(allMonitorData).map(([key, value]) => {
+			return { name: key, data: value }
+		})
+		return echartsMapData.map((item) => {
+			console.log(item);
+			return {
+				dom: null,
+				domId: item.name,
+				// title: echartsTitleMap[item.name],
+				title: "今日话务",
+				data: item.data.filter(item => item.gatewayName === '总数').map((itemData, index) => {
+					let name = itemData.gatewayName
+					if (
+						itemData.gatewayName === '总数' &&
+						(item.name === 'callList' || item.name === 'transferList')
+					) {
+						name = '总占比'
+					} else {
+						name = itemData.gatewayUserName
+							? `${itemData.gatewayUserName}(${itemData.gatewayName})`
+							: itemData.gatewayName
+						name = name ?? itemData.gateway_id
+					}
+					return {
+						name: String(name ?? ''),
+						gatewayName: itemData.gatewayName ?? '',
+						gateway_id: itemData.gateway_id ?? '',
+						type: 'line',
+						showSymbol: false,
+						data: itemData.data ?? [[new Date().getTime(), 0]],
+						lineStyle: {
+							color: colors[index % 5]
+						}
+					}
+				})
+			}
+		})
+	}
+
+	function claerAllDomAndInterval() {
+		console.log("触发定时器关闭");
+		// 清除数据监控定时器
+		if (intervalControlAllData) {
+			clearInterval(intervalControlAllData)
+		}
+		echartsMapData.forEach((item) => {
+			if (item.dom) {
+				item.dom.clear()
+				item.dom.dispose()
+				item.dom = null
+			}
+		})
+	}
+
+
+	function formatDateToString(date) {
+		const dateDay = date.toLocaleString().split(' ')[0]
+		const datetime = date.toLocaleString().split(' ')[1]
+		const dateDayMap = dateDay.split('/')
+		dateDayMap[1] = dateDayMap[1].toString().padStart(2, '0')
+		dateDayMap[2] = dateDayMap[2].toString().padStart(2, '0')
+		return dateDayMap.join('-') + ' ' + datetime
+	}
+</script>

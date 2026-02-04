@@ -1,0 +1,404 @@
+<div class="layui-fluid">
+    <div class="layui-card">
+		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+			<ul class="layui-tab-title">
+			  <li class="layui-this">防火墙</li>
+			  <li>地域围栏</li>
+			</ul>
+			<div class="layui-tab-content">
+			  	<div class="layui-tab-item layui-show">
+					<div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist-firewall">
+						<div class="layui-form-item">
+							<div class="layui-inline">
+								<!-- <label class="layui-form-label"></label> -->
+								<div class="layui-input-inline">
+									<input type="text" name="addr" placeholder="地址" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+			
+							<div class="layui-inline">
+								<!-- <label class="layui-form-label">类型</label> -->
+								<div class="layui-input-inline">
+									<select name="action" id="action">
+										<option value="">授权策略</option>
+											<option value="DROP">拒绝</option>
+											<option value="ACCEPT">允许</option>
+										
+									</select>
+								</div>
+							</div>
+			
+							<div class="layui-btn-group" style="float: right;">
+								<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit lay-filter="LAY-user-front-search-firewall">
+									<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+								  </button>
+								<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加" data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+								<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger" title="删除" data-type="batchdel"> <i class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+							</div>
+			
+						</div>
+					</div>
+			
+					<div class="layui-card-body">
+						<table id="LAY-user-manage-firewall" lay-filter="LAY-user-manage-firewall"></table>
+					</div>
+			  	</div>
+				<div class="layui-tab-item">
+					<div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist-region">
+						<div class="layui-form-item">
+
+						
+						<div class="layui-btn-group" style="float: right;">
+							<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit lay-filter="LAY-user-front-search-region">
+								<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+							  </button>
+							<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加" data-type="addregion"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+						</div>
+					</div>
+					</div>
+					<div class="layui-card-body">
+						<table id="LAY-user-manage-region" lay-filter="LAY-user-manage-region"></table>
+						<script type="text/html" id="barDemoRegion">
+							<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="deleteRegion">删除</a>
+						</script>
+					</div>
+				</div>
+			</div>
+		  </div> 
+
+
+
+        
+    </div>
+</div>
+<style>
+	.layui-layer-content {
+		overflow: visible !important;
+	}
+</style>
+<script>
+    layui.use(['admin', 'table'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+        table.render({
+			method: "post",
+			elem: '#LAY-user-manage-firewall',
+			url: layui.setter.configUrl + "super_admin/firewall/grid",
+			height: 'full-250',
+			where: {
+				action: '',
+				addr: ""
+			},
+			cols: [
+				[{
+						type: 'checkbox'
+					},  {
+						field: 'action',
+						title: '授权策略',
+						align: 'center',
+                        templet:function(d){
+                            if (d.action == 'ACCEPT') {
+                                return "<span style='color:green'>允许</span>";
+                            }else{
+                                return "<span style='color:red'>拒绝</span>";
+                            }
+                        }
+					}, {
+						field: 'priority',
+						title: '优先级',
+						align: 'center'
+					},{
+						field: 'addr',
+						title: '授权地址',
+						align: 'center',
+					},{
+						field: 'region',
+						title: '授权地区',
+						align: 'center',
+					}, {
+						field: 'stamp',
+						title: '日期',
+						align: 'center'
+					}, {
+						field: 'remark',
+						title: '备注',
+						align: 'center'
+					}
+				]
+			],
+
+			page: true,
+		});
+
+		form.render(null, 'layadmin-userfront-formlist-firewall');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-firewall)', function (data) {
+			var field = data.field;
+
+			//执行重载
+			table.reload('LAY-user-manage-firewall', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-region',
+			url: layui.setter.configUrl + "super_admin/fence/grid",
+			height: 'full-250',
+			parseData:function(obj){
+				var nodes = obj.data.map((item)=>{
+					return {
+						"region":item
+					}
+				})
+				return {
+					code:0,
+					msg:"success",
+					count :obj.data.length,
+					data: nodes
+				}
+			},
+			cols: [
+				[{
+						field: 'region',
+						title: '地区',
+						align: 'center'
+					}, {
+						field: 'caozuo',
+						title: '操作',
+						toolbar: '#barDemoRegion',
+						fixed: 'right',
+						align: 'center',
+						minWidth: 180
+					}
+				]
+			],
+			page: false,
+		});
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-region)', function (data) {
+			var field = data.field;
+
+			//执行重载
+			table.reload('LAY-user-manage-region', {
+				
+			});
+		});
+
+		//行监听工具
+		table.on('tool(LAY-user-manage-region)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'deleteRegion') {
+				layer.confirm('确定删除吗？', {
+					icon: 3
+				}, function (index) {
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + "super_admin/fence/delete",
+						//async: true,
+						dataType: "json",
+						data: {
+							fence: data.region
+						},
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("删除成功", {
+									icon: 1
+								});
+								table.reload('LAY-user-manage-region');
+							} else {
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+					});
+				})
+
+				
+			}
+
+		})
+//事件
+var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-firewall'),
+					checkData = checkStatus.data; //得到选中的数据
+				var ids = "";
+				var checklen = checkData.length;
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+
+				layer.confirm('确定删除吗？', {
+					icon: 3
+				}, function (index) {
+					layer.load();
+					//执行 Ajax 后重载
+
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + "super_admin/firewall/delete",
+						//async: true,
+						dataType: "json",
+						data: {
+							ids: ids
+						},
+
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("成功删除 " + checkData.length + " 条", {
+									icon: 1
+								});
+								table.reload('LAY-user-manage-firewall');
+							} else {
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+					});
+				});
+			},
+			add: function () {
+				admin.popupRight({
+					title: '添加',
+					area: '500px',
+					id: 'LAY-popup-user-add',
+					success: function (layero, index) {
+						view(this.id).render('plat/firewall/add').done(function () {
+							form.render(null, 'layuiadmin-form-useradmin-firewall');
+
+							//监听提交
+							form.on('submit(LAY-user-front-firewall-add-submit)', function (data) {
+								layer.load();
+								var field = data.field; //获取提交的字段
+								admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +
+											"super_admin/firewall/add",
+										data: field,
+										dataType: "json",
+										success: function (obj) {
+											layer.closeAll('loading');
+											if (obj.data>0) {
+												layer.msg("添加成功", {icon: 1});
+												layui.table.reload('LAY-user-manage-firewall'); //重载表格
+												layer.close(index); //执行关闭 
+											}else{
+                                                layer.msg("操作失败", {icon: 2});
+                                            }
+										}
+									})
+							});
+						});
+					}
+				});
+				return false;
+			},
+			addregion: function () {
+				admin.popupRight({
+					title: '添加地域围栏',
+					area: '600px',
+					id: 'LAY-popup-user-add',
+					success: function (layero, index) {
+						view(this.id).render('plat/firewall/addRegion').done(function () {
+							form.render(null, 'layuiadmin-form-useradmin-region');
+
+							//监听提交
+							form.on('submit(LAY-user-front-region-add-submit)', function (data) {
+								var field = data.field;
+								if(country_name==""){
+									layer.msg("请选择国家", {icon: 2});
+									return false;
+								}
+								let setData = country_name+"|0";
+								if (province_name !="") {
+									setData +=`|${province_name}`;
+								}
+								if (city_name !="") {
+									setData +=`|${city_name}`;
+								}
+								layer.load();
+								admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +
+											"super_admin/fence/add",
+										data: {
+											fence: setData
+										},
+										dataType: "json",
+										success: function (obj) {
+											layer.closeAll('loading');
+											if (obj.data>0) {
+												layer.msg("添加成功", {icon: 1});
+												layui.table.reload('LAY-user-manage-region'); //重载表格
+												layer.close(index); //执行关闭 
+											}else{
+                                                layer.msg("操作失败", {icon: 2});
+                                            }
+										}
+									})
+							});
+						});
+					}
+				});
+				return false;
+			}
+
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+
+
+    })
+
+	function tips1(ip, id) {
+		var node = "#test" + id;
+		var addr = "";
+		admin.req({
+			type: "post",
+			url: layui.setter.configUrl + "common/ipAddr",
+			data: {
+				ip: ip
+			},
+			async: false,
+			success: function (res) {
+				addr = res.data;
+			}
+		})
+		layer.tips("<span>"+addr+"</span>", node, {
+			tips: [1, 'black'],
+			time: false
+		});
+	}
+	function closeTips(){
+		layer.closeAll('tips'); 
+	}
+</script>

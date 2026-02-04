@@ -1,0 +1,182 @@
+<div class="layui-form" lay-filter="layuiadmin-form-relayadd" style="padding: 20px 0 0 0;">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" lay-verify="required" autocomplete="off" placeholder="请输入SIP名称" class="layui-input">
+		</div>
+
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">SIP账号:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="username" name="username" lay-verify="required|characters|gateways_name|siplength" autocomplete="off" placeholder="请输入SIP账号" class="layui-input">
+		</div>
+
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">密码:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="passwd" lay-verify="required|pass|characters" autocomplete="off" placeholder="请输入密碼" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">SIP地址:</label>
+		<div class="layui-input-inline" style="width: 250px;">
+			<input type="text" name="realm" lay-verify="required|characters" autocomplete="off" placeholder="SIP地址" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">对接模式:</label>
+			<div class="layui-input-inline" style="width: 100px;">
+				<select name="register" lay-verify="required" lay-search="">
+
+					<option value="false">对接</option>
+					<option value="true">注册</option>
+					<option value="reverse">反向注册</option>
+
+				</select>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">计费时长:</label>
+		<div class="layui-input-inline" style="width: 150px;">
+			<input type="text" name="cycle" lay-verify="required|number|billing_secs" value="60" autocomplete="off" placeholder="" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">计费费率:</label>
+		<div class="layui-input-inline" style="width: 150px;">
+			<input type="text" name="rate" placeholder="￥" lay-verify="required|number|billing_rates" autocomplete="off" placeholder="" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">语音编码:</label>
+			<div class="layui-input-inline" style="width: 300px;">
+				<!-- <select name="codec" xm-select="audio_codec_add_select" xm-select-height="36px" lay-verify="required" lay-search="">
+					<option value="G729">G729</option>
+					<option value="PCMA">PCMA</option>
+					<option value="PCMU">PCMU</option>
+				</select> -->
+				<div id="codec" class="xm-select-demo"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">DTMF类型:</label>
+			<div class="layui-input-inline" style="width: 100px;">
+				<select name="dtmf_type" lay-verify="required" lay-search="">
+					<option value="none">none</option>
+					<option value="rfc2833">rfc2833</option>
+					<option value="info">info</option>
+					<option value="inband">inband</option>
+
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">主叫改写:</label>
+			<div class="layui-input-inline" style="width: 100px;">
+				<select name="caller_id_in_from" lay-verify="required" lay-search="">
+					<option value="false">禁用</option>
+					<option value="true">启用</option>
+
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">线路上限:</label>
+			<div class="layui-input-inline" style="width: 150px;">
+				<input type="text" name="maxload" value="1000" lay-verify="required|number" autocomplete="off" placeholder="" class="layui-input">
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">用户:</label>
+			<div class="layui-input-inline">
+				<select name="admin_id" id="admin_id_getway" lay-filter="admin_gateway" lay-verify="required" lay-search="">
+					<option value="">--请选择--</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="gateways-add" lay-submit lay-filter="LAY-relaygroundadd-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+
+</div>
+<script>
+	layui.use(['form', 'layedit', 'laydate', 'xmSelect'], function() {
+		var form = layui.form,
+			layer = layui.layer,
+			layedit = layui.layedit,
+			laydate = layui.laydate;
+			var $ = layui.$;
+			xmSelect = layui.xmSelect;
+
+		var demo1 = xmSelect.render({
+            el: '#codec',
+            toolbar: {
+                show: true,
+            },
+            name: 'codec',
+            layVerify: 'required',
+            layVerType: 'tips',
+            data: [{
+                    name: 'G729',
+                    value: 'G729'
+                },
+                {
+                    name: 'PCMA',
+                    value: 'PCMA'
+                },
+                {
+                    name: 'PCMU',
+                    value: 'PCMU'
+                }
+            ]
+        })
+		$(function() {
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "super_admin/admin/list",
+				dataType: 'json',
+				success: function(res) {
+					function sortId(a,  b)  {                    
+							return  a.id  -  b.id;
+						}
+						var data = res.data.sort(sortId);
+					for(var i = 0; i < data.length; i++) {
+						$("#admin_id_getway").append("<option value=" + data[i].id + ">" + data[i].name + "</option>");
+					}
+					layui.form.render("select");
+				}
+			});
+		})
+
+	});
+</script>

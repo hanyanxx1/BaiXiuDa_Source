@@ -1,0 +1,111 @@
+<div class="layui-form" lay-filter="layuiadmin-form-trunkgroup-add" style="padding: 0px 0 0 0;">
+    <div class="layui-form-item">
+		<label class="layui-form-label">名称:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" lay-verify="required" autocomplete="off"
+				placeholder="请输入名称" class="layui-input">
+		</div>
+	</div>
+    <div class="layui-form-item">
+		<label class="layui-form-label">策略:</label>
+		<div class="layui-input-inline">
+			<select id="policy" name="policy">
+                <option value="1">顺序</option>
+                <option value="2">乱序</option>
+            </select>
+		</div>
+	</div>
+    <div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-block">
+			<div id="test1" class="demo-transfer"></div>
+		</div>
+	</div>
+    
+    <blockquote class="layui-elem-quote layui-quote-nm">
+		<span style="color: #cd6864;">中继组提示：</span>
+		
+		<br><span style="color: #cd6864;">1. 当线路不通时(被叫未振铃)自动切换下一条线路</span> 
+		<br><span style="color: #cd6864;">2. 最多支持切换中继20次</span> 
+		<br><span style="color: #cd6864;">3. 坐席手动外呼时只会分配第一条中继</span> 
+	  </blockquote> 
+    
+    <!-- <div class="layui-btn-container">
+        <button type="button" class="layui-btn" lay-demotransferactive="getData">获取右侧数据</button>
+        <button type="button" class="layui-btn" lay-demotransferactive="reload">重载实例</button>
+    </div> -->
+    <div class="layui-form-item" style="display: none;">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" id="trunkgroup_add" lay-submit lay-filter="LAY-user-front-trunkgroup-add-submit"
+                value="提交" class="layui-btn">
+        </div>
+    </div>
+</div>
+<style>
+    .layui-transfer-data{
+        height:100%;
+    }
+    .layui-transfer-box{
+        height:300px !important;
+    }
+</style>
+<script>
+    layui.use(['transfer', 'layer', 'util'], function () {
+        var $ = layui.$
+            , transfer = layui.transfer
+            , layer = layui.layer
+            , util = layui.util;
+
+        
+
+        //模拟数据
+        var data1 = [
+        ]
+
+        admin.req({
+            type: 'post',
+            url: layui.setter.configUrl +
+                'admin/project/gateways',
+                async:false,
+            success: function (obj) {
+                for (let i = 0; i < obj.data.length; i++) {
+                    const element = obj.data[i];
+                    let ever = {};
+                    ever.value = element.id;
+                    ever.title = element.username+"("+element.name+")";
+                    data1.push(ever);
+                }
+            }
+
+        })
+
+
+        //基础效果
+        transfer.render({
+            elem: '#test1',
+            title: ['中继名称', '已选定中继']
+            , data: data1
+            , id: 'key123'
+        })
+        // debugger;
+        // document.querySelectorAll(".layui-transfer-box").forEach(item =>{
+        //     item.style.height="200px";
+        // }) 
+        // //批量办法定事件
+        // util.event('lay-demoTransferActive', {
+        //     getData: function (othis) {
+        //         var getData = transfer.getData('key123'); //获取右侧数据
+        //         layer.alert(JSON.stringify(getData));
+        //     }
+        //     , reload: function () {
+        //         //实例重载
+        //         transfer.reload('key123', {
+        //             title: ['文人', '喜欢的文人']
+        //             , value: ['2', '5', '9']
+        //             , showSearch: true
+        //         })
+        //     }
+        // });
+    })
+</script>

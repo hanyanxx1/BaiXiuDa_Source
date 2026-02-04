@@ -1,0 +1,333 @@
+<div class="layui-fluid">
+	<div class="layui-card">
+		<div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist-task-report">
+			<div class="layui-form-item">
+
+				<div class="layui-inline">
+					<label class="layui-form-label">项目名称</label>
+					<div class="layui-input-inline">
+						<select id="tr_project" name="project_id" lay-filter="project_id_task_report">
+
+						</select>
+					</div>
+				</div>
+
+				<div class="layui-inline">
+					<label class="layui-form-label">任务名称</label>
+					<div class="layui-input-inline">
+						<div id="tr_task" class="xm-select-demo"></div>
+					</div>
+				</div>
+
+				<div class="layui-inline">
+					<label class="layui-form-label">日期</label>
+					<div class="layui-input-inline">
+						<input type="text" name="date" id="tr_date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+
+				<div class="layui-btn-group" style="float: right;">
+					<button class="layui-btn layuiadmin-btn-useradmin" title="查询" id="task_report_btn" lay-submit lay-filter="LAY-user-front-search-manage_taskreport">
+           						 <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+          					</button>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-card-body">
+
+			<table id="LAY-user-manage_taskreport" lay-filter="LAY-user-manage_taskreport"></table>
+
+		</div>
+	</div>
+</div>
+
+<script>
+	layui.use(['admin', 'table', 'laydate','xmSelect'], function() {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		laydate = layui.laydate;
+		xmSelect = layui.xmSelect;
+
+
+		var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			if (month < 10)
+				month = "0" + month;
+			var day = date.getDate();
+			if (day < 10)
+				day = "0" + day;
+			var timestamp = year + "-" + month + "-" + day;
+
+		$(function() {
+			if(layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+
+				admin.req({ //执行项目下拉列表
+					type: "POST",
+					url: layui.setter.configUrl + "/admin/project/list",
+					dataType: 'json',
+					success: function(res) {
+						var result = res.data;
+						$("#tr_project").empty();
+						$("#tr_project").append("<option value='0'>--请选择--</option>");
+						for(var i = 0; i < result.length; i++) {
+							$("#tr_project").append("<option value=" + result[i].id + ">" + result[i].name + "</option>");
+						}
+						layui.form.render("select");
+					}
+				});
+				
+
+			}
+		})
+
+		//日期
+		laydate.render({
+			elem: '#tr_date',
+			value: new Date()
+		});
+
+		xmSelect.render({
+						el: '#tr_task',
+						toolbar: {
+							show: true,
+						},
+						filterable: true,
+						tips: "请选择任务",
+						searchTips: '请输入任务',
+						data: []
+					})
+
+		table.render({
+			method: 'POST',
+			elem: '#LAY-user-manage_taskreport',
+			url: layui.setter.configUrl + "admin/getTaskReport",
+			height: 'full-180',
+			toolbar:true,
+			defaultToolbar: ['filter' ,'print', 'exports'], 
+			where: {
+				project_id: 0,
+				date: timestamp,
+				type: 0,
+				task_ids:""
+			},
+			cols: [function () {
+				var arr = [{
+					field: 'taskName',
+					title: '任务名称',
+					align: 'center',
+					minWidth: 150,
+					templet: function (d) {
+						if (d.taskName == null) {
+							return "--";
+						}
+						return d.taskName;
+					}
+				}, {
+					field: 'total',
+					title: '呼叫总数',
+					sort: true,
+					minWidth: 150,
+					align: 'center'
+				}, {
+					field: 'answer',
+					title: '应答数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'answerPercent',
+					title: '应答率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.answerPercent + "%";
+					}
+				}, {
+					field: 'transfer',
+					title: '转接数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'transferPercent',
+					title: '转接率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.transferPercent + "%";
+					}
+				}, {
+					field: 'loss',
+					title: '呼损数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'lossPercent',
+					title: '呼损率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.lossPercent + "%";
+					}
+				}, {
+					field: 'successfulNumber',
+					title: '成功数',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'successfulPercent',
+					title: '成功率',
+					minWidth: 150,
+					sort: true,
+					align: 'center',
+					templet: function (d) {
+						return d.successfulPercent + "%";
+					}
+				}, {
+					field: 'avg_answer',
+					title: '平均通时(秒)',
+					align: 'center',
+					sort: true,
+					minWidth: 160
+				}, {
+					field: 'avg_progress',
+					title: '平均人工通时(秒)',
+					align: 'center',
+					sort: true,
+					minWidth: 160
+				}, {
+					field: 'ai_bill',
+					title: 'BOT消费(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}, {
+					field: 'phone_bill',
+					title: '话费金额(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}
+					, {
+					field: 'costAccounting',
+					title: '成本核算(元)',
+					minWidth: 150,
+					sort: true,
+					align: 'center'
+				}
+				]
+
+				//初始化筛选状态
+				var local = layui.data('table-filter-task-report');
+				layui.each(arr, function (index, item) {
+					if (item.field in local) {
+						item.hide = true;  // 在本地标识中则隐藏
+					}
+				});
+				return arr;
+			}()
+
+			], done: function () {
+				//记录筛选状态
+				var that = this;
+				that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
+					var input = $(this).prev()[0];
+					var input = $(this).prev()[0];
+					if (input.checked === true) {  // 复选框取消，则加入本地缓存标识
+						layui.data('table-filter-task-report', { key: input.name, value: !input.checked })
+					} else {  // 复选框勾上，则移除本地标识
+						layui.data('table-filter-task-report', { key: input.name, remove: true });
+					}
+				});
+			}
+
+		});
+
+		form.render(null, 'layadmin-userfront-formlist-task-report');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-manage_taskreport)', function(data) {
+			var field = data.field;
+			if (field.project_id == "") {
+				field.project_id = 0;
+			}
+			field.type=0;
+			field.task_ids = field.select;
+			delete field.select;
+			//	console.log($('input[name^="test"]').map(function(){return this.value}).get());
+			//执行重载
+			table.reload('LAY-user-manage_taskreport', {
+				where: field
+			});
+		});
+
+
+		var tro_name;
+		form.on('select(project_id_task_report)', function(data) { //layui获取项目下拉框的文本值
+				var elem = data.elem;
+				var textId = elem.getAttribute("tr_project");
+			
+				tro_name = this.innerText;
+
+
+				let project_id = data.value;
+			admin.req({ //任务下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/project_task/getTaskByProject",
+				dataType: 'json',
+				data: {
+					project_id: project_id
+				},
+				success: function (res) {
+
+					var results = res.data;
+					var da = [];
+					for (var i = 0; i < results.length; i++) {
+						var rs = {};
+						rs.name = results[i].name;
+						rs.value = results[i].id;
+						da.push(rs);
+					}
+					xmSelect.render({
+						el: '#tr_task',
+						toolbar: {
+							show: true,
+						},
+						filterable: true,
+						tips: "请选择任务",
+						searchTips: '请输入任务',
+						data: da
+					})
+				}
+			});
+			})
+
+
+		table.on('toolbar(LAY-user-manage_taskreport)', function(obj){
+			var tableData = layui.table.cache['LAY-user-manage_taskreport']; //表格数据
+			switch(obj.event){
+				case 'LAYTABLE_EXPORT':
+				
+				obj.config.title = "任务报表-"+tro_name+"-" +timestamp;  //更改默认文件名
+				table.exportFile(obj.config.id, tableData,'csv'); // 参数依次：表格ID，数据，文件类型
+				break;
+		  };
+		});
+
+
+
+	});
+
+
+</script>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title></title>
+
+</head>
+
+<body>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+                lay-filter="layadmin-userfront-formlist-project-task-schedule">
+                <div class="layui-form-item">
+
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" title="查询" id="user_task_search" lay-submit
+                            lay-filter="LAY-user-front-search-project-task-schedule">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                        </button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+                            data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+                            title="删除" data-type="batchdel"> <i
+                                class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <table id="LAY-user-manage-project-task-schedule" lay-filter="LAY-user-manage-project-task-schedule">
+                </table>
+                <script id="switchTpl" type="text/html">
+					<input type="checkbox" name="task_status" value={ {d.task_status}} lay-skin="switch" lay-text="启用|禁用" lay-filter="task_status" {{ d.task_status==1 ? 'checked' : '' }}>
+				</script>
+                <script type="text/html" id="barDemoSchedule">
+				<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+				</script>
+
+            </div>
+        </div>
+    </div>
+</body>
+<style>
+    /*自动适应高度*/
+    /* .layui-table .layui-table-cell {
+        height: auto;
+        white-space: normal;
+    
+    } */
+
+    /* .layui-table-fixed-r .layui-table-cell {
+        height: auto !important;
+    } */
+
+    .layui-table .layui-table-cell {
+        height: auto;
+        word-break: normal;
+        display: block;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: hidden;
+        padding: 0 10px !important;
+    }
+</style>
+<script>
+    layui.use(['admin', 'table', 'upload', 'xmSelect', 'laydate'], function () {
+
+        var table = layui.table;
+        form = layui.form;
+        $ = layui.$;
+        view = layui.view;
+        admin = layui.admin;
+        upload = layui.upload;
+        element = layui.element;
+        xmSelect = layui.xmSelect;
+        laydate = layui.laydate;
+
+
+        table.render({
+
+            method: 'POST',
+
+            elem: '#LAY-user-manage-project-task-schedule',
+
+            url: layui.setter.configUrl + 'admin/schedule/grid',
+
+            height: 'full-180',
+            cols: [
+
+                [{
+
+                    type: 'checkbox'
+
+                }, {
+
+                    field: 'task_desc',
+
+                    title: '描述',
+
+                    align: 'center',
+
+                    minWidth: 280
+
+                }, {
+                    title: '重复周期',
+                    minWidth: 280,
+                    align: 'center',
+                    templet: function (d) {
+                        let s = "";
+                        if (d.task_week != "" && d.task_week != null) {
+                            let task_week_data = d.task_week.split(",");
+                            for (let i = 0; i < task_week_data.length; i++) {
+                                let ele = task_week_data[i];
+                                ele = ele.replace('1', "周一").replace('2', "周二").replace('3',
+                                    "周三").replace('4', "周四").replace('5', "周五").replace('6',
+                                        "周六").replace('7', "周日")
+                                if (s == "") {
+                                    s = '<span class="layui-badge layui-bg-green">' + ele + '</span>';
+                                } else {
+                                    s += '<span style="margin-left:3px;" class="layui-badge layui-bg-green">' + ele + '</span>';
+                                }
+                            }
+                        }
+                        return s;
+                    }
+                }, {
+                    title: '呼叫时段',
+                    minWidth: 280,
+                    align: 'center',
+                    templet: function (d) {
+                        let s = "";
+                        if (d.task_time != "" && d.task_time != null) {
+                            let slots = JSON.parse(d.task_time);
+                            for (let i = 0; i < slots.length; i++) {
+                                const element = slots[i];
+                                if (s == "") {
+                                    s = '<span class="layui-badge layui-bg-green">' + element.start + '~' + element.end + '</span>';
+                                } else {
+                                    s += '<span style="margin-left:3px;" class="layui-badge layui-bg-green">' + element.start + '~' + element.end + '</span>';
+                                }
+                            }
+                            return s;
+                        }
+                        return "";
+                    }
+                }, {
+
+                    field: 'create_time',
+
+                    title: '创建时间',
+
+                    align: 'center',
+
+                    minWidth: 180
+
+                }, {
+
+                    title: '操作',
+
+                    align: 'center',
+
+                    fixed: 'right',
+                    minWidth: 100,
+
+                    toolbar: '#barDemoSchedule'
+
+                }]
+
+            ], 
+            id: 'tableIns',
+             done: function (res, curr, count) {
+                tableData = table.cache.tableIns;
+                $(".layui-table-main tr").each(function (index, val) {
+                    $($(".layui-table-fixed .layui-table-body tbody tr")[index]).height($(val).height());
+                });
+            },
+
+            page: true
+
+        });
+
+        form.render(null, 'layadmin-userfront-formlist-project-task-schedule');
+
+        //监听搜索
+
+        form.on('submit(LAY-user-front-search-project-task-schedule)', function (data) {
+
+            var field = data.field;
+
+            //执行重载
+
+            table.reload('tableIns', {
+
+                where: field,
+
+                page: {
+                    curr: 1
+
+                }
+
+            });
+
+        });
+
+        admin.req({ //任务下拉列表
+            type: "POST",
+            url: layui.setter.configUrl + "admin/project_task/getList",
+            dataType: 'json',
+            success: function (res) {
+                $("#task_id").empty();
+                var result = res.data;
+                $("#task_id").append("<option value=''>请选择任务</option>");
+                for (var i = 0; i < result.length; i++) {
+                    $("#task_id").append("<option value=" + result[i].id + ">" + result[i]
+                        .name + "</option>");
+                }
+                layui.form.render("select");
+            }
+        });
+
+        //监听行工具栏
+        table.on('tool(LAY-user-manage-project-task-schedule)', function (obj) {
+            var data = obj.data, //获得当前行的数据
+                layEvent = obj.event; //获得lay-event对应的值
+            if (layEvent === 'edit') {
+                admin.popupRight({
+                    title: '修改',
+                    area: '600px',
+                    id: 'LAY-popup-user-task-schedule-edit',
+                    success: function (layero, index) {
+                        view(this.id).render('control/task_schedule/edit').done(function () {
+                            form.render(null, 'layuiadmin-form-project_task_schedule_edit');
+                            form.val("layuiadmin-form-project_task_schedule_edit", data);
+                            if (data.task_time != "") {
+                                let task_time_data = JSON.parse(data.task_time);
+                                for (let i = 0; i < task_time_data.length; i++) {
+                                    addnode(1, task_time_data[i].start + " - " + task_time_data[i].end);
+                                }
+                            }
+                            let weekDays = data.task_week.split(",");
+                            days(weekDays);
+
+                            form.on('submit(LAY-user-front-project-task-schedule-edit-submit)',
+                                function (datas) {
+                                    var field = datas.field; //获取提交的字段
+                                    field.id = data.id;
+                                    var reqTimer = [];
+                                    $('#nodes').children().each(function (i, n) {
+                                        var obj = $(n).find('input');
+                                        if ($(obj[0]).val() != "") {
+                                            var teach = {};
+                                            teach.start = $(obj[0]).val().split(" - ")[0];
+                                            teach.end = $(obj[0]).val().split(" - ")[1];
+                                            reqTimer.push(teach);
+                                        }
+                                    });
+                                    if (reqTimer.length == 0) {
+                                        layer.msg("请添加时段", { icon: 2 });
+                                        return;
+                                    }
+                                    if (reqTimer.length > 4) {
+                                        layer.msg("最多选择四个呼叫时段", { icon: 2 });
+                                        return;
+                                    }
+                                    field.task_time = JSON.stringify(reqTimer);
+                                    layer.load();
+                                    admin.req({
+                                        type: "POST",
+                                        url: layui.setter.configUrl +
+                                            'admin/schedule/edit',
+                                        //async: true,
+                                        data: field,
+                                        dataType: "json",
+                                        success: function (obj) {
+                                            layer.closeAll('loading');
+                                            if (obj.data > 0) {
+                                                layer.msg("修改成功", {
+                                                    icon: 1
+                                                });
+                                                layui.table.reload(
+                                                    'tableIns'
+                                                ); //重载表格
+                                                layer.close(index);
+                                            } else {
+                                                layer.msg("操作失败,请重试", {
+                                                    icon: 2
+                                                });
+                                            }
+                                        }
+                                    });
+                                });
+                        });
+
+                    }
+
+                });
+            }
+        })
+
+        //监听指定开关
+        form.on('switch(task_status)', function (data) {
+            var index = data.othis.parents('tr').attr("data-index");
+            var id = tableData[index].id;
+
+            if ((this.checked ? 'true' : 'false') == 'true') {
+                admin.req({
+                    type: "POST",
+                    url: layui.setter.configUrl + "admin/schedule/start",
+                    dataType: "json",
+                    data: {
+                        id: id
+                    },
+                    success: function (obj) {
+                        layer.msg("开启", { icon: 1 })
+                    }
+                });
+            } else {
+                admin.req({
+                    type: "POST",
+                    url: layui.setter.configUrl + "admin/schedule/stop",
+                    dataType: "json",
+                    data: {
+                        id: id
+                    },
+                    success: function (obj) {
+                        layer.msg("关闭", { icon: 2 })
+                    }
+                });
+            }
+        });
+
+        var active = {
+            batchdel: function () {
+
+                var checkStatus = table.checkStatus('tableIns'),
+
+                    checkData = checkStatus.data; //得到选中的数据
+
+                var ids = "";
+                for (var i = 0; i < checkData.length; i++) {
+                    if (ids != "") {
+                        ids = ids + "," + checkData[i].id;
+                    } else
+                        ids = checkData[i].id;
+                }
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据', {
+                        icon: 2
+                    });
+                }
+                layer.confirm('确定删除吗？', {
+
+                    icon: 3
+
+                }, function (index) {
+                    //执行 Ajax 后重载
+                    layer.load();
+                    admin.req({
+                        type: "post",
+                        url: layui.setter.configUrl + 'admin/schedule/remove',
+                        dataType: "json",
+                        data: {
+                            ids: ids
+                        },
+                        success: function (obj) {
+
+                            layer.closeAll('loading');
+
+                            if (obj.data > 0) {
+
+                                layer.msg("已删除", {
+                                    icon: 1
+                                });
+
+                                table.reload('tableIns');
+
+                            } else {
+
+                                layer.msg("删除失败,请重试", {
+                                    icon: 2
+                                });
+
+                            }
+
+                        }
+
+                    });
+
+
+                });
+
+            },
+
+            add: function () {
+                admin.popupRight({
+
+                    title: '新增',
+
+                    area: '550px',
+
+                    id: 'LAY-popup-user-schedule-add',
+
+                    success: function (layero, index) {
+
+                        view(this.id).render('control/task_schedule/add').done(function () {
+
+                            form.render(null, 'layuiadmin-form-project_task_schedule_add');
+
+                            //监听提交
+
+                            form.on('submit(LAY-user-front-project-task-schedule-add-submit)', function (data) {
+
+                                var field = data.field; //获取提交的字段
+                                var reqTimer = [];
+                                $('#nodes').children().each(function (i, n) {
+                                    var obj = $(n).find('input');
+                                    if ($(obj[0]).val() != "") {
+                                        var teach = {};
+                                        teach.start = $(obj[0]).val().split(" - ")[0].substring(0, 5);
+                                        teach.end = $(obj[0]).val().split(" - ")[1].substring(0, 5);
+                                        reqTimer.push(teach);
+                                    }
+                                });
+                                if (reqTimer.length == 0) {
+                                    layer.msg("请添加时段", { icon: 2 });
+                                    return;
+                                }
+                                if (reqTimer.length > 4) {
+                                    layer.msg("最多选择四个呼叫时段", { icon: 2 });
+                                    return;
+                                }
+                                field.task_time = JSON.stringify(reqTimer);
+                                layer.load();
+                                admin.req({
+                                    type: "POST",
+                                    url: layui.setter.configUrl +
+                                        'admin/schedule/add',
+                                    data: field,
+                                    dataType: "json",
+                                    where: field,
+                                    success: function (obj) {
+                                        layer.closeAll('loading');
+                                        if (obj.data > 0) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            layui.table.reload(
+                                                'tableIns'
+                                            ); //重载表格
+                                            layer.close(index); //执行关闭 
+                                        } else {
+                                            layer.msg("操作失败", {
+                                                icon: 2
+                                            });
+                                        }
+                                    }
+                                });
+
+                            });
+
+                        });
+
+                    }
+
+                });
+            }
+        }
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+
+            var type = $(this).data('type');
+
+            active[type] ? active[type].call(this) : '';
+
+        });
+    })
+
+</script>
+
+</html>

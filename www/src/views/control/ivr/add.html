@@ -1,0 +1,193 @@
+<form class="layui-form" lay-filter="layuiadmin-form-ivr-add" style="padding: 20px;">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称:</label>
+        <div class="layui-input-block">
+            <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" placeholder="请输入名称"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">播放次数:</label>
+        <div class="layui-input-inline">
+            
+            <input type="text" id="tries" name="tries" value="1" lay-verify="required" autocomplete="off" placeholder="请输入"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">语音:</label>
+        <div class="layui-input-inline" style="width: 320px;">
+            <select id="file" name="file">
+              
+            </select>
+
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">提示语音:</label>
+        <div class="layui-input-inline">
+            <select id="invalid_file" name="invalid_file">
+                
+            </select>
+
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">类型:</label>
+            <div class="layui-input-block">
+                <table id="LAY-user-manage-ivr-add" lay-filter="LAY-user-manage-ivr-add"></table>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" id="ivr-add-add" lay-submit lay-filter="LAY-user-front-ivr-add-submit" value="提交"
+                class="layui-btn">
+        </div>
+    </div>
+</form>
+<style>
+    .layui-table-cell, .layui-table-tool-panel li{
+	    overflow:visible !important;
+    }
+    .layui-form-select dl{
+           z-index:9999;
+ 
+       }
+ 
+       .layui-table-cell{
+           overflow:visible;
+ 
+       }
+       .layui-table-box{
+           overflow:visible;
+ 
+       }
+       .layui-table-body{
+           overflow:visible;
+ 
+       }
+</style>
+<script>
+    layui.use(['laydate', 'form'], function () {
+        var laydate = layui.laydate;
+        var $ = layui.$;
+        var form = layui.form;
+
+        $(function () {
+
+            admin.req({ //语音下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/audioFile/list",
+				dataType: 'json',
+				success: function(res) {
+                    $("#invalid_file").empty();
+                    $("#file").empty();
+					var resultg = res.data;
+					$("#invalid_file").append("<option value=''>--请选择--</option>");
+                    $("#file").append("<option value=''>--请选择--</option>");
+					for(var i = 0; i < resultg.length; i++) {
+						$("#invalid_file").append("<option value=" + resultg[i].file_name + ">" + resultg[i].name + "</option>");
+                        $("#file").append("<option value=" + resultg[i].file_name + ">" + resultg[i].name + "</option>");
+					}
+					layui.form.render("select");
+				}
+			});
+        })
+
+
+        // form.on('select(actions_type)', function (data) {
+        //     var value = data.value;
+        //     if (value == "ivr") {
+        //         admin.req({ //执行ivr下拉列表
+
+        //             type: "POST",
+
+        //             url: layui.setter.configUrl + "admin/ivr/list",
+
+        //             dataType: 'json',
+
+        //             success: function (res) {
+        //                 $("#actions_value").empty();
+        //                 var result = res.data;
+        //                 $("#actions_value").append("<option value=''>--请选择--</option>");
+        //                 for (var i = 0; i < result.length; i++) {
+
+        //                     $("#actions_value").append("<option value=" + result[i].id + ">" +
+        //                         result[i].name + "</option>");
+
+        //                 }
+
+        //                 layui.form.render("select");
+
+        //                 //}
+
+        //             }
+
+        //         });
+
+
+        //     } else if (value == "project") {
+        //         admin.req({ //执行项目下拉列表
+
+        //             type: "POST",
+
+        //             url: layui.setter.configUrl + "admin/project/list",
+
+        //             dataType: 'json',
+
+        //             success: function (res) {
+        //                 $("#actions_value").empty();
+        //                 var result = res.data;
+        //                 $("#actions_value").append("<option value=''>--请选择--</option>");
+        //                 for (var i = 0; i < result.length; i++) {
+
+        //                     $("#actions_value").append("<option value=" + result[i].id + ">" +
+        //                         result[i].name + "</option>");
+
+        //                 }
+
+        //                 layui.form.render("select");
+
+        //                 //}
+
+        //             }
+
+        //         });
+        //     } else if (value == "agent") {
+                
+        //         admin.req({ //坐席下拉列表
+        //             type: "POST",
+        //             url: layui.setter.configUrl + "admin/agent/list",
+        //             dataType: 'json',
+        //             success: function (res) {
+        //                 $("#actions_value").empty();
+        //                 var results = res.data;
+        //                  $("#actions_value").append("<option value=''>--请选择--</option>");
+        //                 for (var i = 0; i < results.length; i++) {
+
+        //                     $("#actions_value").append("<option value=" + results[i].value.substring(0,4) + ">" +
+        //                         results[i].value + "</option>");
+
+        //                 }
+        //                 layui.form.render("select");
+        //             }
+        //         });
+        //     }
+        // })
+
+        
+    })
+</script>

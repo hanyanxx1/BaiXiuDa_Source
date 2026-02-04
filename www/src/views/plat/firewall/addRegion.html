@@ -1,0 +1,137 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin-region" style="padding: 20px 20px 0 0;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span style="color:red;">*&nbsp;</span>国家</label>
+        <div class="layui-input-block">
+            <select name="country" id="country" lay-verify="required" lay-search="" lay-filter="country">
+                
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">省份</label>
+        <div class="layui-input-block">
+            <select name="province" id="province" lay-search="" lay-filter="province">
+                <option value="">请选择</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">城市</label>
+        <div class="layui-input-block">
+            <select name="city" id="city" lay-search="" lay-filter="city">
+                <option value="">请选择</option>
+                
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="region-add" lay-submit lay-filter="LAY-user-front-region-add-submit" value="确认" class="layui-btn">
+		</div>
+	</div>
+</div>
+<script>
+    var country_name="";
+		var province_name="";
+        var city_name="";
+    layui.use(['admin', 'table'], function () {
+        var table = layui.table;
+        form = layui.form;
+        var $ = layui.$;
+        view = layui.view;
+        admin = layui.admin;
+
+        admin.req({
+            type: "POST",
+            url: layui.setter.configUrl + "common/region",
+            //async: true,
+            dataType: "json",
+            data: {
+                p_id:0,
+                type:1
+            },
+            success: function (obj) {
+                var data = obj.data;
+                $("#country").empty();
+                $("#country").append("<option value=''>请选择</option>");
+					for (var i = 0; i < data.length; i++) {
+						$("#country").append("<option value=" + data[i].id + ">" + data[i]
+							.name + "</option>");
+					}
+					layui.form.render("select");
+            }
+        });
+        
+        form.on('select(country)',function(data){
+            var elem = data.elem;
+			var textId = elem.getAttribute("country");
+
+			country_name = this.innerText;
+
+
+            let val = data.value;
+            admin.req({
+            type: "POST",
+            url: layui.setter.configUrl + "common/region",
+            //async: true,
+            dataType: "json",
+            data: {
+                p_id:val,
+                type:2
+            },
+            success: function (obj) {
+                var data = obj.data;
+                $("#province").empty();
+                $("#province").append("<option value=''>请选择</option>");
+					for (var i = 0; i < data.length; i++) {
+						$("#province").append("<option value=" + data[i].id + ">" + data[i]
+							.name + "</option>");
+					}
+					layui.form.render("select");
+            }
+        });
+        })
+        form.on('select(province)',function(data){
+            var elem = data.elem;
+			var textId = elem.getAttribute("province");
+
+			province_name = this.innerText;
+
+            let val = data.value;
+            admin.req({
+            type: "POST",
+            url: layui.setter.configUrl + "common/region",
+            //async: true,
+            dataType: "json",
+            data: {
+                p_id:val,
+                type:3
+            },
+            success: function (obj) {
+                var data = obj.data;
+                $("#city").empty();
+                $("#city").append("<option value=''>请选择</option>");
+					for (var i = 0; i < data.length; i++) {
+						$("#city").append("<option value=" + data[i].id + ">" + data[i]
+							.name + "</option>");
+					}
+					layui.form.render("select");
+            }
+        });
+        })
+
+        form.on('select(city)',function(data){
+            var elem = data.elem;
+			var textId = elem.getAttribute("city");
+
+			city_name = this.innerText;
+
+        })
+
+    })
+</script>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-cdr">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<div class="layui-input-inline" style="width: 100px;">
+							<select id="timezidingyi" lay-filter="timezidingyi">
+								<option value="1">1小时</option>
+								<option value="6">6小时</option>
+								<option value="今天">今天</option>
+								<option value="上一天">上一天</option>
+								<option value="上两天">上两天</option>
+								<option value="上三天">上三天</option>
+								<option value="自定义">自定义</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline" id="ID-startend-datetime" style="margin-left: -20px;">
+						<div class="layui-input-inline" style="width: 350px;">
+							<input type="text" class="layui-input" id="newDateStamp" placeholder=" ~ "
+								autocomplete="off" />
+						</div>
+					</div>
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="recording" name="recording">
+								<option value="2">有效话单</option>
+								<option value="0">无效话单</option>
+								
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="answered" name="answered">
+								
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="cc_project" name="project_id" lay-search="" lay-filter="project_id_select">
+								<option value="0">--项目--</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="cc_task" name="task_id" lay-search="">
+								<option value="0">--任务--</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<select id="cc_status" name="status">
+								<option value="-1">--客户状态--</option>
+							</select>
+						</div>
+					</div>
+
+					<!-- <div class="layui-inline">
+							<div class="layui-input-inline">
+								<input type="text" name="start_stamp" id="cc_start" placeholder="开始日期" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<input type="text" name="end_stamp" id="cc_end" placeholder="结束日期" autocomplete="off" class="layui-input">
+							</div>
+						</div> -->
+
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<input type="text" id="cc_telephone" name="telephone" placeholder="客户号码" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-inline" id="cc_extension_ids">
+						<div class="layui-input-inline">
+							<input type="text" id="cc_extension" name="extno" placeholder="坐席工号" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<input type="text" id="cc_key" name="digits" placeholder="功能键" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+
+					<div class="layui-inline">
+						<label class="layui-form-label">应答时长</label>
+						<div class="layui-input-inline" style="white-space: nowrap;">
+							<table>
+								<tr>
+									<!-- <td>范围</td> -->
+									<td><input type="text" id="cc_gt_billsec" name="gt_billsec" placeholder=""
+											autocomplete="off" class="layui-input" style="width: 88px;"></td>
+									<td>&nbsp;&nbsp;-&nbsp;&nbsp;</td>
+									<td><input id="cc_lt_billsec" name="lt_billsec" autocomplete="off" value=""
+											class="layui-input" style="width: 88px;"></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" id="cust_cdr_btn" lay-submit
+							lay-filter="LAY-user-front-search-cust-cdr">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-useradmin" id="download_cdr_c" style="display: none;"
+							onclick="cust_cdr_tool.downloadInfo()">
+							<i class="layui-icon layui-icon-upload-drag layuiadmin-button-btn"></i>导出信息
+						</button>
+
+						<button class="layui-btn layuiadmin-btn-useradmin" id="downloadInfo_c" style="display: none;"
+							onclick="cust_cdr_tool.download_cdr()">
+							<i class="layui-icon layui-icon-upload layuiadmin-button-btn"></i>导出话单
+						</button>
+
+
+
+						<button class="layui-btn layuiadmin-btn-useradmin" id="recover_c" style="display: none;"
+							onclick="cust_cdr_tool.recover()">
+							<i class="layui-icon layui-icon-dialogue layuiadmin-button-btn"></i>回收数据
+						</button>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-cdr" lay-filter="LAY-user-manage-cdr"></table>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+<style>
+
+</style>
+<script src="/start/js/publicmethod.js"></script>
+<script>
+	var admin_name = "";
+	var $;
+	layui.use(['admin', 'table', 'laydate'], function () {
+		var table = layui.table;
+		form = layui.form;
+		$ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		laydate = layui.laydate;
+
+		var date = new Date();
+		let newEndTime = formatDateToString(date);
+		date.setHours(date.getHours() - 1);
+		let newStartTime = formatDateToString(date);
+		let dateTimeChange = 0;
+		form.on('select(timezidingyi)', function (data) {
+			let val = data.value;
+			newStartTime = getStartTime(val);
+			newEndTime = getEndTime(val);
+			laydate.render({
+				elem: '#newDateStamp',
+				type: 'datetime',
+				value: newStartTime + " ~ " + newEndTime,
+				range: "~",
+
+			});
+		})
+
+		laydate.render({
+			elem: '#newDateStamp',
+			type: 'datetime',
+			value: newStartTime + " ~ " + newEndTime,
+			range: "~",
+			change: function (value, date) { //日期被切换的回调
+				//layer.msg("日期切换")
+				dateTimeChange = 1;
+			},
+			done: function (value, date, endDate) {
+				//layer.msg("日期确定")
+				if (dateTimeChange == 1) {
+					$("#timezidingyi").val("自定义");
+					dateTimeChange = 0;
+					form.render("select")
+				}
+			}
+		});
+
+		admin.req({
+			url: layui.setter.configUrl + 'menu/info',
+			async: false,
+			done: function (res) {
+
+				admin_name = res.data.name;
+
+			}
+		})
+
+		table.render({
+			method: 'POST',
+			elem: '#LAY-user-manage-cdr',
+			url: layui.setter.configUrl + "admin/customer_cdr/grid",
+			height: 'full-230',
+			where: {
+				project_id: 0,
+				status: -1,
+				start_stamp: newStartTime,
+				end_stamp: newEndTime,
+				telephone: $('#cc_telephone').val(),
+				extno: $('#cc_extension').val(),
+				gt_billsec: $('#cc_gt_billsec').val(),
+				lt_billsec: $('#cc_lt_billsec').val(),
+				digits: $('#cc_key').val(),
+				task_id: 0,
+				inspection: -2,
+				recording:2
+			},
+			cols: [
+				[{
+					type: 'checkbox'
+				},{
+					field: 'gatewayName',
+					title: '主叫号码',
+					align: 'center',
+					minWidth: 150,
+					templet: function (d) {
+						if(d.gatewayName == null){
+							return "";
+						}
+						return d.gatewayName;
+					}
+				}, {
+					field: 'telephone',
+					title: '客户号码',
+					sort: true,
+					align: 'center',
+					minWidth: 150,
+					templet: function (d) {
+						if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] == "agent") {
+							return '<a href="javascript:;" title="点击拨号" onclick="cust_cdr_tool.cdrcall(' + "'" + d.info_uuid + "'" + ');"><img src="../start/images/info_call.png""/> ' + d.telephone + '</a>';
+						} else {
+							return d.telephone;
+						}
+
+					}
+				}, {
+					field: 'extno',
+					title: '坐席工号',
+					sort: true,
+					align: 'center',
+					minWidth: 100
+				}, {
+					field: 'direction',
+					title: '呼叫类型',
+					align: 'center',
+					templet: function (d) {
+						if (d.direction == 'inbound') {
+							return '呼入';
+						} else {
+							return '呼出';
+						}
+					},
+					minWidth: 100
+				}, {
+					field: 'start_stamp',
+					title: '开始时间',
+					sort: true,
+					align: 'center',
+					minWidth: 180
+				}, {
+					field: 'duration',
+					title: '总时长（秒）',
+					align: 'center',
+					minWidth: 120
+				}, {
+					field: 'billsec',
+					title: '应答时长（秒）',
+					align: 'center',
+					minWidth: 130
+				}, {
+					field: 'consume',
+					title: '金额（元）',
+					sort: true,
+					align: 'center',
+					minWidth: 120
+				}, {
+					field: 'hangup_disposition',
+					title: '挂断处理',
+					align: 'center',
+					minWidth: 120,
+					templet: function (d) {
+						if (d.hangup_disposition == 'recv_bye' || d.hangup_disposition == 'recv_refuse') {
+							return '被叫挂断';
+						} else if (d.hangup_disposition == 'send_bye' || d.hangup_disposition == 'send_cancel') {
+							return '主叫挂断';
+						} else {
+							return d.hangup_disposition;
+						}
+					}
+				}, {
+					field: 'hangup_cause',
+					title: '挂断原因',
+					sort: true,
+					align: 'center',
+					minWidth: 220
+				}, {
+					field: 'satisfaction',
+					title: '服务评分',
+					align: 'center',
+					minWidth: 120
+				}]
+			],
+
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-cdr');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-cust-cdr)', function (data) {
+			var field = data.field;
+
+			field['inspection'] = -2;
+			let val = $("#timezidingyi").val();
+			if (val != "自定义") {
+				newStartTime = getStartTime(val);
+				newEndTime = getEndTime(val);
+				laydate.render({
+					elem: '#newDateStamp',
+					type: 'datetime',
+					value: newStartTime + " ~ " + newEndTime,
+					range: "~",
+				});
+			}
+			field.start_stamp = $('#newDateStamp').val().split(" ~ ")[0];
+			field.end_stamp = $('#newDateStamp').val().split(" ~ ")[1];
+			//执行重载
+			table.reload('LAY-user-manage-cdr', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+		$(function () {
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+				admin.req({ //项目下拉列表
+					type: "POST",
+					url: layui.setter.configUrl + "admin/project/list",
+					dataType: 'json',
+					success: function (res) {
+						$("#cc_project").empty();
+						var result = res.data;
+						$("#cc_project").append("<option value='0'>--项目--</option>");
+						for (var i = 0; i < result.length; i++) {
+							$("#cc_project").append("<option value=" + result[i].id + ">" + result[i].name + "</option>");
+						}
+						layui.form.render("select");
+					}
+				});
+
+				if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["allow_down"] == true) {
+					$("#download_cdr_c").css("display", "");
+					$("#downloadInfo_c").css("display", "");
+					$("#recover_c").css("display", "");
+				}
+
+				if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["permission"] == 4) {
+
+					$("#cc_extension").val(window.sessionStorage.getItem("name"));
+					$("#cc_extension_ids").css("display", "none");
+					$("#cust_cdr_btn").click();
+				}
+
+				// admin.req({
+				// 	url: layui.setter.configUrl + 'menu/info',
+				// 	done: function(res) {
+
+				// 		if(res.data.permission == 3) {
+				// 			$("#cc_extension").val(res.data.name);
+				// 			$("#cc_extension_ids").css("display", "none");
+				// 			$("#cust_cdr_btn").click();
+				// 		} else {
+				// 			$("#download_cdr_c").css("display", "");
+				// 			$("#downloadInfo_c").css("display", "");
+				// 			$("#recover_c").css("display", "");
+				// 		}
+
+				// 		layui.form.render("select");
+
+				// 	}
+				// })
+			}
+		})
+
+		form.on('select(project_id_select)', function (data) { //监听项目下拉框,联动任务,客户状态下拉框
+			var project_id_s = data.value;
+			admin.req({ //任务下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/project_task/getTaskByProject",
+				dataType: 'json',
+				data: {
+					project_id: project_id_s
+				},
+				success: function (res) {
+					$("#cc_task").empty();
+					var result = res.data;
+					$("#cc_task").append("<option value='0'>--任务--</option>");
+					for (var i = 0; i < result.length; i++) {
+						$("#cc_task").append("<option value=" + result[i].id + ">" + result[i].name + "</option>");
+					}
+					layui.form.render("select");
+				}
+			});
+
+			admin.req({ //客户状态下拉框
+				type: "POST",
+				url: layui.setter.configUrl + "admin/crm_field/listProjectStatus",
+				dataType: 'json',
+				data: {
+					project_id: project_id_s
+				},
+				success: function (res) {
+					$("#cc_status").empty();
+					var result = JSON.parse(res.data);
+					$("#cc_status").append("<option value='-1'>--客户状态--</option>");
+					for (var i = 0; i < result.length; i++) {
+						$("#cc_status").append("<option value=" + i + ">" + result[i] + "</option>");
+					}
+					layui.form.render("select");
+				}
+			});
+		})
+
+		//事件
+		var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-cdr'),
+					checkData = checkStatus.data; //得到选中的数据
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+
+				layer.prompt({
+					formType: 1,
+					title: '敏感操作，请输入密码验证口令'
+				}, function (value, index) {
+					layer.close(index);
+
+					layer.confirm('确定删除吗？', function (index) {
+
+						table.reload('LAY-user-manage-cdr');
+						layer.msg('已删除');
+					});
+				});
+			},
+
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+
+	// 定义按钮事件
+	cust_cdr_tool = {
+		download_cdr: function () {
+			var downUrl = layui.setter.configUrl + '/cdr/download_cdr?project_id=' +
+				$('#cc_project').val() +
+				"&status=" +
+				$('#cc_status').val() +
+				"&telephone=" +
+				$('#cc_telephone').val() +
+				"&extno=" +
+				$('#cc_extension').val() +
+				"&start_stamp=" +
+				$('#newDateStamp').val().split(" ~ ")[0] +
+				"&end_stamp=" +
+				$('#newDateStamp').val().split(" ~ ")[1] +
+				"&gt_billsec=" +
+				$('#cc_gt_billsec').val() +
+				"&lt_billsec=" + $('#cc_lt_billsec').val() +
+				"&digits=" + $('#cc_key').val() +
+				"&task_id=" + $('#cc_task').val() +
+				"&recording=" + $('#recording').val() +
+				"&inspection=-2" +
+				"&access_token=" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+			// if($('#cc_project').val() != 0) {
+			// 	window.location = downUrl;
+			// } else {
+			// 	layer.msg("请选择项目", {
+			// 		icon: 2
+			// 	});
+			// }
+			window.location = downUrl;
+		},
+		downloadInfo: function () {
+			var downUrl = layui.setter.configUrl + '/cdr/download_info?project_id=' +
+				$('#cc_project').val() + "&status=" + $('#cc_status').val()
+				+ "&telephone=" + $('#cc_telephone').val() +
+				"&extno=" + $('#cc_extension').val() +
+				"&start_stamp=" + $('#newDateStamp').val().split(" ~ ")[0] +
+				"&end_stamp=" + $('#newDateStamp').val().split(" ~ ")[1] +
+				"&gt_billsec=" + $('#cc_gt_billsec').val() +
+				"&lt_billsec=" + $('#cc_lt_billsec').val() +
+				"&digits=" + $('#cc_key').val() +
+				"&task_id=" + $('#cc_task').val() +
+				"&recording=" + $('#recording').val() +
+				"&inspection=-2" +
+				"&access_token=" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+
+			// 	if($('#cc_project').val() != 0) {
+			// 	window.location = downUrl;
+			// } else {
+			// 	layer.msg("请选择项目", {
+			// 		icon: 2
+			// 	});
+			// }
+			window.location = downUrl;
+		},
+		recover: function () {
+			layer.confirm('条件数据回收后将被重新呼叫，请确认？', {
+				icon: 3,
+				title: '确定操作?'
+			}, function (flag) {
+				layer.close(flag);
+				if (flag) {
+					//if($('#cc_project').val() != 0) {
+					layer.load();
+					admin.req({
+						type: 'POST',
+						url: layui.setter.configUrl + '/admin/customer_cdr/recovery',
+						data: {
+							project_id: $('#cc_project').val(),
+							status: $('#cc_status').val(),
+							start_stamp: $('#newDateStamp').val().split(" ~ ")[0],
+							end_stamp: $('#newDateStamp').val().split(" ~ ")[1],
+							telephone: $('#cc_telephone').val(),
+							extno: $('#cc_extension').val(),
+							gt_billsec: $('#cc_gt_billsec').val(),
+							lt_billsec: $('#cc_lt_billsec').val(),
+							digits: $('#cc_key').val(),
+							task_id: $('#cc_task').val(),
+							recording: $('#recording').val(),
+							inspection: -2
+						},
+						success: function (data) {
+							layer.closeAll('loading');
+							// if (data.data>-1) {
+							// 	layer.msg(data.data + "条数据被回收", {
+							// 		icon: 1
+							// 	});
+							// 	layui.table.reload('LAY-user-manage-cdr'); //重载表格
+							// }else if(data.data==-2){
+							// 	layer.msg("超出系统限制的最大条数", {
+							// 		icon: 2
+							// 	});
+							// }else{
+							// 	layer.msg("回收失败", {
+							// 		icon: 2
+							// 	});
+							// }
+							layer.msg("系统正在回收，请稍后查看", {
+								icon: 1
+							});
+
+						}
+					});
+					// } else {
+					// 	layer.msg("您没有选择项目,无法进行呼叫回收", {
+					// 		icon: 2
+					// 	});
+					// }
+
+				}
+
+			})
+		},
+		cdrcall: function (uuid) {
+			admin.req({
+				type: 'POST',
+				url: layui.setter.configUrl + 'admin/agent/clickCall',
+				data: {
+					info_uuid: uuid
+				},
+				success: function (data) {
+
+				}
+			});
+		}
+	}
+
+</script>
+
+</html>

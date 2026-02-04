@@ -1,0 +1,37 @@
+<div class="layui-form" lay-filter="layuiadmin-form-task-add" style="padding: 0px;">
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+        lay-filter="layadmin-userfront-formlist-project-task">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">任务名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-btn-group" style="float: right;">
+                <button class="layui-btn layuiadmin-btn-useradmin" title="查询" id="user_task_search" lay-submit
+                    lay-filter="LAY-user-front-search-task-fileList">
+                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-card-body">
+
+        <table id="LAY-user-manage-task-fileList" lay-filter="LAY-user-manage-task-fileList">
+        </table>
+        <script type="text/html" id="barDemofileList">
+            
+            {{# if(d.status==0){ }}
+                <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="downUpload">取消上传</a>
+            {{# } }}
+            {{# if(d.status==1){ }}
+                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="upUpload">重新上传</a>
+            {{# } }}
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="removefileList">删除</a>
+        </script>
+    </div>
+
+
+</div>

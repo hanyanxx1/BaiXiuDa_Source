@@ -1,0 +1,51 @@
+<div class="layui-form" lay-filter="layuiadmin-form-userpay" style="padding: 20px 0 0 0;">
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">用户名:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" readonly="readonly" lay-verify="required" autocomplete="off"
+				placeholder="请输入用户名" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">充值类型:</label>
+		<div class="layui-input-inline">
+			<select id="type" name="type">
+				<option value="0">话费充值</option>
+				<!-- <option value="1">AI充值</option> -->
+			</select>
+		</div>
+	</div>
+
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">金额(元):</label>
+		<div class="layui-input-inline">
+			<input type="text" id="money" name="recharge_money" style="width: 80px;" lay-verify="required|number"
+				autocomplete="off" placeholder="￥" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">描述:</label>
+		<div class="layui-input-block">
+			<textarea placeholder="请输入内容" id="remark" name="remark" class="layui-textarea"
+				style="width: 350px;"></textarea>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="user-pay-btn" lay-submit lay-filter="LAY-user-front-pay-submit" value="提交"
+				class="layui-btn">
+		</div>
+	</div>
+
+	<fieldset class="layui-elem-field layui-field-title">
+		<legend>充值记录<span id="app_id1"></span></legend>
+	</fieldset>
+	<table id="LAY-user-manage-pay-recharges" lay-filter="LAY-user-manage-pay-recharges"></table>
+
+</div>

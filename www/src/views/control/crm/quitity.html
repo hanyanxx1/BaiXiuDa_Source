@@ -1,0 +1,47 @@
+<div class="layui-form" lay-filter="layuiadmin-form-crm-quitity" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+								
+        <div class="layui-inline">
+            <label class="layui-form-label">质检状态:</label>
+            
+                <div class="layui-input-inline" style="width: 140px;">
+                    <!-- <select id="input_type" name="input_type" lay-verify="required" lay-filter="type_select" lay-search="">
+                        <option value="1">短文本</option>
+                        <option value="4">长文本</option>
+                        <option value="2">单选</option>
+                        <option value="3">多选</option>
+
+                    </select> -->
+
+                </div>
+            
+            <div id="on_type" class="layui-input-inline">
+                <button type="button" onclick="quitity_tool.addnode()" class="layui-btn">添加选项</button>
+            </div>
+
+            <!--<a id="on_type" onclick="field_tool.addnode()" class="layui-hide">
+                <div class="layui-form-mid">添加选项</div>
+            </a>-->
+        </div>
+        
+    </div>
+
+    <div id="node">
+
+    </div>
+
+
+    <div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="crm-quitity" lay-submit lay-filter="LAY-user-front-crm-quitity-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+</div>
+<script>
+    quitity_tool={
+        addnode:function(){
+            $("#node").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>'); 
+        }
+    }
+</script>

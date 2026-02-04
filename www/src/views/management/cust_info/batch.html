@@ -1,0 +1,52 @@
+<div class="layui-form" lay-filter="layuiadmin-form-cust-info-batch" style="padding: 0px 0 0 0;">
+	<div class="layui-form-item" style="margin-top: 20px;margin-left: 20px;">
+		<label class="layui-form-label">项目坐席:</label>
+		<div class="layui-inline">
+			<select name="agent" id="agent_id" lay-search="">
+			</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline" style="width: 80px;">
+			<input type="button" id="LAY-user-front-cust-info-batch-submit" lay-submit lay-filter="LAY-user-front-cust-info-batch-submit" value="确认" class="layui-btn">
+		</div>
+	</div>
+	<style>
+		.layui-layer-content {
+			overflow: visible !important;
+		}
+	</style>
+	<script>
+		layui.use('admin', function() {
+			var $ = layui.$;
+			var form = layui.form;
+			/*$(function() {
+				
+			})*/
+		})
+		
+		function getProjectAgent(project_id){
+			admin.req({ //坐席下拉列表
+					type: "POST",
+					url: layui.setter.configUrl + "admin/agent/list",
+					dataType: 'json',
+					data: {
+						project_id: project_id
+					},
+					success: function(res) {
+						var results = res.data;
+						$("#agent_id").append("<option value=''>--请选择--</option>");
+						var agent;
+						for(var i = 0; i < results.length; i++) {
+							var ipos = results[i].value.indexOf("(");
+							agent=results[i].value.substring(0,ipos); //取前bai部分duzhi 
+							$("#agent_id").append("<option value=" + agent + ">" + results[i].value  + "</option>");
+						}
+						form.render();
+					}
+				})
+		}
+		
+	</script>

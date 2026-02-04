@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>上传文件</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="shortcut icon" href="favicon.ico" />
+		<script src="layui/layui.js"></script>
+		<link rel="stylesheet" href="layui/css/layui.css" media="all">
+		<!--<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>-->
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-row layui-col-space15">
+				<div class=" layui-col-md12">
+					<div class=" layui-col-md12">
+						<div class="layui-card">
+							<hr />
+							<div class="layui-card-body">
+								
+								<div class="layui-row layui-col-space15">
+									<div class="layui-col-md12">
+										
+										<div class="layui-panel" style="border: 1px solid #e6e6e6;height: 300px;">
+
+											<div class="layui-upload-drag" id="test10" style="top: 30%;left: 25%;">
+												<i class="layui-icon"></i>
+												<p>点击上传，或将文件拖拽到此处</p>
+												<div class="layui-hide" id="uploadDemoView">
+													<hr>
+													<img src="" alt="上传成功后渲染" style="max-width: 196px">
+												</div>
+											</div>
+
+										</div>
+									</div>
+									
+									<div class="layui-col-md1">
+										<div class="form-group">
+											<div class="col-sm-10 col-sm-offset-2" style="width: 300px;">
+												<div class="layui-progress" lay-showPercent="yes">
+													<div class="layui-progress-bar" id="uploadImg" lay-percent="0%"></div>
+												</div>
+											</div>
+										</div>
+										<div class="layui-btn-container" style="margin-top: 20px;">
+											<button type="button" class="layui-btn layui-btn-normal" id="record-front-submit" lay-submit lay-filter="record-front-submit">开始上传</button>
+										</div>
+									</div>
+									
+								</div>
+
+								<div class="layui-row layui-col-space15">
+									<div class="layui-col-md6">
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		</div>
+	</body>
+	<style>
+		.layui-layout-body {
+			overflow-y: auto;
+		}
+	</style>
+	<script>
+		layui.config({
+			base: '../src/',
+			version: new Date().getTime()
+		}).extend().use('index');
+		layui.use(['form', 'table', 'upload'], function() {
+			table = layui.table;
+			form = layui.form;
+			var $ = layui.$;
+			view = layui.view;
+			admin = layui.admin;
+			setter = layui.setter;
+			upload = layui.upload;
+			element = layui.element;
+
+element.render();
+
+			
+			
+			var myMsg1;
+			//拖拽上传
+			var fileName="";
+			upload.render({ //加载导入按钮
+				type: 'POST',
+				elem: '#test10',
+				url: 'http://localhost:8871/txt/upload',
+				auto: false,
+				accept: 'file',
+				//exts: 'mp3|wav', //文件类型
+				bindAction: '#record-front-submit', //指向按钮触发
+				done: function(obj) {
+                    layer.close(myMsg1);
+				   $("#uploadImg").attr("lay-percent", "0%");
+				   element.render(); //进度条
+					layer.alert("上传成功");
+				},progress: function (n) {
+					var percent = n + '%' //获取进度百分比
+					$("#uploadImg").attr("lay-percent", percent);
+					element.render(); //进度条
+				},error:function(res){
+                    layer.close(myMsg1);
+					$("#uploadImg").attr("lay-percent", "0%");
+				   	element.render(); //进度条
+					layer.alert("上传失败");
+                }
+			});
+			//监听提交
+			form.on('submit(record-front-submit)', function(
+				data) {
+//					if(fileName==""){
+//						layer.msg("请选择文件",{icon:2});
+//						return;
+//					}
+				var field = data.field; //获取提交的字段
+				 myMsg1 = layer.msg("正在执行，请稍等", {
+				 	icon: 16,
+					shade: [0.1, '#fff'],
+				 	time: false //取消自动关闭
+				 })
+
+			});
+		})
+	</script>
+
+</html>

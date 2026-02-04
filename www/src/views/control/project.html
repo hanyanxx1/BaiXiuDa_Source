@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="css/new/cascader.css">
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-project">
+				<div class="layui-form-item">
+
+					<div class="layui-inline">
+						<label class="layui-form-label">项目状态</label>
+						<div class="layui-input-inline">
+							<select id="enable" name="enable">
+								<option value="1">启用</option>
+								<option value="0">禁用</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+
+						<label class="layui-form-label">项目名称</label>
+
+						<div class="layui-input-inline">
+
+							<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+
+						</div>
+
+					</div>
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+							lay-filter="LAY-user-front-search-project">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+							data-type="add_p"> <i
+								class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+						<!-- <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="修改"
+							data-type="bupdate_p"> <i
+								class="layui-icon layui-icon-edit layuiadmin-button-btn"></i></button> -->
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-warm"
+							title="启用" data-type="batchon_p"> <img src="../start/images/enable.png"></img></button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+							title="禁用" data-type="batchoff_p"> <img src="../start/images/disable.png"></img></button>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-project" lay-filter="LAY-user-manage-project"></table>
+
+				<script type="text/html" id="barDemoProject">
+					<a class="layui-btn layui-btn-xs layui-btn-primary layui-border-green" lay-event="bupdate_p">修改</a>
+					<a class="layui-btn layui-btn-xs layui-btn-primary layui-border-green" lay-event="senior">高级</a>
+					<a class='layui-btn layui-btn-xs layui-btn-primary layui-border-blue' lay-event='open'>监控</a>
+				</script>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+<style>
+	.layui-form-label {
+		width: 90px;
+	}
+
+	/*.layui-layer-content {
+			overflow: visible !important;
+		}*/
+</style>
+<script>
+	var $;
+	layui.use(['admin', 'table', 'xmSelect', 'cascader'], function () {
+		var table = layui.table;
+		form = layui.form;
+		$ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		xmSelect = layui.xmSelect;
+		var cascader = layui.cascader;
+
+		let gatewayNameList = [];
+		admin.req({ //中继下拉列表
+			type: "POST",
+			url: layui.setter.configUrl + "admin/project/gateways",
+			async: false,
+			dataType: 'json',
+			success: function (res) {
+				gatewayNameList = res.data;
+
+			}
+		});
+
+		let gatewayGroup = [];
+		admin.req({ //中继组下拉列表
+			type: "POST",
+			url: layui.setter.configUrl + "admin/trunkGroup/getGroup",
+			dataType: 'json',
+			async: false,
+			success: function (res) {
+				gatewayGroup = res.data;
+			}
+		});
+		let botGreetingData = [];
+		admin.req({ //机器人下拉列表
+			type: "POST",
+			url: layui.setter.configUrl + "admin/bot/grid",
+			async: false,
+			dataType: 'json',
+			success: function (res) {
+				botGreetingData = res.data;
+			}
+		});
+		let greetingData = [];
+		admin.req({ //欢迎语下拉列表
+			type: "POST",
+			url: layui.setter.configUrl + "admin/audioFile/list",
+			dataType: 'json',
+			async: false,
+			success: function (res) {
+				greetingData = res.data;
+			}
+		});
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-project',
+			url: layui.setter.configUrl + 'admin/project/grid',
+			height: 'full-180',
+			where: {
+				enable: $("#enable").val(),
+				name:""
+			},
+			cols: [
+				[{
+					type: 'checkbox'
+				}, {
+					field: 'name',
+					title: '名称',
+					align: 'center',
+					minWidth: 130
+				}, {
+					field: 'outbound_type',
+					title: '外呼类型',
+					sort: true,
+					align: 'center',
+					minWidth: 150,
+					templet: function (d) {
+						if (d.outbound_type == 1)
+							return "预测外呼";
+						else if (d.outbound_type == 2)
+							return "比例外呼";
+						else if (d.outbound_type == 3)
+							return "自动外呼";
+						else if (d.outbound_type == 4)
+							return "点击外呼";
+						else if (d.outbound_type == 5)
+							return "预览外呼";
+
+					}
+				}, {
+					field: 'crmName',
+					title: 'CRM',
+					minWidth: 120,
+					align: 'center'
+				}, {
+					field: 'crm_timeout',
+					title: '处理CRM超时(秒)',
+					minWidth: 150,
+					align: 'center'
+				}, {
+					field: 'gatewayName',
+					title: '外呼线路',
+					minWidth: 150,
+					align: 'center',
+					templet: function (d) {
+						let result = "";
+						if (d.tg_id != 0) {
+							for (let i = 0; i < gatewayGroup.length; i++) {
+								const element = gatewayGroup[i];
+								if (element.id == d.tg_id) {
+									result = element.name + "(中继组)";
+									break;
+								}
+							}
+						}
+						if (d.gateway_id != 0) {
+							for (let i = 0; i < gatewayNameList.length; i++) {
+								const element = gatewayNameList[i];
+								if (element.username == d.gatewayName && element.name != "") {
+									result = d.gatewayName + '(' + element.name + ')';
+									break;
+								}
+							}
+							if (result == "") {
+								result = d.gatewayName;
+							}
+						}
+						return result;
+					}
+				}, {
+					field: 'caozuo',
+					title: '操作',
+					minWidth: 200,
+					fixed: 'right',
+					toolbar: '#barDemoProject',
+					align: 'center'
+					// ,templet: function(d) {
+					// 	var result ="";
+					// 	result = "<a class='layui-btn layui-btn-xs' lay-event='edit'><img title='实时监控' src='../start/images/monitor.png' /></a>";
+					// 	result+='<img style="cursor:pointer;margin-left:16px;" title="实时监控" onclick="project_tool.open('+d.id+');" src="../start/images/monitor.png">';
+					// 	return result;
+
+					// }
+				}]
+			],
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-project');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-project)', function (data) {
+			var field = data.field;
+
+			//执行重载
+			table.reload('LAY-user-manage-project', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+		form.verify({
+			crm_timeout: function (value, item) { //value：表单的值、item：表单的DOM对象
+				if (/^[0-9]\d*(\d+)?$/.test(value) == false) { //大于等于0,不包含小数
+					return "请填写大于或等于0的数字";
+				}
+
+			},
+			verifyNumber: function (value, item) {
+				let reg = /\.\d{0,2}$/;
+				if (value.length > 2) {
+					return "参数值只能输入两位数字";
+				}
+			},
+			exist_project_name: function (value, item) { //value：表单的值、item：表单的DOM对象
+				var exist;
+				admin.req({
+					type: "POST",
+					async: false,
+					url: layui.setter.configUrl + "admin/project/exist",
+					dataType: 'json',
+					data: {
+						name: $("#name").val()
+					},
+					success: function (res) {
+						exist = res.data;
+					}
+
+				})
+				if (exist != null) {
+					//layer.tips('该用户名已存在', '#name', {tips: [2, 'red']});
+					return "该名称已被使用,请重试";
+				}
+
+			}
+
+		});
+
+
+		table.on('tool(LAY-user-manage-project)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'senior') {
+				admin.popupRight({
+					title: '高级设置',
+					area: '600px',
+					id: 'LAY-popup-user-add',
+					success: function (layero, index) {
+						view(this.id).render('control/project/senior').done(function () {
+							form.render(null, 'layuiadmin-form-management-senior');
+							if (data.play_extno == true) {
+								data.play_extno = "true";
+							} else {
+								data.play_extno = "false";
+							}
+							if (data.prompt_recording == true) {
+								data.prompt_recording = "true";
+							} else {
+								data.prompt_recording = "false";
+							}
+							if (data.prompt_waiting == true) {
+								data.prompt_waiting = "true";
+							} else {
+								data.prompt_waiting = "false";
+							}
+							if (data.detect_ringing == true) {
+								data.detect_ringing = "true";
+							} else {
+								data.detect_ringing = "false";
+							}
+							if (data.jitterbuffer == true) {
+								data.jitterbuffer = "true";
+							} else {
+								data.jitterbuffer = "false";
+							}
+							if (data.vad_silence == true) {
+								data.vad_silence = "true";
+							} else {
+								data.vad_silence = "false";
+							}
+							if (data.waiting_file == "") {
+								data.waiting_file = "waiting.wav";
+							}
+							data.acd = 5;
+
+							form.val('layuiadmin-form-management-senior', data);
+							//监听提交
+							form.on('submit(LAY-user-front-management-senior-submit)',
+								function (datas) {
+
+									var field = datas.field; //获取提交的字段
+									field["id"] = data.id;
+									layer.load();
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +
+											'admin/project/senior',
+										//async: true,
+										data: field,
+										dataType: "json",
+
+										success: function (obj) {
+											layer.closeAll('loading');
+											if (obj.data > 0) {
+												layer.msg("操作成功", {
+													icon: 1
+												});
+												layui.table.reload(
+													'LAY-user-manage-project'
+												); //重载表格
+												layer.close(
+													index); //执行关闭
+											} else {
+												layer.msg("操作失败", {
+													icon: 2
+												});
+											}
+
+										}
+
+									});
+
+
+								});
+						});
+					}
+				});
+			} else if (layEvent === "bupdate_p") {
+				admin.popupRight({
+					title: '修改',
+					area: '600px',
+					id: 'LAY-popup-user-update',
+					success: function (layero, index) {
+						view(this.id).render('control/project/update').done(function () {
+							form.render(null, 'layuiadmin-form-edit');
+							form.val('layuiadmin-form-edit', data); //表单初始赋值
+							//project_getways_id(data.gateway_id);
+							project_crm_id(data.crm_id);
+							//project_greeting_id(data.bot_id);
+							project_agent_id(data.id);
+
+							if (data.outbound_type == 1) {
+								$("#parameter_text").html("外呼数 = 参数*签入坐席（参数自动调整）");
+							} else if (data.outbound_type == 2) {
+								$("#parameter_text").html("外呼数 = 参数*签入坐席");
+							} else if (data.outbound_type == 3) {
+								$("#parameter_text").html("外呼数 = 参数")
+							} else if (data.outbound_type == 4) {
+								$("#parameter_text").html("0 - 公海，1 - 私海");
+							} else {
+								$("#parameter_text").html(" 0 - 公海，1 - 私海");
+							}
+
+							if (data.greeting_file != "") {
+								$("#digitsDiv").show();
+							}
+
+							var options = [];
+							var dataGreetingFileIsHave=0; //脏数据，判断是否可用
+							var dataBotIdIsHave =0;
+							if (botGreetingData.length > 0) {
+								let greetingData = {};
+								greetingData.value = "机器人";
+								greetingData.label = '机器人';
+								let greetingChildren = [];
+								for (let i = 0; i < botGreetingData.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = botGreetingData[i].id;
+									greetingChildrenOne.label = botGreetingData[i].name;
+									greetingChildrenOne.type = "机器人";
+									greetingChildren.push(greetingChildrenOne);
+									if (data.bot_id > 0 && data.bot_id == botGreetingData[i].id) {
+										dataBotIdIsHave=1;
+									}
+								}
+								greetingData.children = greetingChildren;
+								options.push(greetingData);
+							}
+							if (greetingData.length > 0) {
+								let greetingData1 = {};
+								greetingData1.value = "欢迎语";
+								greetingData1.label = '欢迎语';
+								let greetingChildren = [];
+								for (let i = 0; i < greetingData.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = greetingData[i].file_name;
+									greetingChildrenOne.label = greetingData[i].name;
+									greetingChildrenOne.type = "欢迎语";
+									greetingChildren.push(greetingChildrenOne);
+									if (data.greeting_file != "" && greetingData[i].file_name == data.greeting_file) {
+										dataGreetingFileIsHave=1;
+									}
+								}
+								greetingData1.children = greetingChildren;
+								options.push(greetingData1);
+							}
+							let bot_id = data.bot_id;
+							let greeting_file = data.greeting_file;
+							let label = "";
+							let value = "";
+							if (data.bot_id > 0 && dataBotIdIsHave==1) {
+								label = "机器人";
+								value = data.bot_id;
+							}
+							if (data.greeting_file != "" && dataGreetingFileIsHave==1) {
+								label = "欢迎语";
+								value = data.greeting_file;
+							}
+							
+							if (label != "" && value != "") {
+								cascader({
+									elem: "#demo2_1",
+									data: options,
+									value: [label, value],
+									success: function (valData, labelData) {
+										if (valData[0] == "机器人") {
+											bot_id = valData[1];
+											greeting_file = "";
+											$("#greeting_digits").val("");
+										}
+										if (valData[0] == "欢迎语") {
+											bot_id = 0;
+											greeting_file = valData[1];
+											$("#digitsDiv").show();
+										} else {
+											$("#digitsDiv").hide();
+										}
+									}
+								});
+							} else {
+								cascader({
+									elem: "#demo2_1",
+									data: options,
+									success: function (valData, labelData) {
+										if (valData[0] == "机器人") {
+											bot_id = valData[1];
+											greeting_file = "";
+											$("#greeting_digits").val("");
+										}
+										if (valData[0] == "欢迎语") {
+											bot_id = 0;
+											greeting_file = valData[1];
+											$("#digitsDiv").show();
+										} else {
+											$("#digitsDiv").hide();
+										}
+									}
+								});
+							}
+
+
+
+							var options2 = [];
+							var gatewayNameIsHave=0;
+							var gatewayGroupIsHave=0;
+							if (gatewayNameList.length > 0) {
+								let greetingData = {};
+								greetingData.value = "单一中继";
+								greetingData.label = '单一中继';
+								let greetingChildren = [];
+
+								for (let i = 0; i < gatewayNameList.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = gatewayNameList[i].id;
+									greetingChildrenOne.label = gatewayNameList[i].username + "(" + gatewayNameList[i].name + ")";
+									greetingChildrenOne.type = "单一中继";
+									greetingChildren.push(greetingChildrenOne);
+									
+								}
+								greetingData.children = greetingChildren;
+								options2.push(greetingData);
+							}
+							if (gatewayGroup.length > 0) {
+								let greetingData = {};
+								greetingData.value = "中继组";
+								greetingData.label = '中继组';
+								let greetingChildren = [];
+
+								let resultg = gatewayGroup;
+								for (let i = 0; i < resultg.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = "tg_" + resultg[i].id;
+									greetingChildrenOne.label = resultg[i].name;
+									greetingChildrenOne.type = "中继组";
+									greetingChildren.push(greetingChildrenOne);
+								}
+								greetingData.children = greetingChildren;
+								options2.push(greetingData);
+							}
+							let gateway_id = data.gateway_id;
+							let tg_id = data.tg_id;
+							let label1 = "";
+							let value1 = "";
+							if (data.tg_id != 0) {
+								for (let i = 0; i < gatewayGroup.length; i++) {
+									if (tg_id == gatewayGroup[i].id) {
+										label1 = "中继组";
+										value1 = "tg_" + data.tg_id;
+										break;
+									}
+								}
+							}
+							if (gateway_id != 0) {
+								for (let i = 0; i < gatewayNameList.length; i++) {
+									if (gateway_id == gatewayNameList[i].id) {
+										label1 = "单一中继";
+										value1 = data.gateway_id;
+										break;
+									}
+								}
+							}
+
+							if (label1 != "" && value1 != "") {
+								cascader({
+									elem: "#demo2_2",
+									data: options2,
+									value: [label1, value1],
+									success: function (valData, labelData) {
+										if (valData[0] == "单一中继") {
+											gateway_id = valData[1];
+											tg_id = "0";
+										}
+										if (valData[0] == "中继组") {
+											tg_id = valData[1].replace("tg_", "");
+											gateway_id = 0;
+
+										}
+									}
+								});
+							} else {
+								cascader({
+									elem: "#demo2_2",
+									data: options2,
+									success: function (valData, labelData) {
+										if (valData[0] == "单一中继") {
+											gateway_id = valData[1];
+											tg_id = "0";
+										}
+										if (valData[0] == "中继组") {
+											tg_id = valData[1].replace("tg_", "");
+											gateway_id = 0;
+
+										}
+									}
+								});
+							}
+
+							//监听提交
+							form.on('submit(LAY-user-front-managementedit-submit)', function (datas) {
+								//layer.load();
+								var field = datas.field; //获取提交的字段
+								if ($("#demo2_1").val() == "") {
+									field.bot_id = 0;
+									field.greeting_file = "";
+								} else {
+									field.bot_id = bot_id;
+									field.greeting_file = greeting_file;
+								}
+								if ($("#demo2_2").val() == "") {
+									field.tg_id = 0;
+									field.gateway_id = 0;
+								} else {
+									field.tg_id = tg_id;
+									field.gateway_id = gateway_id;
+								}
+
+
+								if (field.select != "") {
+									field.agents = field.select;
+								} else {
+									field.agents = 0;
+								}
+								delete field.select;
+								//console.log(field)
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl + 'admin/project/edit',
+									data: field,
+									dataType: "json",
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("修改成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-project'
+											); //重载表格
+											layer.close(index); //执行关闭 
+										} else {
+											layer.msg("修改失败,请重试", { icon: 2 });
+										}
+
+									}
+
+								});
+							});
+						});
+					}
+				});
+			} else if (layEvent === 'open') {
+				window.open("../start/monitor.html?id=" + data.id);
+			}
+		})
+
+		//事件
+		var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-project'),
+					checkData = checkStatus.data; //得到选中的数据
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+
+				layer.prompt({
+					formType: 1,
+					title: '敏感操作，请输入密码验证口令'
+				}, function (value, index) {
+					layer.close(index);
+
+					layer.confirm('确定删除吗？', function (index) {
+
+						//执行 Ajax 后重载
+						/*
+						admin.req({
+						  url: 'xxx'
+						  //,……
+						});
+						*/
+						table.reload('LAY-user-manage-project');
+						layer.msg('已删除', {
+							icon: 1
+						});
+					});
+				});
+			},
+			add_p: function () {
+				admin.popupRight({
+					title: '添加',
+					area: '600px',
+					id: 'LAY-popup-user-add',
+					success: function (layero, index) {
+						view(this.id).render('control/project/add').done(function () {
+							form.render(null, 'layuiadmin-form-managementadd');
+
+
+							var options = [];
+							if (botGreetingData.length > 0) { //机器人下拉列表
+								let greetingData2 = {};
+								greetingData2.value = "机器人";
+								greetingData2.label = '机器人';
+								let greetingChildren = [];
+								for (let i = 0; i < botGreetingData.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = botGreetingData[i].id;
+									greetingChildrenOne.label = botGreetingData[i].name;
+									greetingChildren.push(greetingChildrenOne);
+								}
+								greetingData2.children = greetingChildren;
+								options.push(greetingData2);
+							}
+
+							if (greetingData.length > 0) {
+								let greetingData1 = {};
+								greetingData1.value = "欢迎语";
+								greetingData1.label = '欢迎语';
+								let greetingChildren = [];
+								for (let i = 0; i < greetingData.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = greetingData[i].file_name;
+									greetingChildrenOne.label = greetingData[i].name;
+									greetingChildren.push(greetingChildrenOne);
+								}
+								greetingData1.children = greetingChildren;
+								options.push(greetingData1);
+							}
+							let bot_id = 0;
+							let greeting_file = "";
+							var demo2_1 = cascader({
+								elem: "#demo2_1",
+								data: options,
+								// url: "/aa",
+								// type: "post",
+								// triggerType: "change",
+								// showLastLevels: true,
+								// where: {
+								//     a: "aaa"
+								// },
+								//value: ["B", "BB2", "BBB4"],
+								// changeOnSelect: true,
+								success: function (valData, labelData) {
+									if (valData[0] == "机器人") {
+										bot_id = valData[1];
+										greeting_file = "";
+										$("#greeting_digits").val("");
+									}
+									if (valData[0] == "欢迎语") {
+										bot_id = 0;
+										greeting_file = valData[1];
+										$("#digitsDiv").show();
+									} else {
+										$("#digitsDiv").hide();
+									}
+								}
+							});
+
+							var options2 = [];
+							gatewayNameList
+							if (gatewayNameList.length > 0) {
+								let greetingData3 = {};
+								greetingData3.value = "单一中继";
+								greetingData3.label = '单一中继';
+								let greetingChildren = [];
+								for (let i = 0; i < gatewayNameList.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = gatewayNameList[i].id;
+									greetingChildrenOne.label = gatewayNameList[i].username + "(" + gatewayNameList[i].name + ")";
+									greetingChildrenOne.type = "单一中继";
+									greetingChildren.push(greetingChildrenOne);
+								}
+								greetingData3.children = greetingChildren;
+								options2.push(greetingData3);
+							}
+							if (gatewayGroup.length > 0) {
+								let greetingData = {};
+								greetingData.value = "中继组";
+								greetingData.label = '中继组';
+								let greetingChildren = [];
+
+								let resultg = gatewayGroup;
+								for (let i = 0; i < resultg.length; i++) {
+									let greetingChildrenOne = {};
+									greetingChildrenOne.value = "tg_" + resultg[i].id;
+									greetingChildrenOne.label = resultg[i].name;
+									greetingChildrenOne.type = "中继组";
+									greetingChildren.push(greetingChildrenOne);
+								}
+								greetingData.children = greetingChildren;
+								options2.push(greetingData);
+							}
+
+							let gateway_id = 0;
+							let tg_id = "0";
+							var demo2_2 = cascader({
+								elem: "#demo2_2",
+								data: options2,
+								// url: "/aa",
+								// type: "post",
+								// triggerType: "change",
+								// showLastLevels: true,
+								// where: {
+								//     a: "aaa"
+								// },
+								//value: ["B", "BB2", "BBB4"],
+								// changeOnSelect: true,
+								success: function (valData, labelData) {
+									if (valData[0] == "单一中继") {
+										gateway_id = valData[1];
+										tg_id = "0";
+									}
+									if (valData[0] == "中继组") {
+										tg_id = valData[1].replace("tg_", "");
+										gateway_id = 0;
+
+									}
+								}
+							});
+
+							//监听提交
+							form.on('submit(LAY-user-front-managementadd-submit)', function (data) {
+								var field = data.field; //获取提交的字段
+
+
+								//获取选中的坐席
+								if (field.select != "") {
+									field.agents = field.select;
+								} else {
+									field.agents = 0;
+								}
+								if ($("#demo2_1").val() == "") {
+									field.bot_id = 0;
+									field.greeting_file = "";
+								} else {
+									field.bot_id = bot_id;
+									field.greeting_file = greeting_file;
+								}
+								if ($("#demo2_2").val() == "") {
+									field.tg_id = 0;
+									field.gateway_id = 0;
+								} else {
+									field.tg_id = tg_id;
+									field.gateway_id = gateway_id;
+								}
+
+								if ($("#exist_projectname").html() ==
+									"项目名称已存在") {
+
+									layer.msg("项目名称重复,请重试", {
+										icon: 2
+									})
+								} else {
+									delete field.select;
+									layer.load();
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +
+											'admin/project/add',
+										data: field,
+										dataType: "json",
+										success: function (obj) {
+											layer.closeAll(
+												'loading');
+											if (obj.data > 0) {
+												layer.msg("操作成功", {
+													icon: 1
+												});
+												layui.table.reload(
+													'LAY-user-manage-project'
+												); //重载表格
+												layer.close(
+													index); //执行关闭
+											} else {
+												layer.msg("操作失败", {
+													icon: 2
+												});
+											}
+
+										}
+
+									});
+								}
+
+							});
+						});
+					}
+				});
+			},
+			// bupdate_p: function () {
+			// 	var checkStatus = table.checkStatus('LAY-user-manage-project'),
+			// 		checkData = checkStatus.data; //得到选中的数据
+
+			// 	if (checkData.length === 0) {
+			// 		return layer.msg('请选择数据', {
+			// 			icon: 2
+			// 		});
+			// 	} else if (checkData.length > 1) {
+			// 		return layer.msg('请选择一条数据进行编辑', {
+			// 			icon: 2
+			// 		});
+			// 	} else {
+			// 		admin.popupRight({
+			// 			title: '修改',
+			// 			area: '600px',
+			// 			id: 'LAY-popup-user-update',
+			// 			success: function (layero, index) {
+			// 				view(this.id).render('control/project/update').done(function () {
+			// 					form.render(null, 'layuiadmin-form-edit');
+			// 					form.val('layuiadmin-form-edit', checkData[0]); //表单初始赋值
+			// 					project_getways_id(checkData[0].gateway_id);
+			// 					project_crm_id(checkData[0].crm_id);
+			// 					project_greeting_id(checkData[0].greeting_file);
+			// 					project_agent_id(checkData[0].id);
+
+			// 					//监听提交
+			// 					form.on('submit(LAY-user-front-managementedit-submit)',
+			// 						function (data) {
+			// 							layer.load();
+			// 							var field = data.field; //获取提交的字段
+			// 							if (field.select != "") {
+			// 								field.agents = field.select;
+			// 							} else {
+			// 								field.agents = 0;
+			// 							}
+			// 							delete field.select;
+			// 							//提交 Ajax 成功后，关闭当前弹层并重载表格
+			// 							admin.req({
+			// 								type: "POST",
+			// 								url: layui.setter.configUrl +'admin/project/edit',
+			// 								data: field,
+			// 								dataType: "json",
+			// 								where: field,
+
+			// 								success: function (obj) {
+			// 									layer.closeAll(
+			// 										'loading');
+			// 									if (obj.data > 0) {
+			// 										layer.msg("修改成功", {
+			// 											icon: 1
+			// 										});
+			// 										layui.table.reload(
+			// 											'LAY-user-manage-project'
+			// 										); //重载表格
+			// 										layer.close(
+			// 											index); //执行关闭 
+			// 									} else {
+			// 										layer.msg(
+			// 											"修改失败,请重试", {
+			// 												icon: 2
+			// 											});
+			// 									}
+
+			// 								}
+
+			// 							});
+			// 						});
+			// 				});
+			// 			}
+			// 		});
+			// 	}
+
+			// },
+			batchoff_p: function () { //禁用
+				var checkStatus = table.checkStatus('LAY-user-manage-project'),
+					checkData = checkStatus.data; //得到选中的数据
+
+				var ids = "";
+				var checklen = checkData.length;
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				} else {
+					layer.load();
+					//提交 Ajax 成功后，关闭当前弹层并重载表格
+					admin.req({
+						type: "post",
+						url: layui.setter.configUrl + 'admin/project/enable',
+						//async: true,
+						data: {
+							ids: ids,
+							status: false
+						},
+						dataType: "json",
+
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("已禁用", {
+									icon: 1
+								});
+								layui.table.reload('LAY-user-manage-project'); //重载表格
+							} else {
+								layer.msg("操作失败,请重试", {
+									icon: 2
+								});
+							}
+
+						}
+
+					});
+				}
+
+			},
+			batchon_p: function () { //启用
+				var checkStatus = table.checkStatus('LAY-user-manage-project'),
+					checkData = checkStatus.data; //得到选中的数据
+
+				var ids = "";
+				var checklen = checkData.length;
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				} else {
+					layer.load();
+					//提交 Ajax 成功后，关闭当前弹层并重载表格
+					admin.req({
+						type: "post",
+						url: layui.setter.configUrl + 'admin/project/enable',
+						//async: true,
+						data: {
+							ids: ids,
+							status: true
+						},
+						dataType: "json",
+
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("已启用", {
+									icon: 1
+								});
+								layui.table.reload('LAY-user-manage-project'); //重载表格
+							} else {
+								layer.msg("操作失败,请重试", {
+									icon: 2
+								});
+							}
+
+						}
+
+					});
+				}
+
+			}
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+
+	project_tool = {
+		open: function (id) {
+			window.open("../start/monitor.html?id=" + id);
+			//window.sessionStorage.setItem("name",window.sessionStorage.getItem("name"));
+
+		}
+	}
+</script>
+
+</html>

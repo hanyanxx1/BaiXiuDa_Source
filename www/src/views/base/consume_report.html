@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-consume-report">
+				<div class="layui-form-item">
+
+					<div class="layui-inline">
+
+						<label class="layui-form-label">日期范围</label>
+
+						<div class="layui-input-inline">
+
+							<input type="text" id="ar_date" placeholder="yyyy-MM-dd" autocomplete="off"
+								class="layui-input">
+
+						</div>
+
+					</div>
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+							lay-filter="LAY-user-front-search-consume-report">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-useradmin" id="downloadConsumeReport" lay-submit
+							lay-filter="LAY-user-front-downloadConsumeReport">
+							<i class="layui-icon layui-icon-upload-drag layuiadmin-button-btn"></i>导出
+						</button>
+
+					</div>
+
+				</div>
+			</div>
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-consume-report" lay-filter="LAY-user-manage-consume-report"></table>
+
+			</div>
+
+
+
+		</div>
+	</div>
+
+</body>
+<style>
+</style>
+<script>
+	layui.use(['admin', 'table', 'laydate'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		laydate = layui.laydate;
+
+		let stored_days = 7;
+		// admin.req({
+		// 	type: "post",
+		// 	url: layui.setter.configUrl + 'admin/admin/get',
+		// 	async: false,
+		// 	done: function (res) {
+		// 		stored_days = res.data.stored_days;
+		// 	}
+		// })
+
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		if (month < 10)
+			month = "0" + month;
+		var day = date.getDate();
+		if (day < 10)
+			day = "0" + day;
+		var timestamp = year + "-" + month + "-" + day;
+		$("#ar_date").val(getDay(- stored_days) + " ~ " + getDay(0));
+
+		laydate.render({
+			elem: '#ar_date',
+			range: "~"
+		});
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-consume-report',
+			url: layui.setter.configUrl + 'admin/statConsume/grid',
+			height: 'full-200',
+			//cellMinWidth: 130,
+			where: {
+				startd: getDay(-stored_days),
+				endd: getDay(0)
+			},
+			cols: [
+				[{
+					field: 'date',
+					title: '日期',
+					align: 'center'
+				}, {
+					field: 'consumes',
+					title: '话费消费(元)',
+					align: 'center'
+				}, {
+					field: 'calls',
+					title: '呼叫总数',
+					align: 'center'
+				}, {
+					field: 'answers',
+					title: '应答数',
+					align: 'center'
+				}, {
+					field: 'transfers',
+					title: '转接数',
+					align: 'center'
+				}, {
+					field: 'loses',
+					title: '呼损数',
+					align: 'center'
+				}, {
+					field: 'successes',
+					title: '成功数',
+					align: 'center'
+				}, {
+					field: 'minutes',
+					title: '分钟数',
+					align: 'center'
+				}, {
+					field: 'ring_hit',
+					title: '号码状态检测(命中)',
+					minWidth: 180,
+					align: 'center'
+				}]
+			]
+
+			,
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-consume-report');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-consume-report)', function (data) {
+			var field = data.field;
+			field['startd'] = $('#ar_date').val().split(" ~ ")[0];
+			field['endd'] = $('#ar_date').val().split(" ~ ")[1];
+
+
+			//执行重载
+			table.reload('LAY-user-manage-consume-report', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+		form.on('submit(LAY-user-front-downloadConsumeReport)', function (data) {
+			let startd = $('#ar_date').val().split(" ~ ")[0];
+			let endd = $('#ar_date').val().split(" ~ ")[1];
+
+			var downUrl = layui.setter.configUrl + 'consume/download?startd=' + startd +
+				"&endd=" + endd + "&access_token=" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+			window.location = downUrl;
+		})
+	});
+</script>
+<script>
+
+	function getDay(day) {
+
+		var today = new Date();
+
+		var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+
+		today.setTime(targetday_milliseconds); //注意，这行是关键代码
+
+		var tYear = today.getFullYear();
+
+		var tMonth = today.getMonth();
+
+		var tDate = today.getDate();
+
+		tMonth = doHandleMonth(tMonth + 1);
+
+		tDate = doHandleMonth(tDate);
+
+		return tYear + "-" + tMonth + "-" + tDate;
+
+	}
+
+	function doHandleMonth(month) {
+
+		var m = month;
+
+		if (month.toString().length == 1) {
+
+			m = "0" + month;
+
+		}
+
+		return m;
+
+	}
+	// console.log(getDay(-7)); //获取七天前的日期
+	// console.log(getDay(0)); //获取今天的日期
+</script>
+
+</html>

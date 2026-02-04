@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-users">
+				<div class="layui-form-item">
+
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="name" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+					</div>
+
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+							lay-filter="LAY-user-front-search-users">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+							data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin  layui-btn-danger"
+							title="删除" data-type="batchdel"> <i
+								class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-users" lay-filter="LAY-user-manage-users"></table>
+
+				<script type="text/html" id="barDemo">
+					<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="editupdate">修改</a>
+					<a class="layui-btn layui-btn-xs" lay-event="editpay">充值</a>
+					<a class="layui-btn layui-btn-xs" lay-event="edit">登陆</a>
+				</script>
+				<script type="text/html" id="barDemos">
+
+				</script>
+			</div>
+		</div>
+	</div>
+
+</body>
+<style>
+	.layui-form-label {
+		width: 90px;
+	}
+
+	.layui-layer-content {
+		overflow: visible !important;
+	}
+</style>
+<script>
+	layui.use(['admin', 'table', 'util'], function () {
+		var table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		setter = layui.setter;
+		router = layui.router(),
+			search = router.search;
+		util = layui.util;
+
+		//form表单文本框验证规则
+		form.verify({
+			username: function (value, item) { //value：表单的值、item：表单的DOM对象
+
+				if (/^[^\u4e00-\u9fa5]{4,16}$/.test(value) == false) {
+					return "用户名不能输入汉字且长度不小于4位";
+				}
+				if (/^([a-zA-Z])/.test(value) == false) {
+					return "用户名必须首位英文字母且长度不小于4位(例:abc123)";
+				}
+			},
+			existname: function (value, item) { //验证用户名
+				var exist;
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "super_admin/admin/exist",
+					//dataType: 'json',
+					async: false,
+					data: {
+						name: value
+					},
+					success: function (res) {
+
+						exist = res.data;
+					}
+
+				})
+				if (exist == true) {
+					return "用户名已被使用,请重试";
+				}
+				if (value == "admin") {
+					return "用户名不能使用admin,请重试";
+				}
+			},
+			stored_days: function (value, item) { //value：表单的值、item：表单的DOM对象
+				if (/^[1-9]\d*(\d+)?$/.test(value) == false) //大于0,不包含小数
+					return "请填写大于0的正整数";
+			},
+			userPass: function (value, item) {
+					if(/^[\S]{8,16}$/.test(value)==false){
+						return "密码必须8到16位，且不能出现空格";
+					}
+
+
+					//var pwdRegex = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$).{6,}$/;
+					var pwdRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[~!@#$%^&,.?/<>-_+=*])[\da-zA-Z~!@#$%^&,.?/<>-_+=*]{8,}$/;
+					if (!pwdRegex.test(value)) {
+						return "您的密码复杂度太低（密码中必须包含字母、数字,特殊字符）";
+					}
+					var arr = value.match(/(.)\1*/g);
+					for (let i = 0; i < arr.length; i++) {
+						if (arr[i].length >= 3) {
+							return "密码包含3个或以上相同字符(" + arr[i] + ")";
+						}
+					}
+					if (/^[^\u4e00-\u9fa5]{8,16}$/.test(value) == false)
+						return "不能输入汉字";
+				
+			},
+			userEditPass: function (value, item) {
+				if (value != "") {
+					if(/^[\S]{8,16}$/.test(value)==false){
+						return "密码必须8到16位，且不能出现空格";
+					}
+
+
+					//var pwdRegex = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$).{6,}$/;
+					var pwdRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[~!@#$%^&,.?/<>-_+=*])[\da-zA-Z~!@#$%^&,.?/<>-_+=*]{8,}$/;
+					if (!pwdRegex.test(value)) {
+						return "您的密码复杂度太低（密码中必须包含字母、数字,特殊字符）";
+					}
+					var arr = value.match(/(.)\1*/g);
+					for (let i = 0; i < arr.length; i++) {
+						if (arr[i].length >= 3) {
+							return "密码包含3个或以上相同字符(" + arr[i] + ")";
+						}
+					}
+					if (/^[^\u4e00-\u9fa5]{8,16}$/.test(value) == false)
+						return "不能输入汉字";
+				}
+			},
+			verifyAiRate: function (value, item) {
+				let rateRegex = /^(0|[1-9]\d*)(\.\d{1,4})?$/;
+				if (!rateRegex.test(value)) {
+					return "请输入大于等于0的数字或小数";
+				}
+			},
+			pass: [/^[\S]{8,16}$/, '密码必须8到16位，且不能出现空格'] //密码验证规则
+		});
+
+		table.render({
+			method: 'post',
+			elem: '#LAY-user-manage-users',
+			url: layui.setter.configUrl + 'super_admin/admin/grid',
+			where: {
+				name: ""
+			},
+			height: 'full-180',
+			escape: true,
+			parseData: function (obj) {
+				let result = [];
+				for (let i = 0; i < obj.data.length; i++) {
+					const element = obj.data[i];
+					element.passwd = unescape(element.passwd);
+					result.push(element);
+				}
+				return {
+					"code": obj.code,
+					"msg": obj.msg,
+					"count": obj.count,
+					"data": result
+				}
+
+			},
+			cols: [
+				[{
+					type: 'checkbox',
+					fixed: 'left'
+				}, {
+					field: 'name',
+					title: '用户名',
+					fixed: 'left',
+					align: 'center',
+					minWidth: 140
+				}, {
+					field: 'consumes',
+					title: '今日话费',
+					align: 'center',
+					minWidth: 100,
+					templet: function (d) {
+						if (d.consumes > 0) {
+							return '<span style="color: red;">' + d.consumes + '</span>';
+						} else {
+							return d.consumes;
+						}
+					}
+				}, {
+					field: 'balance',
+					title: '话费余额(元)',
+					align: 'center',
+					minWidth: 140,
+					templet: function (d) {
+						if (d.balance > 0) {
+							return '<span style="color: green;">' + d.balance + '</span>';
+						} else {
+							return '<span style="color: red;">' + d.balance + '</span>';
+						}
+					}
+				}, {
+					field: 'overdraw',
+					title: '话费透支余额(元)',
+					edit: 'text',
+					align: 'center',
+					minWidth: 140
+				},
+				// {
+				// 	field: 'ai_cost',
+				// 	title: '今日AI消费',
+				// 	align: 'center',
+				// 	minWidth: 100,
+				// 	templet: function (d) {
+				// 		if (d.ai_cost > 0) {
+				// 			return '<span style="color: red;">' + d.ai_cost + '</span>';
+				// 		} else {
+				// 			return d.ai_cost;
+				// 		}
+				// 	}
+				// }, {
+				// 	field: 'ai_balance',
+				// 	title: 'AI余额(元)',
+				// 	align: 'center',
+				// 	minWidth: 95,
+				// 	templet: function (d) {
+				// 		if (d.ai_balance > 0) {
+				// 			return '<span style="color: green;">' + d.ai_balance + '</span>';
+				// 		} else {
+				// 			return '<span style="color: red;">' + d.ai_balance + '</span>';
+				// 		}
+				// 	}
+				// }, {
+				// 	field: 'ai_overdraw',
+				// 	title: 'AI透支余额(元)',
+				// 	edit: true,
+				// 	align: 'center',
+				// 	minWidth: 140
+				// }, 
+				{
+					field: 'company',
+					title: '公司名称',
+					align: 'center',
+					minWidth: 150
+				}, {
+					field: 'contact',
+					title: '联系人',
+					align: 'center',
+					minWidth: 150
+				}, {
+					field: 'telephone',
+					title: '联系电话',
+					align: 'center',
+					minWidth: 150
+				}, {
+					field: 'stored_days',
+					title: '数据存储(天)',
+					align: 'center',
+					minWidth: 130
+				}, {
+					field: 'record_format',
+					title: '录音格式',
+					align: 'center',
+					minWidth: 150
+				}, {
+					field: 'record_type',
+					title: '录音类型',
+					align: 'center',
+					templet: function (d) {
+						if (d.record_type == 3) {
+							return "转坐席录音";
+						} else if (d.record_type == 2) {
+							return "应答录音";
+						} else if (d.record_type == 1) {
+							return "全程录音";
+						} else if (d.record_type == 0) {
+							return "不录音";
+						}
+					},
+					minWidth: 150
+				}, {
+					field: 'caozuo',
+					title: '操作',
+					toolbar: '#barDemo',
+					fixed: 'right',
+					align: 'center',
+					minWidth: 180
+				}]
+			]
+
+			,
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-users');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-users)', function (data) {
+			var field = data.field;
+
+			//执行重载
+			table.reload('LAY-user-manage-users', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+		//监听单元格编辑
+		table.on('edit(LAY-user-manage-users)', function (obj) {
+			var value = obj.value //得到修改后的值
+				, data = obj.data //得到所在行所有键值
+				, field = obj.field; //得到字段
+			if (/^(0|[1-9]\d*)(\.\d{1,2})?$/.test(value) == false) {//大于等于0,不包含小数
+				layer.msg("请填写大于0的整数或小数", { icon: 2 });
+				return;
+			}
+			//console.log(value);
+			if (field == "overdraw") {
+				//layer.msg(data.name +" 的透支金额已更改为 "+value +" 元", {icon: 1});
+				//layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改值为：'+ util.escape(value));
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "super_admin/admin/editOverdraw",
+					//async: true,
+					data: {
+						id: data.id,
+						overdraw: value
+					},
+					dataType: "json",
+					success: function (obj) {
+						if (obj.data > 0) {
+							layer.msg(data.name + " 的透支金额已更改为 " + value + " 元", { icon: 1 });
+						} else {
+							layer.msg("修改失败,请重试", { icon: 2 });
+						}
+					}
+				});
+			}
+			if (field == "ai_overdraw") {
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "super_admin/admin/editAIOverdraw",
+					//async: true,
+					data: {
+						id: data.id,
+						overdraw: value
+					},
+					dataType: "json",
+					success: function (obj) {
+						if (obj.data > 0) {
+							layer.msg(data.name + " 的AI透支金额已更改为 " + value + " 元", { icon: 1 });
+						} else {
+							layer.msg("修改失败,请重试", { icon: 2 });
+						}
+					}
+				});
+			}
+
+
+
+		});
+
+
+		//行监听工具
+		table.on('tool(LAY-user-manage-users)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'edit') { //登陆
+				layer.load();
+				admin.req({
+					type: "post",
+					url: layui.setter.configUrl + 'super_admin/admin/quick_login' //实际使用请改成服务端真实接口
+					,
+					data: {
+						id: data.id
+					},
+					done: function (res) {
+						layer.closeAll('loading');
+						let result = res.data;
+						result.name = data.name;
+						result.allow_down = true;
+						result.allow_inspection = true;
+						result.permission = 1;
+						//新方式的存储token
+						layui.data(setter.tableName, {
+							key: data.name,
+							value: result
+						});
+
+						// //请求成功后，写入 access_token
+						// layui.data(setter.tableName, {
+						// 	key: setter.request.tokenName,
+						// 	value: res.data.access_token
+						// });
+						// //保存角色,用于判断坐席与管理员
+						// layui.data(setter.tableName, {
+						// 	key: "role",
+						// 	value: res.data.role
+						// });
+
+						window.sessionStorage.removeItem("loads");
+						//window.sessionStorage.setItem("role_names", res.data.role);
+						window.sessionStorage.removeItem("own");
+						window.sessionStorage.setItem("routerName", data.name);
+						setTimeout(() => {
+							window.sessionStorage.removeItem("routerName");
+						}, 1000);
+						window.open("../start/index.html#/base/home");
+						window.sessionStorage.setItem("own", 'super_admin');
+						layui.setter.name = layui.setter.name;
+					}
+
+				});
+			} else if (layEvent === 'editupdate') {
+
+				admin.popupRight({
+					title: '修改用户信息',
+					area: '600px',
+					id: 'LAY-popup-user-update',
+					success: function (layero, index) {
+						view(this.id).render('setting/users/update').done(function () {
+							form.render(null, 'layuiadmin-form-userupdate');
+							if (data.webphone == true) {
+								data.webphone = "true";
+							} else {
+								data.webphone = "false";
+							}
+							data.passwd = "";
+							form.val('layuiadmin-form-userupdate', data); //表单初始赋值
+							if (data.expand != null) {
+								let expand = JSON.parse(data.expand);
+								$("#push_wechat_url").val(expand.push_wechat_url);
+							}
+							//监听提交
+							form.on('submit(LAY-user-update-submit)', function (
+								datas) {
+								var field = datas.field; //获取提交的字段
+								field.passwd = escape(field.passwd);
+								let expand = {};
+								expand.push_wechat_url = $("#push_wechat_url").val();
+								field.expand = JSON.stringify(expand);
+								layer.load();
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										"super_admin/admin/edit",
+									//async: true,
+									data: field,
+									dataType: "json",
+
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg(field.name +
+												" 的信息已更新", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-users'
+											); //重载表格
+											layer.close(
+												index); //执行关闭 
+										} else if (obj.data == '-100') {
+											layer.msg(obj.msg, { icon: 2, time: 6000 });
+										} else {
+											layer.msg("修改失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+								});
+
+							});
+						});
+					}
+				});
+
+			} else {
+
+				admin.popupRight({
+					title: '充值',
+					area: '600px',
+					id: 'LAY-popup-user-pay',
+					success: function (layero, index) {
+						view(this.id).render('setting/users/pay').done(function () {
+							form.render(null, 'layuiadmin-form-userpay');
+							form.val('layuiadmin-form-userpay', data); //表单初始赋值
+							table.render({
+								method: "post",
+								elem: '#LAY-user-manage-pay-recharges',
+								url: layui.setter.configUrl +
+									'super_admin/recharge/grid',
+								where: {
+									id: data.id
+								},
+								cols: [
+									[{
+										field: 'type',
+										title: '充值类型',
+										align: 'center',
+										templet: function (d) {
+											if (d.type == 0) {
+												return "话费充值";
+											} else {
+												return "AI充值";
+											}
+										}
+									}, {
+										field: 'recharge_money',
+										title: '充值金额',
+										align: 'center'
+									}, {
+										field: 'before_money',
+										title: '充值前余额',
+										align: 'center'
+									}, {
+										field: 'datetime',
+										title: '充值时间',
+										align: 'center'
+									}, {
+										field: 'remark',
+										title: '备注',
+										align: 'center'
+									}]
+								]
+
+								,
+								page: true
+							});
+
+
+
+
+							//监听提交
+							form.on('submit(LAY-user-front-pay-submit)', function (
+								datas) {
+								var field = datas.field; //获取提交的字段
+								field['admin_id'] = data.id;
+								layer.load();
+
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										"super_admin/recharge/add",
+									//async: true,
+									data: field,
+									dataType: "json",
+
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg(
+												"充值成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-users'
+											); //重载表格
+											layer.close(
+												index); //执行关闭 
+										} else {
+											layer.msg("充值失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+
+								});
+
+							});
+
+
+						});
+					}
+				});
+
+			}
+		})
+
+		//事件
+		var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-users'),
+					checkData = checkStatus.data; //得到选中的数据
+				var idss = "";
+				for (var i = 0; i < checkData.length; i++) {
+					if (idss == "")
+						idss += checkData[i].id;
+					else
+						idss += "," + checkData[i].id;
+				}
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+
+				layer.confirm('确定删除吗？', {
+					icon: 3
+				}, function (index) {
+					layer.load();
+					//执行 Ajax 后重载
+
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + "super_admin/admin/remove",
+						data: {
+							ids: idss
+						},
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								layer.msg("删除成功", {
+									icon: 1
+								});
+								table.reload('LAY-user-manage-users');
+							} else {
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+					});
+				});
+			},
+			add: function () {
+				admin.popupRight({
+					title: '添加',
+					area: '600px',
+					id: 'LAY-popup-user-add',
+					success: function (layero, index) {
+						view(this.id).render('setting/users/add').done(function () {
+							form.render(null, 'layuiadmin-form-useradd');
+
+							//监听提交
+							form.on('submit(LAY-user-front-submit)', function (data) {
+								var field = data.field; //获取提交的字段
+								field.passwd = escape(field.passwd);
+								let expand = {};
+								expand.push_wechat_url = $("#push_wechat_url").val();
+								field.expand = JSON.stringify(expand);
+								layer.load();
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										"super_admin/admin/add",
+									data: field,
+									dataType: "json",
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("添加成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-users'
+											); //重载表格
+											layer.close(
+												index); //执行关闭 
+										} else if (obj.data == '-100') {
+											layer.msg(obj.msg, { icon: 2, time: 6000 });
+										} else {
+											layer.msg("添加失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+								});
+							});
+						});
+					}
+				});
+			},
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+</script>
+
+</html>

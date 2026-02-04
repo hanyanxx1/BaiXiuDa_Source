@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist-greetings">
+					<div class="layui-form-item">
+
+						<div class="layui-inline">
+							<label class="layui-form-label">用户名</label>
+							<div class="layui-input-inline">
+								<select name="admin_id" id="admin_id_greetings">
+									<option value="0">--请选择--</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="layui-inline">
+							<label class="layui-form-label">文件名</label>
+							<div class="layui-input-inline">
+								<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+
+						<div class="layui-btn-group" style="float: right;">
+							<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit lay-filter="LAY-user-front-search-greetings">
+            					<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+          					</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="layui-card-body">
+
+					<table id="LAY-user-manage-greetings" lay-filter="LAY-user-manage-greetings"></table>
+
+					<script type="text/html" id="barDemogreetings">
+						<a class="layui-btn layui-btn-xs" lay-event="editStatus">审核</a>
+					</script>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<style>
+		.layui-layer-content {
+			overflow: visible !important;
+		}
+	</style>
+	<script>
+			var recordUrl=layui.setter.configUrl+ "sounds/";//欢迎语路径
+		layui.use(['admin', 'table'], function() {
+			var table = layui.table;
+			form = layui.form;
+			var $ = layui.$;
+			view = layui.view;
+			admin = layui.admin;
+
+			$(function() {
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl + "super_admin/admin/list",
+					dataType: 'json',
+					success: function(res) {
+						var data = res.data;
+						for(var i = 0; i < data.length; i++) {
+							$("#admin_id_greetings").append("<option value=" + data[i].id + ">" + data[i].name + "</option>");
+						}
+
+						layui.form.render("select");
+					}
+				});
+			})
+
+			table.render({
+				method:"post",
+				elem: '#LAY-user-manage-greetings',
+				url: layui.setter.configUrl + 'super_admin/audioFile/grid',
+				height: 'full-180',
+				where: {
+					admin_id:0,
+					name:''
+				},
+				cols: [
+						[{
+							type: 'checkbox'
+						}, {
+							field: 'name',
+							title: '名称',
+							align: 'center'
+						}, {
+							field: 'file_name',
+							title: '文件',
+							align: 'center'
+						},{
+							field: 'stamp',
+							title: '上传日期',
+							align: 'center'
+						}, {
+							field: 'adminName',
+							title: '用户',
+							align: 'center'
+						}, {
+							field: 'status',
+							title: '审核状态',
+							sort: true,
+							align: 'center',
+							templet: function(d) {
+								if(d.status == 0) {
+									return '未审核';
+								} else if(d.status == 1) {
+									return '<span style="color:OliveDrab;">审核通过</span>';
+								} else {
+									return '<span style="color:red;">不通过</span>';
+								}
+							}
+						}, {
+							field: 'caozuo',
+							title: '操作',
+							toolbar: '#barDemogreetings',
+							align: 'center'
+						}]
+					]
+
+					,
+				page: true
+			});
+			form.render(null, 'layadmin-userfront-formlist-greetings');
+
+			//监听搜索
+			form.on('submit(LAY-user-front-search-greetings)', function(data) {
+				var field = data.field;
+
+				//执行重载
+				table.reload('LAY-user-manage-greetings', {
+					where: field,
+					page:{
+						curr:1
+					}
+				});
+			});
+			
+			
+			//行监听工具
+			table.on('tool(LAY-user-manage-greetings)', function(obj) {
+				var datas = obj.data,
+					layEvent = obj.event;
+				if(layEvent === 'editStatus') {
+					admin.popup({
+						title: '审核',
+						area: ['550px', '350px'],
+						id: 'LAY-popup-user-update',
+						btn: ['提交', '取消'],
+						success: function(layero, index) {
+							view(this.id).render('setting/greetings/edit').done(function() {
+								form.render(null, 'layuiadmin-form-greetings-editStatus'); //弹出层页面的form id
+								form.val('layuiadmin-form-greetings-editStatus', datas); //表单初始赋值
+								$('#audio_record').attr("src", recordUrl + datas.file_name);//引入欢迎语路径
+								//监听提交
+								form.on('submit(LAY-user-front-greeting-editStatus-submit)', function(data) { //监听弹层页面的提交id
+									layer.load();
+									var fields = data.field; //获取提交的字段
+									
+									//提交 Ajax 成功后，关闭当前弹层并重载表格
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl + "super_admin/audioFile/quality",
+										//async: true,
+										data: {
+											status:fields.status,
+											id:datas.id
+										},
+										dataType: "json",
+										where: fields,
+
+										success: function(obj) {
+											layer.closeAll('loading');
+											if(obj.data > 0) {
+												layer.msg("修改成功",{icon:1});
+												layui.table.reload('LAY-user-manage-greetings'); //重载表格
+												layer.close(index); //执行关闭 
+											} else {
+												layer.msg("修改失败,请重试",{icon:2});
+											}
+										}
+
+									});
+									
+
+								});
+
+							});
+						},
+						yes: function(index, layero) {
+							layero.find('#greetings_editStatus').click();
+						}
+					});
+				}
+
+			})
+
+		});
+	</script>
+
+</html>

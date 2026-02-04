@@ -1,0 +1,21 @@
+<div class="layui-form" lay-filter="layuiadmin-form-agentpwdadd" style="padding: 0px 0 0 0;">
+	<div class="layui-form-item">
+		<label class="layui-form-label">新密码:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="pwdroleupdate" name="pwd" lay-verify="required|pass|characters" autocomplete="off" placeholder="请输入密码" class="layui-input">
+
+		</div>
+		
+
+		<input type="button" id="agent-pwdupdate" style="display: none;" lay-submit lay-filter="LAY-agentpwdadd-front-submit" value="提交" class="layui-btn">
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-block">
+		<div class="layui-form-mid layui-word-aux">
+			<p>1. 密码必须8到16位，且不能出现空格</p>
+			<p>2. 建议每周或者每月更改一次密码</p>
+			<p>3. 密码组合必须不低于三种方式，大写英文+小写英文+数字+特殊符号。</p>
+		</div></div></div>
+
+</div>

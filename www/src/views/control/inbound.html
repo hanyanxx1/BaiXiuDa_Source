@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+                lay-filter="layadmin-userfront-formlist-inbound">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="name" autocomplete="off" placeholder="请输入名称" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">呼入号码</label>
+                        <div class="layui-input-inline">
+                            <select id="getways_ids" name="gateway_id" lay-filter="aihao" style="width: 50px;">
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+                            lay-filter="LAY-user-front-search-inbound">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                        </button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+                            data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+                            title="删除" data-type="batchdel"> <i
+                                class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <script type="text/html" id="barDemoinbound">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                </script>
+
+                <table id="LAY-user-manage-inbound" lay-filter="LAY-user-manage-inbound"></table>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script>
+    var user_name = "";
+    layui.use(['admin', 'table', 'upload', 'laydate', 'xmSelect'], function () {
+        var table = layui.table;
+
+        form = layui.form;
+
+        $ = layui.$;
+
+        view = layui.view;
+
+        admin = layui.admin;
+
+        upload = layui.upload;
+        var laydate = layui.laydate;
+        xmSelect = layui.xmSelect;
+
+        let gatewayNameList = [];
+		admin.req({ //中继下拉列表
+				type: "POST",
+				url: layui.setter.configUrl + "admin/project/gateways",
+				async:false,
+				dataType: 'json',
+				success: function (res) {
+					gatewayNameList = res.data;
+					
+				}
+			});
+
+        table.render({
+            method: "post",
+            elem: '#LAY-user-manage-inbound',
+            url: layui.setter.configUrl + 'admin/inbound/grid',
+            height: 'full-180',
+            where: {
+                name: '',
+                gateway_id: 0
+            },
+            cols: [
+                    [{
+                            type: 'checkbox'
+                        }, {
+                            field: 'name',
+                            title: '名称',
+                            minWidth: 150,
+                            align: 'center'
+                        }, {
+                            field: 'city_code',
+                            title: '区号',
+                            minWidth: 150,
+                            align: 'center'
+                        },
+                        {
+                            field: 'days',
+                            title: '工作日',
+                            minWidth: 300,
+                            align: 'center',
+                            templet: function (d) {
+                                return d.days.replace("0", "周一").replace("1", "周二").replace("2",
+                                    "周三").replace("3", "周四").replace("4", "周五").replace("5",
+                                    "周六").replace("6", "周日").replace("[", "").replace("]", "");
+                            }
+                        }, {
+                            title: '工作时间',
+                            minWidth: 200,
+                            align: 'center',
+                            templet: function (d) {
+                                return d.start_time + " ~ " + d.end_time;
+                            }
+                        }, {
+                            field: 'gateway_name',
+                            title: '呼入号码',
+                            minWidth: 150,
+                            rowspan: "2",
+                            align: 'center',
+                            templet: function (d) {
+                                for (let i = 0; i < gatewayNameList.length; i++) {
+                                    const element = gatewayNameList[i];
+                                    if(element.username == d.gateway_name && element.name !=""){
+                                        return d.gateway_name+'('+element.name+')';
+                                    }
+                                    
+                                }
+                                return d.gateway_name;
+                            }
+                        }, {
+                            field: 'caozuo',
+                            title: '操作',
+                            minWidth: 100,
+                            fixed: 'right',
+                            rowspan: "2",
+                            toolbar: '#barDemoinbound',
+                            align: 'center'
+                            // ,
+                            // templet: function(d) {
+
+                            // 	return '<a class="layui-btn layui-btn-xs" title="试听" onclick="greeting_tool.listen_greeting(' + d.description.replace(".wav", "") + ')">试听</a>'
+
+                            // }
+                        }
+                    ]
+                ]
+
+                ,
+            page: true
+        });
+        form.render(null, 'layadmin-userfront-formlist-inbound');
+
+        //监听搜索
+        form.on('submit(LAY-user-front-search-inbound)', function (data) {
+            var field = data.field;
+
+            //执行重载
+            table.reload('LAY-user-manage-inbound', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        admin.req({
+            url: layui.setter.configUrl + 'menu/info',
+            async: false,
+            done: function (res) {
+                user_name = res.data.name;
+
+            }
+        })
+
+        admin.req({ //中继下拉列表
+            type: "POST",
+            url: layui.setter.configUrl + "admin/project/gateways",
+            dataType: 'json',
+            success: function (res) {
+                var result = res.data;
+                $("#getways_ids").append("<option value='0'>--请选择--</option>");
+                for (var i = 0; i < result.length; i++) {
+                    $("#getways_ids").append("<option value=" + result[i].id + ">" +
+                        result[i].username + "</option>");
+                }
+                layui.form.render("select");
+            }
+        });
+
+        table.on('tool(LAY-user-manage-inbound)', function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'edit') {
+                admin.popupRight({
+                    title: '修改',
+                    //area: ['45%', '57%'],
+                    area: '650px',
+                    id: 'LAY-popup-inboundadd-edit',
+                    success: function (layero, index) {
+                        view(this.id).render('control/inbound/edit').done(function () {
+                            form.render(null, 'layuiadmin-form-inboundedit');
+                            var action = JSON.parse(data.action);
+                            var action_type = action.type;
+                            data['action_type'] = action_type;
+                            form.val('layuiadmin-form-inboundedit', data); //表单初始赋值
+
+                            parseGateway(data.gateway_id);
+                            var ids = data.days.replace("[", "").replace("]", "")
+                                .replace(" ", "").replace(" ", "").replace(" ", "")
+                                .replace(" ", "").replace(" ", "").replace(" ", "")
+                                .replace(" ", "");
+                            var idds = ids.split(",");
+                            days(idds);
+                            var time = data.start_time + " - " + data.end_time;
+                            times(time);
+                            laydate.render({
+                                elem: '#time',
+                                type: 'time',
+                                range: true,
+                                value: time
+                            });
+
+                            var action_value = action.value;
+                            putValue(action_type, action_value);
+                            ivr_project(data.project_id);
+
+
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-inboundedit-submit)',
+                                function (datas) {
+                                    var field = datas.field; //获取提交的字段
+                                    var time = $("#time").val();
+                                    var string = {};
+                                    var action = field.action_type;
+                                    string['type'] = action;
+                                    string['value'] = field.value.split("(")[0];
+
+                                    admin.req({
+                                        type: 'post',
+                                        url: layui.setter.configUrl +
+                                            'admin/inbound/edit',
+                                        data: {
+                                            id: data.id,
+                                            name: field.name,
+                                            project_id: field
+                                                .project_id,
+                                            gateway_id: field
+                                                .gateway_id,
+                                            city_code: field.city_code,
+                                            days: "[" + field.days +
+                                                "]",
+                                            start_time: time.split(
+                                                " - ")[0],
+                                            end_time: time.split(" - ")[
+                                                1],
+                                            action: JSON.stringify(
+                                                string)
+                                        },
+                                        success: function (obj) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            table.reload(
+                                                "LAY-user-manage-inbound"
+                                            );
+                                        }
+
+                                    })
+
+                                    //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                    //$.ajax({});
+                                    layer.close(index); //执行关闭 
+                                });
+                        });
+                    }
+                });
+            }
+
+        })
+
+
+        //事件
+        var active = {
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-user-manage-inbound'),
+                    checkData = checkStatus.data; //得到选中的数据
+
+                var ids = "";
+                for (var i = 0; i < checkData.length; i++) {
+                    if (ids != "") {
+                        ids = ids + "," + checkData[i].id;
+                    } else
+                        ids = checkData[i].id;
+                }
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据', {
+                        icon: 2
+                    });
+                }
+
+                layer.confirm('确定删除吗？', {
+                    icon: 3
+                }, function (index) {
+
+                    //执行 Ajax 后重载
+                    layer.load();
+                    admin.req({
+                        type: "post",
+                        url: layui.setter.configUrl + 'admin/inbound/remove',
+                        //async: true,
+                        //dataType: "json",
+                        data: {
+                            ids: ids
+                        },
+
+                        success: function (obj) {
+                            layer.closeAll('loading');
+                            if (obj.data > 0) {
+                                layer.msg("已删除", {
+                                    icon: 1
+                                });
+                                table.reload('LAY-user-manage-inbound');
+                            } else {
+                                layer.msg("删除失败,请重试", {
+                                    icon: 2
+                                });
+                            }
+                        }
+                    });
+
+                });
+            },
+            add: function () {
+                admin.popupRight({
+                    title: '新增',
+                    //area: ['45%', '57%'],
+                    area: '650px',
+                    id: 'LAY-popup-inboundadd-add',
+                    success: function (layero, index) {
+                        view(this.id).render('control/inbound/add').done(function () {
+                            form.render(null, 'layuiadmin-form-inboundadd');
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-inboundadd-submit)',
+                                function (data) {
+                                    var field = data.field; //获取提交的字段
+                                    var time = $("#time").val();
+
+                                    var string = {};
+                                    var action = field.action;
+                                    if (action == "agent") {
+                                        string['type'] = action;
+                                        string['value'] = field.value.split("(")[0];
+                                    } else {
+                                        string['type'] = action;
+                                        string['value'] = field.value;
+                                    }
+                                    admin.req({
+                                        type: 'post',
+                                        url: layui.setter.configUrl +
+                                            'admin/inbound/add',
+                                        data: {
+                                            name: field.name,
+                                            project_id: field
+                                                .project_id,
+                                            gateway_id: field
+                                                .gateway_id,
+                                            city_code: field.city_code,
+                                            days: "[" + field.days +
+                                                "]",
+                                            start_time: time.split(
+                                                " - ")[0],
+                                            end_time: time.split(" - ")[
+                                                1],
+                                            action: JSON.stringify(
+                                                string)
+                                        },
+                                        success: function (obj) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            layer.close(
+                                            index); //执行关闭 
+                                            table.reload(
+                                                "LAY-user-manage-inbound"
+                                            );
+                                        }
+
+                                    })
+
+                                });
+                        });
+                    }
+                });
+            }
+
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    })
+</script>

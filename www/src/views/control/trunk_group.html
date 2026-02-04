@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+                lay-filter="layadmin-userfront-formlist-trunkgroup">
+                <div class="layui-form-item">
+
+                    <label class="layui-form-label">名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" autocomplete="off" placeholder="请输入名称" class="layui-input">
+                    </div>
+
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+                            lay-filter="LAY-user-front-search-trunkgroup">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                        </button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+                            data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+                            title="删除" data-type="batchdel"> <i
+                                class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+
+                <table id="LAY-user-manage-trunkgroup" lay-filter="LAY-user-manage-trunkgroup"></table>
+                <script type="text/html" id="trunkGroupbound">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                    </script>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    var $;
+    layui.use(['admin', 'table', 'upload', 'transfer'], function () {
+        var table = layui.table;
+        form = layui.form;
+        $ = layui.$;
+        view = layui.view;
+        admin = layui.admin;
+        upload = layui.upload;
+        transfer = layui.transfer;
+
+        table.render({
+            method: "post",
+            elem: '#LAY-user-manage-trunkgroup',
+            url: layui.setter.configUrl + 'admin/trunkGroup/grid',
+            height: 'full-180',
+            where: {
+                name: ''
+            },
+            cols: [
+                [{
+                    type: 'checkbox'
+                }, {
+                    field: 'name',
+                    title: '名称',
+                    minWidth: 150,
+                    align: 'center'
+                }, {
+                    field: 'list',
+                    title: '中继',
+                    minWidth: 250,
+                    align: 'center'
+                    , templet: function (d) {
+                        let result = '';
+                        let list = JSON.parse(d.list);
+
+                        for (let i = 0; i < list.length; i++) {
+                            let listOne = list[i];
+                            if (result == '') {
+                                result = '<span class="layui-badge layui-bg-green">' + listOne.username + '</span>';
+                            } else {
+                                result += '<span class="layui-badge layui-bg-green" style="margin-left:5px;">' + listOne.username + '</span>';
+                            }
+                        }
+                        return result;
+                    }
+                }, {
+                    field: 'policy',
+                    title: '策略',
+                    minWidth: 150,
+                    align: 'center'
+                    , templet: function (d) {
+                        if (d.policy == 1) {
+                            return "顺序";
+                        } else {
+                            return "乱序";
+                        }
+                    }
+                }, {
+                    field: 'caozuo',
+                    title: '操作',
+                    minWidth: 100,
+                    fixed: 'right',
+                    rowspan: "2",
+                    toolbar: '#trunkGroupbound',
+                    align: 'center'
+                }]
+            ]
+
+            ,
+            page: true
+        });
+        form.render(null, 'layadmin-userfront-formlist-trunkgroup');
+
+        //监听搜索
+        form.on('submit(LAY-user-front-search-trunkgroup)', function (data) {
+            var field = data.field;
+
+            //执行重载
+            table.reload('LAY-user-manage-trunkgroup', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        table.on('tool(LAY-user-manage-trunkgroup)', function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'edit') {
+                admin.popup({
+                    title: '修改',
+                    //area: ['45%', '57%'],
+                    area: ['800px', '720px'],
+                    id: 'LAY-popup-trunkgroup-edit',
+                    btn: ['提交', '取消'],
+                    success: function (layero, index) {
+                        view(this.id).render('control/trunkgroup/edit').done(function () {
+
+                            // $("#name").val(data.name);
+                            //console.log(data)
+                            form.val('layuiadmin-form-trunkgroup-edit', data);
+                            form.render(null, 'layuiadmin-form-trunkgroup-edit');
+                            //模拟数据
+                            var data1 = []
+                            admin.req({
+                                type: 'post',
+                                url: layui.setter.configUrl +
+                                    'admin/project/gateways',
+                                async: false,
+                                success: function (obj) {
+                                    for (let i = 0; i < obj.data.length; i++) {
+                                        const element = obj.data[i];
+                                        let ever = {};
+                                        ever.value = element.id;
+                                        ever.title = element.username+"("+element.name+")";
+                                        data1.push(ever);
+                                    }
+                                }
+                            })
+                            let list = JSON.parse(data.list);
+                            let listStr = [];
+                            for (let i = 0; i < list.length; i++) {
+                                const listOne = list[i];
+                                listStr.push(listOne.id)
+
+                            }
+                            //console.log(listStr)
+                            //基础效果
+                            transfer.render({
+                                elem: '#test2',
+                                title: ['中继名称', '已选定中继']
+                                , data: data1
+                                , id: 'key124'
+                                , value: listStr
+                            })
+                            transferRightSort(listStr);
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-trunkgroup-edit-submit)',
+                                function (datas) {
+                                    let getData = transfer.getData('key124'); //获取右侧数据
+                                    if (getData.length == 0) {
+                                        layer.msg("请选择数据", { icon: 2 });
+                                        return;
+                                    }
+                                    if (getData.length > 20) {
+                                        layer.msg("最多选择20个", { icon: 2 });
+                                        return;
+                                    }
+                                    let list = [];
+                                    for (let i = 0; i < getData.length; i++) {
+                                        const element = getData[i];
+                                        list.push(element.value);
+                                    }
+                                    var field = datas.field; //获取提交的字段
+                                    field.list = list.join(",");
+                                    field.id = data.id;
+                                    admin.req({
+                                        type: 'post',
+                                        url: layui.setter.configUrl +
+                                            'admin/trunkGroup/edit',
+                                        data: field,
+                                        success: function (obj) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            table.reload(
+                                                "LAY-user-manage-trunkgroup"
+                                            );
+                                        }
+
+                                    })
+
+                                    //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                    //$.ajax({});
+                                    layer.close(index); //执行关闭 
+                                });
+                        });
+                    },
+                    yes: function (index, layero) {
+                        layero.find('#trunkgroup_edit').click();
+                    }
+                });
+            }
+
+        })
+        //事件
+        var active = {
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-user-manage-trunkgroup'),
+                    checkData = checkStatus.data; //得到选中的数据
+
+                var ids = "";
+                for (var i = 0; i < checkData.length; i++) {
+                    if (ids != "") {
+                        ids = ids + "," + checkData[i].id;
+                    } else
+                        ids = checkData[i].id;
+                }
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据', {
+                        icon: 2
+                    });
+                }
+
+                layer.confirm('确定删除吗？', {
+                    icon: 3
+                }, function (index) {
+
+                    //执行 Ajax 后重载
+                    layer.load();
+                    admin.req({
+                        type: "post",
+                        url: layui.setter.configUrl + 'admin/trunkGroup/remove',
+                        //async: true,
+                        //dataType: "json",
+                        data: {
+                            ids: ids
+                        },
+
+                        success: function (obj) {
+                            layer.closeAll('loading');
+                            if (obj.data > 0) {
+                                layer.msg("已删除", {
+                                    icon: 1
+                                });
+                                table.reload('LAY-user-manage-trunkgroup');
+                            } else {
+                                layer.msg("删除失败,请重试", {
+                                    icon: 2
+                                });
+                            }
+                        }
+                    });
+
+                });
+            },
+            add: function () {
+                admin.popup({
+                    title: '新增中继组',
+                    //area: ['45%', '57%'],
+                    area: ['800px', '720px'],
+
+                    id: 'LAY-popup-trunkgroup-add',
+                    btn: ['提交', '取消'],
+                    success: function (layero, index) {
+                        view(this.id).render('control/trunkgroup/add').done(function () {
+                            form.render(null, 'layuiadmin-form-trunkgroup-add');
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-trunkgroup-add-submit)', function (data) {
+                                var getData = transfer.getData('key123'); //获取右侧数据
+                                if (getData.length == 0) {
+                                    layer.msg("请选择数据", { icon: 2 });
+                                    return;
+                                }
+                                if (getData.length > 20) {
+                                    layer.msg("最多选择20个", { icon: 2 });
+                                    return;
+                                }
+                                let list = [];
+                                for (let i = 0; i < getData.length; i++) {
+                                    const element = getData[i];
+                                    list.push(element.value);
+                                }
+                                var field = data.field; //获取提交的字段
+                                field.list = list.join(",");
+                                //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                //$.ajax({});
+                                admin.req({
+                                    type: 'post',
+                                    url: layui.setter.configUrl +
+                                        'admin/trunkGroup/add',
+                                    data: field,
+                                    success: function (obj) {
+
+                                        if (obj.data > 0) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            table.reload(
+                                                "LAY-user-manage-trunkgroup"
+                                            );
+                                            layer.close(
+                                                index); //执行关闭
+                                        } else {
+                                            layer.msg("操作失败", {
+                                                icon: 2
+                                            });
+                                        }
+                                    }
+
+                                })
+                                layer.close(index); //执行关闭 
+
+                            });
+                        });
+                    },
+                    yes: function (index, layero) {
+                        layero.find('#trunkgroup_add').click();
+                    }
+                });
+            }
+
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+
+    //穿梭框重新排序
+    function transferRightSort(arr) {
+        var data = $("ul.layui-transfer-data")[1]
+        var item_list = $(data).children("li")
+        var middle_list = []
+        for (var key in arr) {
+            middle_list.push("")
+        }
+        // console.info(arr)
+        for (var i = 0; i < item_list.length; i++) {
+            var item = item_list[i]
+            var value = $(item_list).children("input")[i].value
+            var index = arr.indexOf(parseInt(value))
+           // console.info(index);
+            middle_list[index] = item
+        }
+        var innertHTML = ""
+        for (var y = 0; y < middle_list.length; y++) {
+          //  console.info($(middle_list).children("input")[y].value)
+            // console.info(middle_list[i].HTML)
+            innertHTML += "<li>" + middle_list[y].innerHTML + "</li>"
+        }
+        $($("ul.layui-transfer-data")[1]).html(innertHTML)
+        // console.info(innertHTML)
+    }
+</script>
+
+</html>

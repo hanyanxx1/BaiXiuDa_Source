@@ -1,0 +1,154 @@
+<div class="layui-form" lay-filter="layuiadmin-form-userupdate" style="padding: 20px;">
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">id:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="id" name="id" lay-verify="required" autocomplete="off" placeholder="请输入"
+				class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">用户名</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" readonly="readonly" lay-verify="required" autocomplete="off"
+				placeholder="请输入用户名" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">重置密码</label>
+		<div class="layui-input-inline">
+			<input type="text" id="pwd" name="passwd" lay-verify="userEditPass" autocomplete="off"
+				placeholder="请输入密碼" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">公司名</label>
+		<div class="layui-input-inline">
+			<input type="text" id="company" name="company" lay-verify="required" autocomplete="off" placeholder="请输入公司名"
+				class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">联系人</label>
+		<div class="layui-input-inline">
+			<input type="text" id="contact" name="contact" autocomplete="off" placeholder="" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">联系电话</label>
+		<div class="layui-input-inline">
+			<input type="text" id="telephone" name="telephone" autocomplete="off" placeholder="" class="layui-input">
+		</div>
+	</div>
+
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">数据存储(天)</label>
+		<div class="layui-input-inline">
+			<input type="text" id="stored_days" name="stored_days" style="width: 80px;"
+				lay-verify="required|number|stored_days" autocomplete="off" placeholder="" class="layui-input">
+
+
+		</div>
+	</div>
+
+
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">录音类型</label>
+			<div class="layui-input-inline">
+				<select id="record_type" name="record_type" lay-verify="required" lay-search="">
+					<option value="0">不录音</option>
+					<option value="1">全程录音</option>
+					<option value="2">应答录音</option>
+					<option value="3">转坐席录音</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">录音格式</label>
+		<div class="layui-input-inline" style="width: 400px;">
+			<!-- <textarea placeholder="请输入内容" id="record_format" name="record_format" class="layui-textarea" style="width: 350px;"></textarea> -->
+			<input type="text" id="record_format" name="record_format" autocomplete="off" placeholder=""
+				class="layui-input">
+			<span style="color: red;">注:工号-${ext},号码-${tel},日期-${date},编号-${uuid}</span>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">网页电话</label>
+			<div class="layui-input-inline">
+				<select id="webphone" name="webphone" lay-verify="required" >
+					<option value="false">禁用</option>
+					<option value="true">启用</option>
+
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">Bot费率</label>
+		<div class="layui-input-inline">
+			<input type="text" id="ai_rate" name="ai_rate" value="0.02" lay-verify="required|verifyAiRate" autocomplete="off" placeholder="元/分钟" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux"><span id="parameter_text">元/分钟</span></div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">录音类型</label>
+			<div class="layui-input-inline">
+				<select id="stereo" name="stereo" lay-verify="required" >
+					<option value="0">单声道</option>
+					<option value="1">立体声</option>
+
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">号码脱敏</label>
+		<div class="layui-input-inline" style="width: 350px;">
+			<!-- <input type="text" id="decrypt" name="decrypt" autocomplete="off" placeholder="" class="layui-input"> -->
+			<select id="decrypt" name="decrypt" lay-verify="required" lay-search="">
+				<option value="none" checked="true">不加密</option>
+				<option value="hide">隐藏四位</option>
+				<option value="md5">MD5加密</option>
+				<option value="asc">ASC加密</option>
+			</select>
+		</div>
+	</div>
+	
+<div class="layui-form-item" style="display: none;">
+	<label class="layui-form-label">微信推送地址</label>
+	<div class="layui-input-inline" style="width: 350px;">
+		<input type="text" id="push_wechat_url" autocomplete="off" placeholder="请输入推送地址"
+			class="layui-input">
+	</div>
+</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="LAY-user-update-submit-btn" lay-submit lay-filter="LAY-user-update-submit"
+				value="提交" class="layui-btn">
+		</div>
+	</div>
+</div>
+<script>
+	layui.use(['laydate', 'form'], function () {
+		var laydate = layui.laydate;
+		var $ = layui.$;
+		var form = layui.form;
+
+	})
+</script>

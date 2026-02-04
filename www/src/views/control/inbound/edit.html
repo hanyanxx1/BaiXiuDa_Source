@@ -1,0 +1,372 @@
+<form class="layui-form" lay-filter="layuiadmin-form-inboundedit" style="padding: 20px 0 0 0;">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" placeholder="请输入名称"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">绑定项目</label>
+            <div class="layui-input-inline">
+                <select id="project_id" name="project_id" lay-verify="required">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">呼入号码:</label>
+        <div class="layui-input-inline">
+            <select id="getways_id" name="gateway_id" lay-verify="required" style="width: 50px;">
+
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">区号:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="city_code" name="city_code" autocomplete="off" placeholder=""
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作日:</label>
+        <div class="layui-input-inline" style="width: 320px;">
+            <div id="days" class="xm-select-demo"></div>
+
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">工作时间:</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="time" placeholder=" - ">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">路由指向:</label>
+        <div class="layui-input-inline">
+            <select id="action_type" name="action_type" lay-verify="required" lay-filter="inbound_action">
+                <option value="">--请选择--</option>
+                <option value="ivr">IVR</option>
+                <option value="project">项目</option>
+                <option value="agent">坐席</option>
+            </select>
+        </div>
+        <div class="layui-input-inline">
+            <select id="value" name="value" lay-verify="required" lay-search="">
+            </select>
+        </div>
+    </div>
+
+    <!-- <div class="layui-form-item" id="inbound_value">
+        <label class="layui-form-label">目的地:</label>
+        <div class="layui-input-inline">
+            <select id="value" name="value" lay-verify="required" lay-search="">
+            </select>
+        </div>
+    </div> -->
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" id="inboundedit-edit" lay-submit lay-filter="LAY-user-front-inboundedit-submit"
+                value="提交" class="layui-btn">
+        </div>
+    </div>
+</form>
+<style>
+    .layui-layer-content {
+        overflow: visible !important;
+    }
+</style>
+<script type="text/javascript">
+    var laydate;
+    var xmSelect;
+    layui.use(['laydate', 'form', 'xmSelect'], function () {
+        laydate = layui.laydate;
+        var $ = layui.$;
+        var form = layui.form;
+        xmSelect = layui.xmSelect;
+        //时间范围
+
+        
+
+
+    })
+
+    function times(value) {
+        
+        form.on('select(inbound_action)', function (data) {
+            var value = data.value;
+            if (value == "ivr") {
+               // $("#inbound_value").css("display", "");
+                admin.req({ //执行ivr下拉列表
+
+                    type: "POST",
+
+                    url: layui.setter.configUrl + "admin/ivr/list",
+
+                    dataType: 'json',
+
+                    success: function (res) {
+                        $("#value").empty();
+                        var result = res.data;
+                        $("#value").append("<option value=''>--请选择--</option>");
+                        for (var i = 0; i < result.length; i++) {
+
+                            $("#value").append("<option value=" + result[i].id + ">" +
+                                result[i].name + "</option>");
+
+                        }
+
+                        layui.form.render("select");
+
+                        //}
+
+                    }
+
+                });
+
+
+            } else if (value == "project") {
+                //$("#inbound_value").css("display", "");
+                admin.req({ //执行项目下拉列表
+
+                    type: "POST",
+
+                    url: layui.setter.configUrl + "admin/project/list",
+
+                    dataType: 'json',
+
+                    success: function (res) {
+                        $("#value").empty();
+                        var result = res.data;
+                        $("#value").append("<option value=''>--请选择--</option>");
+                        for (var i = 0; i < result.length; i++) {
+
+                            $("#value").append("<option value=" + result[i].id + ">" +
+                                result[i].name + "</option>");
+
+                        }
+
+                        layui.form.render("select");
+
+                        //}
+
+                    }
+
+                });
+            } else if (value == "agent") {
+
+                //$("#inbound_value").css("display", "");
+                admin.req({ //坐席下拉列表
+                    type: "POST",
+                    url: layui.setter.configUrl + "admin/agent/list",
+                    dataType: 'json',
+                    success: function (res) {
+                        $("#value").empty();
+                        var results = res.data;
+                        $("#value").append("<option value=''>--请选择--</option>");
+                        for (var i = 0; i < results.length; i++) {
+
+                            $("#value").append("<option value=" + results[i].value + ">" +
+                                results[i].value + "</option>");
+
+                        }
+                        layui.form.render("select");
+                    }
+                });
+            }
+        })
+
+
+    }
+
+    function parseGateway(id) {
+        admin.req({ //中继下拉列表
+            type: "POST",
+            url: layui.setter.configUrl + "admin/project/gateways",
+            dataType: 'json',
+            success: function (res) {
+                var result = res.data;
+                $("#getways_id").append("<option value=''>--请选择--</option>");
+                for (var i = 0; i < result.length; i++) {
+                    if(result[i].name!=""){
+							$("#getways_id").append("<option value=" + result[i].id + ">" + result[
+							i].username+"("+result[i].name+")" + "</option>");
+						}else{
+                            $("#getways_id").append("<option value=" + result[i].id + ">" +
+                        result[i].username + "</option>");
+                        }
+
+                    
+                }
+                $("#getways_id").val(id);
+                layui.form.render("select");
+            }
+        });
+    }
+
+    function days(p) {
+        //console.log(value_days);
+        //formSelects.value('days_select', [p[0], p[1], p[2], p[3], p[4], p[5], p[6]]);
+       // demo1.setValue(p)
+        demo1 = xmSelect.render({
+            el: '#days',
+            toolbar: {
+                show: true,
+            },
+            name: 'days',
+            initValue: p,
+            layVerify: 'required',
+            layVerType: 'tips',
+            tips: "请选择工作日",
+            data: [{
+                    name: '周一',
+                    value: 0
+                },
+                {
+                    name: '周二',
+                    value: 1
+                },
+                {
+                    name: '周三',
+                    value: 2
+                },
+                {
+                    name: '周四',
+                    value: 3
+                },
+                {
+                    name: '周五',
+                    value: 4
+                },
+                {
+                    name: '周六',
+                    value: 5
+                },
+                {
+                    name: '周日',
+                    value: 6
+                },
+            ]
+        })
+    }
+
+    function ivr_project(project_id) {
+        admin.req({ //执行项目下拉列表
+
+            type: "POST",
+
+            url: layui.setter.configUrl + "admin/project/list",
+
+            dataType: 'json',
+
+            success: function (res) {
+
+                var result = res.data;
+                $("#project_id").append("<option value=''>--请选择--</option>");
+                for (var i = 0; i < result.length; i++) {
+
+                    $("#project_id").append("<option value=" + result[i].id + ">" +
+                        result[i].name + "</option>");
+
+                }
+                $("#project_id").val(project_id);
+                layui.form.render("select");
+
+                //}
+
+            }
+
+        });
+    }
+
+    function putValue(type, value) {
+        $("#inbound_value").css("display", "");
+        if (type == "ivr") {
+            $("#inbound_value").css("display", "");
+            admin.req({ //执行ivr下拉列表
+
+                type: "POST",
+
+                url: layui.setter.configUrl + "admin/ivr/list",
+
+                dataType: 'json',
+
+                success: function (res) {
+                    $("#value").empty();
+                    var result = res.data;
+                    $("#value").append("<option value=''>--请选择--</option>");
+                    for (var i = 0; i < result.length; i++) {
+
+                        $("#value").append("<option value=" + result[i].id + ">" +
+                            result[i].name + "</option>");
+
+                    }
+                    $("#value").val(value);
+                    layui.form.render("select");
+
+                    //}
+
+                }
+
+            });
+        } else if (type == "project") {
+            admin.req({ //执行项目下拉列表
+
+                type: "POST",
+
+                url: layui.setter.configUrl + "admin/project/list",
+
+                dataType: 'json',
+
+                success: function (res) {
+                    $("#value").empty();
+                    var result = res.data;
+                    $("#value").append("<option value=''>--请选择--</option>");
+                    for (var i = 0; i < result.length; i++) {
+
+                        $("#value").append("<option value=" + result[i].id + ">" +
+                            result[i].name + "</option>");
+
+                    }
+                    $("#value").val(value);
+                    layui.form.render("select");
+
+                    //}
+
+                }
+
+            });
+        } else if (type == "agent") {
+            admin.req({ //坐席下拉列表
+                type: "POST",
+                url: layui.setter.configUrl + "admin/agent/list",
+                dataType: 'json',
+                success: function (res) {
+                    $("#value").empty();
+                    var results = res.data;
+                    $("#value").append("<option value=''>--请选择--</option>");
+                    for (var i = 0; i < results.length; i++) {
+                        $("#value").append("<option value=" + results[i].value.split("(")[0] + ">" +
+                            results[i].value + "</option>");
+
+                    }
+                    $("#value").val(value);
+                    layui.form.render("select");
+                }
+            });
+        }
+    }
+</script>

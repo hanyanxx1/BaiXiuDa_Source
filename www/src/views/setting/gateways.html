@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-gateways">
+				<div class="layui-form-item">
+
+					<div class="layui-inline">
+						<label class="layui-form-label">用户</label>
+						<div class="layui-input-inline">
+							<select name="admin_id" id="admin_ids">
+								<option value="0">--请选择--</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">SIP账号</label>
+						<div class="layui-input-inline">
+							<input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-btn-group" style="float: right;">
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+							lay-filter="LAY-user-front-search-gateways">
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+						</button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+							data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+							title="删除" data-type="batchdel"> <i
+								class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="layui-card-body">
+				<table id="LAY-user-manage-gateways" lay-filter="LAY-user-manage-gateways"></table>
+
+				<script type="text/html" id="barDemogateways">
+					<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+				</script>
+			</div>
+		</div>
+	</div>
+
+</body>
+<style>
+	/*.layui-form-label {
+			width: 90px;
+		}*/
+
+	.layui-layer-content {
+		overflow: visible !important;
+	}
+</style>
+<script>
+	var $;
+	layui.use(['admin', 'table', 'xmSelect'], function () {
+		var table = layui.table;
+		form = layui.form;
+		$ = layui.$;
+		view = layui.view;
+		admin = layui.admin;
+		xmSelect = layui.xmSelect;
+
+		$(function () {
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "super_admin/admin/list",
+				dataType: 'json',
+				success: function (res) {
+					var data = res.data;
+					for (var i = 0; i < data.length; i++) {
+						$("#admin_ids").append("<option value=" + data[i].id + ">" + data[i]
+							.name + "</option>");
+					}
+
+					layui.form.render("select");
+				}
+			});
+		})
+
+		table.render({
+			method: "post",
+			elem: '#LAY-user-manage-gateways',
+			url: layui.setter.configUrl + 'super_admin/gateway/grid',
+			height: 'full-180',
+			where: {
+				admin_id: 0,
+				username: ''
+			},
+			cols: [
+				[{
+					type: 'checkbox'
+				},  {
+					field: 'name',
+					title: '名称',
+					align: 'center',
+					minWidth: 160
+				}, {
+					field: 'username',
+					title: 'SIP账号',
+					align: 'center',
+					minWidth: 160
+				},
+				//  {
+				// 	field: 'passwd',
+				// 	title: '密码',
+				// 	align: 'center',
+				// 	minWidth: 160
+				// },
+				 {
+					field: 'realm',
+					title: 'SIP地址',
+					align: 'center',
+					minWidth: 220
+				}, {
+					field: 'register',
+					title: '对接模式',
+					align: 'center',
+					templet: function (d) {
+						if (d.register == 'true') {
+							return "注册";
+						} else if (d.register == 'false') {
+							return "对接";
+						} else {
+							return "反向注册";
+						}
+					},
+					minWidth: 135
+				},
+				{
+					field: 'maxload',
+					title: '线路上限',
+					align: 'center',
+					edit:true,
+					minWidth: 120
+				}, {
+					field: 'cycle',
+					title: '计费时长',
+					align: 'center',
+					minWidth: 120
+				}, {
+					field: 'rate',
+					title: '计费费率',
+					align: 'center',
+					minWidth: 120
+				}, {
+					field: 'codec',
+					title: '语音编码',
+					align: 'center',
+					minWidth: 200
+				}
+				// , {
+				// 	field: 'dtmf_type',
+				// 	title: 'DTMF类型',
+				// 	align: 'center',
+				// 	minWidth: 120
+				// }, {
+				// 	field: 'caller_id_in_from',
+				// 	title: '主叫改写',
+				// 	align: 'center',
+				// 	templet: function (d) {
+				// 		if (d.caller_id_in_from == 0) {
+				// 			return "禁用";
+				// 		} else if (d.caller_id_in_from == 1) {
+				// 			return "启用";
+				// 		}
+				// 	},
+				// 	minWidth: 150
+				// }
+				, {
+					field: 'adminName',
+					title: '用户',
+					align: 'center',
+					minWidth: 120
+				}, {
+					field: 'caozuo',
+					title: '操作',
+					toolbar: '#barDemogateways',
+					align: 'center',
+					fixed: 'right',
+					minWidth: 120
+				}]
+			],
+			page: true
+		});
+		form.render(null, 'layadmin-userfront-formlist-gateways');
+
+		//监听搜索
+		form.on('submit(LAY-user-front-search-gateways)', function (data) {
+			var field = data.field;
+
+			//执行重载
+			table.reload('LAY-user-manage-gateways', {
+				where: field,
+				page: {
+					curr: 1
+				}
+			});
+		});
+
+		form.verify({
+			billing_secs: function (value, item) { //value：表单的值、item：表单的DOM对象
+
+				if (/^[1-9]\d*(\d+)?$/.test(value) == false) { //大于0,不包含小数
+					return "请填写大于0的正整数";
+				}
+
+			},
+			billing_rates: function (value, item) { //value：表单的值、item：表单的DOM对象
+
+				if (/^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/.test(value) == false) { //大于等于0,包含小数
+					return "请填写大于或等于0数字";
+				}
+
+			},
+			gateways_name: function (value, item) { //验证网关账号
+
+				var exist;
+				admin.req({
+					type: "POST",
+					async: false,
+					url: layui.setter.configUrl + "super_admin/gateway/exist",
+					dataType: 'json',
+					data: {
+						name: value
+					},
+					success: function (res) {
+						exist = res.data;
+					}
+
+				})
+				if (exist == true) {
+					//layer.tips('该用户名已存在', '#name', {tips: [2, 'red']});
+					return "该账号已被使用,请重试";
+				}
+
+			},
+			pass: [/^[\S]{6,20}$/, '密码必须6到20位，且不能出现空格'] //密码验证规则
+				,
+			characters: function (value, item) {
+				if (/[\u4E00-\u9FA5]/g.test(value)) {
+					return "格式错误,请不要输入汉字";
+				}
+
+			},
+			siplength: function (value, item) {
+				if (/^[a-zA-Z0-9]{5,16}$/.test(value) == false) {
+					return "sip账号需大于4位";
+				}
+			}
+		});
+
+
+		//监听单元格编辑
+		table.on('edit(LAY-user-manage-gateways)', function(obj){
+			var value = obj.value //得到修改后的值
+			,data = obj.data //得到所在行所有键值
+			,field = obj.field; //得到字段
+			if (/^(0|[1-9]\d*)(\.\d{1,2})?$/.test(value) == false){//大于等于0,不包含小数
+				layer.msg("请填写大于0的整数",{icon:2}) ;
+				return;
+			} 
+			//console.log(value);
+			if(field =="maxload"){
+				admin.req({
+					type: "POST",
+					url: layui.setter.configUrl +"super_admin/gateway/editMaxload",
+					//async: true,
+					data: {
+						id:data.id,
+						maxload:value
+					},
+					dataType: "json",
+					success: function (obj) {
+						if (obj.data > 0) {
+							layer.msg("操作成功", {icon: 1});
+						} else {
+							layer.msg("操作失败,请重试", {icon: 2});
+						}
+					}
+				});
+			}
+
+
+			
+		});
+		//行监听工具
+		table.on('tool(LAY-user-manage-gateways)', function (obj) {
+			var data = obj.data,
+				layEvent = obj.event;
+			if (layEvent === 'edit') {
+				admin.popupRight({
+					title: '修改中继',
+					area: '550px',
+					id: 'LAY-popup-user-update',
+					success: function (layero, index) {
+						view(this.id).render('setting/getway/update').done(function () {
+							form.render(null,
+							'layuiadmin-form-relayupdate'); //弹出层页面的form id
+							bind_admin(data.admin_id);
+							if (data.caller_id_in_from == false) {
+								data.caller_id_in_from = "0";
+							} else {
+								data.caller_id_in_from = "1";
+							}
+							form.val('layuiadmin-form-relayupdate', data); //表单初始赋值
+
+							var arr = data.codec.split(",");
+							//audio_codc_select(arr); //渲染多选框
+
+							demo1 = xmSelect.render({
+								el: '#codec',
+								toolbar: {
+									show: true,
+								},
+								name: 'codec',
+								layVerify: 'required',
+								layVerType: 'tips',
+								data: [{
+										name: 'G729',
+										value: 'G729'
+									},
+									{
+										name: 'PCMA',
+										value: 'PCMA'
+									},
+									{
+										name: 'PCMU',
+										value: 'PCMU'
+									}
+								]
+							})
+
+							demo1.setValue(arr)
+							//监听提交
+							form.on('submit(LAY-relaygroundupdate-submit)', function (
+								datas) { //监听弹层页面的提交id
+								layer.load();
+								var fields = datas.field; //获取提交的字段
+								//fields.audio_codec = audio_codec;
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										'super_admin/gateway/edit',
+									data: fields,
+									dataType: "json",
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("SIP账号: " +
+												fields
+												.username +
+												" 的信息已更新", {
+													icon: 1
+												});
+											layui.table.reload(
+												'LAY-user-manage-gateways'
+												); //重载表格
+											layer.close(
+											index); //执行关闭 
+										} else {
+											layer.msg(
+												"修改失败,未知错误或没有任何修改，请重试", {
+													icon: 2
+												});
+										}
+									}
+								});
+
+							});
+
+						});
+					}
+				});
+			}
+
+		})
+
+		//事件
+		var active = {
+			batchdel: function () {
+				var checkStatus = table.checkStatus('LAY-user-manage-gateways'),
+					checkData = checkStatus.data; //得到选中的数据
+				var ids = "";
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+
+				layer.confirm('确定删除吗？', {
+					icon: 3
+				}, function (index) {
+					layer.load();
+					//执行 Ajax 后重载
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + 'super_admin/gateway/remove',
+						//async: true,
+						//dataType: "json",
+						data: {
+							ids: ids
+						},
+
+						success: function (obj) {
+							layer.closeAll('loading');
+							if (obj.data > 0) {
+								table.reload('LAY-user-manage-gateways');
+								layer.msg("已删除  " + checkData.length + " 条信息,列表已更新", {
+									icon: 1
+								});
+							} else {
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+					});
+
+				});
+			},
+			add: function () {
+				admin.popupRight({
+					title: '新增中继',
+					area: '550px',
+					id: 'LAY-popup-user-add',
+					success: function (layero, index) {
+						view(this.id).render('setting/getway/add').done(function () {
+							form.render(null, 'layuiadmin-form-relayadd');
+
+							//监听提交
+							form.on('submit(LAY-relaygroundadd-submit)', function (
+								data) {
+								layer.load();
+								var field = data.field; //获取提交的字段
+
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								//$.ajax({});
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										'super_admin/gateway/add',
+									//async: true,
+									data: field,
+									dataType: "json",
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("新增成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-gateways'
+												); //重载表格
+											layer.close(
+											index); //执行关闭 
+										} else if (obj.data == -
+											1) {
+											layer.msg('新增失败,请重试', {
+												icon: 2
+											});
+										} else {
+											layer.msg(
+												'新增失败,未知错误导致失败，请重试', {
+													icon: 2
+												})
+										}
+									}
+
+								})
+
+							});
+
+							form.on('submit(LAY-relaygroundadd-submit-false)',
+								function (data) {
+									layui.table.reload(
+									'LAY-user-manage-gateways'); //重载表格
+									layer.close(index); //执行关闭 
+
+								})
+						});
+					}
+				});
+			},
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+	});
+</script>
+
+</html>

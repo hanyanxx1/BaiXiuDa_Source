@@ -1,0 +1,143 @@
+<div class="layui-form" lay-filter="layuiadmin-form-roleupdate" style="padding: 20px 0 0 0;">
+
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">id:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="id" name="id" lay-verify="required" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">角色名称:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" lay-verify="required" readonly="readonly" autocomplete="off"
+				placeholder="请输入角色名" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">附属权限:</label>
+			<div class="layui-input-block">
+				<input type="checkbox" id="allow_down" name="allow_down" lay-skin="switch" lay-filter="switch_allow_down" lay-text="下载文件|下载文件">
+				<input type="checkbox" id="allow_inspection" name="allow_inspection" lay-skin="switch"
+				lay-filter="switch_allow_inspection" lay-text="质检|质检">
+				<input type="checkbox" id="all_projects" name="all_projects" lay-skin="switch" lay-filter="all_projects" lay-text="所有项目可见|所有项目可见">
+			</div>
+		</div>
+	</div>
+
+	<!-- <div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">质检:</label>
+			<div class="layui-input-inline">
+				<input type="checkbox" id="allow_inspection" name="allow_inspection" lay-skin="switch"
+					lay-filter="switch_allow_inspection" lay-text="允许|禁止">
+			</div>
+		</div>
+	</div> -->
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">号码加密:</label>
+			<div class="layui-input-inline">
+				<select id="hide_tel" name="hide_tel" lay-verify="required" lay-search="">
+					<option value="none" checked="true">不加密</option>
+					<option value="hide">隐藏四位</option>
+					<option value="md5">MD5加密</option>
+					<option value="asc">ASC加密</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">权限:</label>
+			<div class="layui-input-inline">
+				<select id="permission" name="permission" lay-verify="required" lay-filter="fomselect" lay-search="">
+					<option value="1">全局</option>
+					<option value="2">本项目</option>
+					<option value="3">标签组</option>
+					<option value="4">个人</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">选择权限</label>
+		<div class="layui-input-block">
+			<!-- <div id="LAY-auth-tree-index" name="menus"></div> -->
+			<div id="test12" class="demo-tree-more"></div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="role-edit" lay-submit lay-filter="LAY-roleupdate-front-submit-true" value="提交"
+				class="layui-btn">
+		</div>
+	</div>
+</div>
+<script>
+	layui.use(['jquery', 'authtree', 'form', 'layer', 'admin', 'tree', 'util'], function () {
+		var $ = layui.jquery;
+		var authtree = layui.authtree;
+		var form = layui.form;
+		var layer = layui.layer;
+		admin = layui.admin;
+		view = layui.view;
+		var tree = layui.tree,
+			layer = layui.layer,
+			util = layui.util;
+		$(function () {
+			form.on('select(fomselect)', function (data) {
+				var value = data.value;
+				if(value == 4){
+					value =3;
+				}
+
+				let str = "";
+				var checkData = tree.getChecked('demoId1');
+				for (let i = 0; i < checkData.length; i++) {
+					if (str == "") {
+						str = checkData[i].id;
+					} else {
+						str = str + "," + checkData[i].id;
+					}
+					var children = checkData[i].children;
+					for (let j = 0; j < children.length; j++) {
+						str = str + "," + children[j].id;
+					}
+
+				}
+				// 初始化
+				admin.req({
+					type: "post",
+					url: layui.setter.configUrl + 'admin/role/getMenus',
+					dataType: 'json',
+					data: {
+						permission_id: value,
+						menus: str
+					},
+					success: function (res) {
+						//基本演示
+						tree.render({
+							elem: '#test12',
+							data: res.data.trees,
+							showCheckbox: true //是否显示复选框
+								,
+							id: 'demoId1'
+						});
+					}
+				});
+			})
+		})
+
+
+	});
+</script>

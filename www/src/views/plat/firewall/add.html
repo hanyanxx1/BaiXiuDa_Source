@@ -1,0 +1,43 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin-firewall" style="padding: 20px 0 0 0;">
+	
+	
+	<div class="layui-form-item">
+		<label class="layui-form-label">授权地址:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="addr" lay-verify="required" autocomplete="off" placeholder="192.168.1.1" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">优先级:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="priority" lay-verify="required|number" autocomplete="off" placeholder="" value="1" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux"><span>(1-100) 1优先级最高</span></div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">授权策略:</label>
+		<div class="layui-input-inline">
+			<select name="action" id="action" lay-verify="required" lay-search="">
+                <option value="ACCEPT">允许</option>
+                <option value="DROP">拒绝</option>
+            </select>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">备注:</label>
+		<div class="layui-input-block">
+			<textarea placeholder="请输入内容" id="remark" name="remark" class="layui-textarea"
+				style="width: 350px;"></textarea>
+		</div>
+	</div>
+
+	
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="firewall-add" lay-submit lay-filter="LAY-user-front-firewall-add-submit" value="确认" class="layui-btn">
+		</div>
+	</div>
+</div>

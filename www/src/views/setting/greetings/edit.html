@@ -1,0 +1,30 @@
+<div class="layui-form" lay-filter="layuiadmin-form-greetings-editStatus" style="padding: 0px 0 0 0;">
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<audio src="" controls="controls" style="width:325px;" id="audio_record"></audio>
+		</div>
+	</div>
+
+
+	<div class="layui-form-item">
+		
+		<label class="layui-form-label">审核状态:</label>
+		<div class="layui-input-inline">
+			<select id="status" name="status" lay-filter="dtmf_type_select">
+				<option value="0">未审核</option>
+				<option value="1">审核通过</option>
+				<option value="2">未通过</option>
+
+			</select>
+		</div>
+	</div>
+
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="greetings_editStatus" lay-submit lay-filter="LAY-user-front-greeting-editStatus-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+</div>

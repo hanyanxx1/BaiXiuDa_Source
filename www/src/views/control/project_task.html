@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<title></title>
+
+</head>
+
+<body>
+
+	<div class="layui-fluid">
+
+		<div class="layui-card">
+
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				lay-filter="layadmin-userfront-formlist-project-task">
+
+				<div class="layui-form-item">
+
+					<div class="layui-inline" id="protect_task_p">
+
+						<label class="layui-form-label">项目名称</label>
+
+						<div class="layui-input-inline">
+
+							<select id="project_ids" name="project_id">
+
+							</select>
+
+						</div>
+
+					</div>
+					<div class="layui-inline">
+
+						<label class="layui-form-label">执行状态</label>
+
+						<div class="layui-input-inline">
+
+							<select id="status" name="status">
+								<option value="-1">全部</option>
+								<option value="1">运行中</option>
+								<option value="0">已停止</option>
+
+
+							</select>
+
+						</div>
+
+					</div>
+
+					<div class="layui-inline">
+
+						<label class="layui-form-label">任务名称</label>
+
+						<div class="layui-input-inline">
+
+							<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+
+						</div>
+
+					</div>
+
+
+
+					<div class="layui-btn-group" style="float: right;">
+
+						<button class="layui-btn layuiadmin-btn-useradmin" title="查询" id="user_task_search" lay-submit
+							lay-filter="LAY-user-front-search-project-task">
+
+							<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+
+						</button>
+
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+							data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+
+						<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin layui-btn-danger"
+							title="删除" data-type="batchdel"> <i
+								class="layui-icon layui-icon-delete layuiadmin-button-btn"></i></button>
+
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="layui-card-body">
+
+				<table id="LAY-user-manage-project-task" lay-filter="LAY-user-manage-project-task"></table>
+
+
+
+			</div>
+
+		</div>
+
+	</div>
+
+</body>
+<style>
+	.layui-form-label {
+		width: 100px;
+	}
+
+	/* .layui-layer-content {
+		overflow: visible !important;
+	} */
+</style>
+
+<script>
+	var $;
+	var admin_name = "";
+	layui.use(['admin', 'table', 'upload', 'xmSelect', 'laydate'], function () {
+
+		var table = layui.table;
+
+		form = layui.form;
+
+		$ = layui.$;
+
+		view = layui.view;
+
+		admin = layui.admin;
+
+		upload = layui.upload;
+
+		element = layui.element;
+		xmSelect = layui.xmSelect;
+		laydate = layui.laydate;
+
+
+		$(function () {
+			admin.req({
+				url: layui.setter.configUrl + 'menu/info',
+				async: false,
+				done: function (res) {
+					admin_name = res.data.name;
+
+
+				}
+			})
+
+
+
+			if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+
+				admin.req({ //执行项目下拉列表
+
+					type: "POST",
+
+					url: layui.setter.configUrl + "admin/project/list",
+
+					dataType: 'json',
+
+					success: function (res) {
+
+						var result = res.data;
+						$("#project_ids").append("<option value='0'>--请选择--</option>");
+						for (var i = 0; i < result.length; i++) {
+
+							$("#project_ids").append("<option value=" + result[i].id + ">" +
+								result[i].name + "</option>");
+
+						}
+
+						layui.form.render("select");
+
+						//}
+
+					}
+
+				});
+
+			}
+
+		})
+
+
+		var timeInfo = [];
+		var timeInfoId = {};
+		admin.req({
+			type: "POST",
+			url: layui.setter.configUrl +
+				'admin/schedule/getInfo',
+			async: false,
+			dataType: "json",
+			success: function (obj) {
+				timeInfo = obj.data;
+				for (let i = 0; i < timeInfo.length; i++) {
+					const element = timeInfo[i];
+					timeInfoId[element.id] = element;
+
+				}
+			}
+		});
+
+
+
+
+		table.render({
+
+			method: 'POST',
+
+			elem: '#LAY-user-manage-project-task',
+
+			url: layui.setter.configUrl + 'admin/project_task/grid',
+
+			height: 'full-180',
+			where: {
+				project_id: 0,
+				name: '',
+				status: "-1"
+			},
+			// parseData: function(res) { //表格数据前置处理
+			// 	//对结果进行排序
+			// 	function  sortId(a,  b)  {                    
+			// 		return  b.id  -  a.id;
+
+			// 	}
+			// 	var result = res.data.sort(sortId); //按id最大排序
+			// 	return {
+			// 		"code": res.code, //解析接口状态
+			// 		"msg": res.msg, //解析提示文本
+			// 		"count": res.data.length, //解析数据长度
+			// 		"data": result //解析数据列表
+			// 	}
+			// },
+			cols: [
+
+				[{
+
+					type: 'checkbox'
+
+				}, {
+
+					field: 'name',
+
+					title: '任务名称',
+					edit: true,
+					align: 'center',
+
+					minWidth: 350
+
+				},
+				// {
+				// 	field: 'outboundType',
+				// 	title: '外呼类型',
+				// 	sort: true,
+				// 	align: 'center',
+				// 	templet: function (d) {
+				// 		if (d.outboundType == 1)
+				// 			return "预测外呼";
+				// 		else if (d.outboundType == 2)
+				// 			return "比例外呼";
+				// 		else if (d.outboundType == 3)
+				// 			return "自动外呼";
+				// 		else if (d.outboundType == 4)
+				// 			return "点击外呼";
+				// 		else if (d.outboundType == 5)
+				// 			return "预览外呼";
+				// 	},
+				// 	minWidth: 130
+				// },
+				{
+
+					field: 'projectName',
+
+					title: '执行项目',
+
+					align: 'center',
+
+					minWidth: 250,
+					templet: function (d) {
+						if (d.outboundType == 1)
+							return d.projectName + "(预测外呼)";
+						else if (d.outboundType == 2)
+							return d.projectName + "(比例外呼)";
+						else if (d.outboundType == 3)
+							return d.projectName + "(自动外呼)";
+						else if (d.outboundType == 4)
+							return d.projectName + "(点击外呼)";
+						else if (d.outboundType == 5)
+							return d.projectName + "(预览外呼)";
+
+					}
+
+				}, {
+
+					field: 'create_stamp',
+
+					title: '创建时间',
+
+					align: 'center',
+
+					minWidth: 180
+
+				}, {
+
+					field: 'noCall_count',
+
+					title: '进度',
+
+					sort: true,
+
+					align: 'center',
+
+					minWidth: 180,
+
+					templet: function (d) {
+
+						return '<div class="layui-progress" lay-showpercent="true" title="未呼条数(' +
+							d.noCalls +
+							')条" style="margin-top:15px;background-color:red;"><div class="layui-progress-bar"  lay-percent="' +
+							d.noCalls + ' / ' + d.total + '"></div></div>';
+
+					}
+
+				}, {
+
+					field: 'status',
+
+					title: '执行状态',
+
+					align: 'center',
+
+					sort: true,
+
+					minWidth: 100,
+
+					templet: function (d) {
+
+						if (d.status == 0) {
+
+							//return '<a href="#" style="color:red">已停止</a>';
+
+							return '<a class="layui-btn layui-btn-xs layui-btn-danger" title="点击执行该项目" onclick="project_task_tool.editStatus(' +
+								d.id + ',1);">已停止</a>'
+
+						} if (d.status == 2) {
+
+							//return '<a href="#" style="color:red">已停止</a>';
+
+							return '<a class="layui-btn layui-btn-xs" title="点击执行该项目">处理中</a>'
+
+						} else {
+
+							//return '<a href="#" style="color:green">正在执行</a>';
+
+							return '<a class="layui-btn layui-btn-xs" title="点击停止该项目" onclick="project_task_tool.editStatus(' +
+								d.id + ',0);">正在执行</a>'
+
+						}
+
+					},
+
+				}, {
+
+					field: 'caozuo',
+
+					title: '操作',
+
+					align: 'center',
+					fixed: 'right',
+					minWidth: 300,
+
+					templet: function (d) {
+
+						var result = "";
+
+						result = result +
+							'<img style="cursor:pointer;margin-left:16px;" title="导入数据" onclick="project_task_tool.import(' +
+							d.id + ',' + d.project_id +
+							')" src="../start/images/data_add.png">';
+
+						result = result +
+							'<img style="cursor:pointer;margin-left:16px;" title="快速导入" onclick="project_task_tool.quick_import(' +
+							d.id + ',' + d.project_id +
+							')" src="../start/images/quick_import.png">';
+
+
+
+						result = result +
+							'<img style="cursor:pointer;margin-left:16px;" title="清空未呼数据" onclick="project_task_tool.clear(' +
+							d.id + ',' + d.project_id +
+							')" src="../start/images/data_clear.png">';
+
+						result = result +
+							'<img style="cursor:pointer;margin-left:16px;" title="回收未接数据" onclick="project_task_tool.recovery(' +
+							d.id + ',' + d.project_id + ')" src="../start/images/data_recovery.png">';
+
+						result = result +
+							'<img style="cursor:pointer;margin-left:16px;" title="定时器" lay-event="onTimeClose" src="../start/images/timer.png">';
+						result = result +
+							'<img style="cursor:pointer;margin-left:16px;" title="时间线" lay-event="time_line" src="../start/images/time_line.png">';
+						result = result +
+							'<img style="cursor:pointer;margin-left:16px;" title="实时监控" onclick="project_task_tool.open(' +
+							d.project_id + ');" src="../start/images/monitor.png">';
+
+						return result;
+
+					}
+
+				}
+				]
+
+			],
+
+			done: function (obj) {
+
+				if (location.hash == '#/control/project_task') {
+
+					layer.tips("执行和停止任务点我哦~", ".layui-table-header th:eq(5)", {
+
+						tips: [1, '#78BA32'],
+
+						time: 2000
+
+					});
+
+				}
+
+				element.render();
+
+			},
+
+			page: true
+
+		});
+
+		form.render(null, 'layadmin-userfront-formlist-project-task');
+
+		//监听搜索
+
+		form.on('submit(LAY-user-front-search-project-task)', function (data) {
+
+			var field = data.field;
+
+			//执行重载
+
+			table.reload('LAY-user-manage-project-task', {
+
+				where: field,
+
+				page: {
+
+					curr: 1
+
+				}
+
+			});
+
+		});
+
+		table.on('sort(LAY-user-manage-project-task)', function (obj) {
+			table.reload('LAY-user-manage-project-task', {
+				initSort: obj
+			});
+		});
+		//监听单元格编辑
+		table.on('edit(LAY-user-manage-project-task)', function (obj) {
+			var value = obj.value //得到修改后的值
+				,
+				data = obj.data //得到所在行所有键值
+				,
+				field = obj.field; //得到字段
+			if (field == "name") {
+				//alert(value);
+				if (value != "") {
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + "admin/project_task/editName",
+						//async: true,
+						data: {
+							id: data.id,
+							name: value
+						},
+						dataType: "json",
+						success: function (obj) {
+							if (obj.data > 0) {
+								layer.msg("任务名称修改成功", {
+									icon: 1
+								});
+							} else {
+								layer.msg("修改失败,请重试", {
+									icon: 2
+								});
+							}
+						}
+					});
+				} else {
+					layer.msg("修改失败,名称不能为空", {
+						icon: 2
+					});
+				}
+			}
+		})
+
+		//监听行工具栏
+		table.on('tool(LAY-user-manage-project-task)', function (obj) {
+			var data = obj.data, //获得当前行的数据
+				layEvent = obj.event; //获得lay-event对应的值
+			if (layEvent === 'onTimeClose') {
+				admin.popupRight({
+					title: '任务定时计划',
+					area: '600px',
+					id: 'LAY-popup-user-timer',
+					success: function (layero, index) {
+						view(this.id).render('control/project_task/timer').done(function () {
+							form.render(null, 'layuiadmin-form-project_task_timer');
+							let weekDays = [];
+							if (data.timer != null && data.timer != "{}") {
+								weekDays = JSON.parse(data.timer).weekDays;
+								let task_time_data = JSON.parse(data.timer).slots;
+								for (let i = 0; i < task_time_data.length; i++) {
+									addnode(1, task_time_data[i].start + " - " + task_time_data[i].end);
+								}
+							}
+							days(weekDays);
+
+							form.on('submit(LAY-user-front-project_task-timer-submit)',
+								function (datas) {
+									var field = datas.field; //获取提交的字段
+
+									var reqTimer = [];
+									$('#nodes').children().each(function (i, n) {
+										var obj = $(n).find('input');
+										if ($(obj[0]).val() != "") {
+											var teach = {};
+											teach.start = $(obj[0]).val().split(" - ")[0].substring(0, 5);
+											teach.end = $(obj[0]).val().split(" - ")[1].substring(0, 5);
+											reqTimer.push(teach);
+										}
+									});
+									if (reqTimer.length == 0) {
+										layer.msg("请添加时段", { icon: 2 });
+										return;
+									}
+									if (reqTimer.length > 4) {
+										layer.msg("最多选择四个呼叫时段", { icon: 2 });
+										return;
+									}
+
+
+
+									let timer = {};
+									timer.slots = reqTimer;
+									timer.weekDays = field.weekDays.split(",");
+									layer.load();
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl +
+											'admin/project_task/editTimer',
+										//async: true,
+										data: {
+											id: data.id,
+											timer: JSON.stringify(timer)
+										},
+										dataType: "json",
+										success: function (obj) {
+											layer.closeAll('loading');
+											if (obj.data > 0) {
+												layer.msg("设置成功", {
+													icon: 1
+												});
+												layui.table.reload(
+													'LAY-user-manage-project-task'
+												); //重载表格
+												layer.close(index);
+											} else {
+												layer.msg("操作失败,请重试", {
+													icon: 2
+												});
+											}
+										}
+									});
+								});
+						});
+
+					}
+
+				});
+			} else if (layEvent === 'time_line') {
+
+				let time_line = JSON.parse(data.time_line);
+				time_line = time_line.reverse();
+				admin.popupRight({
+					title: '时间线',
+					area: '500px',
+					id: 'LAY-popup-user-time_line',
+					success: function (layero, index) {
+						view(this.id).render('control/project_task/time_line').done(function () {
+							form.render(null, 'layuiadmin-form-project_task_timeLineLogs');
+							$("#timeLineLogs").empty();
+
+							for (var i = 0; i < time_line.length; i++) {
+								let result = JSON.parse(time_line[i]);
+								$("#timeLineLogs").append('<li class="layui-timeline-item"><i class="layui-icon layui-timeline-axis"></i>' +
+									'<div class="layui-timeline-content layui-text">' +
+									'<h3 class="layui-timeline-title">' + result.time + '</h3>' +
+									'<p>' + result.msg + '</p>' +
+									'</div>' +
+									'</li>');
+							}
+							$("#timeLineLogs").append('<li class="layui-timeline-item">' +
+								'<i class="layui-icon layui-timeline-axis"></i>' +
+								'<div class="layui-timeline-content layui-text">' +
+								'<div class="layui-timeline-title">没有更多啦</div>' +
+								'</div>' +
+								'</li>');
+
+
+
+
+
+						})
+					}
+				})
+
+			} else if (layEvent === 'editBotId') {
+				admin.popup({
+
+					title: '更改AI机器人',
+
+					//area: ['40%', '45%'],
+
+					area: ['600px', '300px'],
+
+					id: 'LAY-popup-user-editBot',
+					resize: false,
+
+					btn: ['提交', '取消'],
+
+					success: function (layero, index) {
+
+						view(this.id).render('control/project_task/editBotId').done(function () {
+
+							form.render(null, 'layuiadmin-form-project_task_editBot');
+
+							var bot_id = "";
+							if (data.remark != "" && data.remark != null) {
+								bot_id = JSON.parse(data.remark).bot_id;
+							}
+							editBotSelect(bot_id);
+
+
+
+							//监听提交
+
+							form.on('submit(LAY-user-front-project_task-editBot-submit)',
+								function (datas) {
+
+									var field = datas.field; //获取提交的字段
+
+									var bot_id = field.bot_id == "" ? null : field.bot_id;
+
+									layer.load();
+
+									admin.req({
+
+										type: "POST",
+
+										url: layui.setter.configUrl +
+											'admin/project_task/editBot',
+
+										//async: true,
+
+										data: {
+											id: data.id,
+											bot_id: bot_id
+										},
+
+										dataType: "json",
+
+										success: function (obj) {
+
+											layer.closeAll(
+												'loading');
+
+											if (obj.data > 0) {
+
+												layer.msg("操作成功", {
+													icon: 1
+												});
+
+												layui.table.reload(
+													'LAY-user-manage-project-task'
+												); //重载表格
+
+												layer.close(
+													index); //执行关闭 
+
+											} else {
+
+												layer.msg("操作失败", {
+													icon: 2
+												});
+
+											}
+
+										}
+
+									});
+
+
+
+								});
+
+						});
+
+					},
+
+					yes: function (index, layero) {
+
+						layero.find('#project_task_editBot').click();
+
+					}
+
+				});
+			}
+		})
+
+		//事件
+
+		var active = {
+			batchdel: function () {
+
+				var checkStatus = table.checkStatus('LAY-user-manage-project-task'),
+
+					checkData = checkStatus.data; //得到选中的数据
+
+				var ids = "";
+				for (var i = 0; i < checkData.length; i++) {
+					if (ids != "") {
+						ids = ids + "," + checkData[i].id;
+					} else
+						ids = checkData[i].id;
+				}
+				if (checkData.length === 0) {
+					return layer.msg('请选择数据', {
+						icon: 2
+					});
+				}
+				layer.confirm('确定删除吗？', {
+
+					icon: 3
+
+				}, function (index) {
+					//执行 Ajax 后重载
+					layer.load();
+					admin.req({
+						type: "post",
+						url: layui.setter.configUrl + 'admin/project_task/remove',
+						dataType: "json",
+						data: {
+							ids: ids,
+							project_id: checkData.project_id
+						},
+						success: function (obj) {
+
+							layer.closeAll('loading');
+
+							if (obj.data > 0) {
+
+								layer.msg("已删除", {
+									icon: 1
+								});
+
+								table.reload('LAY-user-manage-project-task');
+
+							} else {
+
+								layer.msg("删除失败,请重试", {
+									icon: 2
+								});
+
+							}
+
+						}
+
+					});
+
+
+				});
+
+			},
+
+			add: function () {
+
+				admin.popup({
+
+					title: '新建任务',
+
+					//area: ['40%', '45%'],
+
+					area: ['650px', '400px'],
+
+					id: 'LAY-popup-user-add',
+					resize: false,
+
+					btn: ['提交', '取消'],
+
+					success: function (layero, index) {
+
+						view(this.id).render('control/project_task/add').done(function () {
+
+							form.render(null, 'layuiadmin-form-project_task_add');
+
+							//$("#timer").emtpty();
+							$("#timer").append('<option value="">请选择定时器</option>')
+							for (let i = 0; i < timeInfo.length; i++) {
+								const element = timeInfo[i];
+								$("#timer").append('<option value=' + element.id + '>' + element.task_desc + '</option>')
+
+							}
+
+							//监听提交
+
+							form.on('submit(LAY-user-front-project_task-submit)',
+								function (data) {
+
+									var field = data.field; //获取提交的字段
+
+									if (field.project_id == 0) {
+
+										layer.msg("请选择执行项目", {
+											icon: 2
+										});
+
+										return;
+
+									}
+
+									if ($("#existnames").html() == "任务名称已存在") {
+
+										layer.msg("任务名称重复,请换一个试试", {
+											icon: 2
+										});
+
+									} else {
+										let timer = {};
+										if (field.timer != "") {
+											timer.slots = JSON.parse(timeInfoId[field.timer].task_time);
+											timer.weekDays = resetTaskWeek(timeInfoId[field.timer].task_week);
+										}
+										field.timer = JSON.stringify(timer);
+										layer.load();
+
+										admin.req({
+
+											type: "POST",
+
+											url: layui.setter.configUrl +
+												'admin/project_task/add',
+
+											//async: true,
+
+											data: field,
+
+											dataType: "json",
+
+											success: function (obj) {
+
+												layer.closeAll(
+													'loading');
+
+												if (obj.data > 0) {
+
+													layer.msg("操作成功", {
+														icon: 1
+													});
+
+													layui.table.reload(
+														'LAY-user-manage-project-task'
+													); //重载表格
+
+													layer.close(
+														index); //执行关闭 
+
+												} else {
+
+													layer.msg("操作失败", {
+														icon: 2
+													});
+
+												}
+
+											}
+
+										});
+
+									}
+
+								});
+
+						});
+
+					},
+
+					yes: function (index, layero) {
+
+						layero.find('#project_task_add').click();
+
+					}
+
+				});
+
+			}
+
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+
+			var type = $(this).data('type');
+
+			active[type] ? active[type].call(this) : '';
+
+		});
+
+	});
+
+	var down_project_id; //点击导入按钮获取当前行project_id;
+
+	project_task_tool = {
+
+		editStatus: function (id, status) { //1-开启 ，0-关闭
+
+			layer.load();
+
+			admin.req({
+
+				type: "POST",
+
+				url: layui.setter.configUrl + "admin/project_task/editStatus",
+
+				dataType: 'json',
+
+				data: {
+
+					id: id,
+
+					status: status
+
+				},
+
+				success: function (obj) {
+
+					layer.closeAll('loading');
+
+					if (obj.data > 0) {
+
+						layer.msg("操作成功", {
+							icon: 1
+						});
+
+						layui.table.reload('LAY-user-manage-project-task'); //重载表格
+
+					} else {
+
+						layer.msg("操作失败,请重试", {
+							icon: 2
+						});
+
+					}
+
+				}
+
+			})
+
+		},
+
+		import: function (task_id, project_id) { //导入
+
+			down_project_id = project_id;
+
+			admin.popup({
+
+				title: '导入数据',
+
+				//area: ['50%', '50%'],
+
+				area: ['680px', '570px'],
+
+				id: 'LAY-popup-user-add',
+
+				btn: ['提交', '取消'],
+
+				success: function (layero, index) {
+					view(this.id).render('control/project_task/import').done(function () {
+						form.render(null, 'layuiadmin-form-project_task_import');
+						form.on('select(import_filter_task)', function (data) {
+							let value = data.value;
+							if (value == 1) {
+								$("#import_cover_task").show();
+							} else {
+								$("#import_cover_task").hide();
+							}
+						})
+						let coverVal = false;
+						form.on('checkbox(cover)', function (data) {
+							// 获取复选框的值
+							if (coverVal == false)
+								coverVal = true;
+							else
+								coverVal = false;
+						});
+						var MyMsg;
+						let upload1 = upload.render({ //加载导入按钮
+							type: 'POST',
+							headers: {
+								access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+							},
+							elem: '#test8',
+							url: layui.setter.configUrl + 'admin/project_task/import',
+							auto: false,
+							accept: 'file',
+							exts: 'csv|txt' //文件类型
+							,
+							before: function (obj) {
+								if ($("#import_filter").val() == 0) {
+									coverVal = false;
+								}
+								this.data = {
+									project_id: project_id,
+									task_id: task_id,
+									filter: $("#import_filter").val(),
+									order: $("#import_order").val(),
+									black: $("#black").val(),
+									asyn: true,
+									cover: coverVal
+								}; //关键代码
+							},
+							bindAction: '#project_task_import', //指向按钮触发
+							done: function (obj) {
+
+								if ($("#asyn").val() == "false") {
+									if (obj.data.status == 0) {
+										layer.close(MyMsg);
+										layer.msg("成功导入" + obj.data.success +
+											"条数据,重复" + obj.data.repeat +
+											"条,覆盖" + obj.data.cover + "条,黑名单" +
+											obj.data.black + "条,失败" + obj.data
+												.fail + "条", {
+											icon: 1
+										});
+										layui.table.reload(
+											'LAY-user-manage-project-task'); //重载表格
+									} else if (obj.data.status == -1) {
+										layer.close(MyMsg);
+										layer.alert('表头错误，请重新下载模板', {
+											icon: 2
+										});
+									} else if (obj.data.status == -2) {
+										layer.close(MyMsg);
+										layer.alert('超出数据条数限制，请联系管理员', {
+											icon: 2
+										});
+									} else {
+										layer.close(MyMsg);
+										layer.alert('导入失败,请重试', {
+											icon: 2
+										});
+									}
+								} else {
+									if (obj.data.status == 0) {
+										layer.close(MyMsg);
+										layer.msg("正在导入，请稍后", {
+											icon: 1
+										});
+										layui.table.reload(
+											'LAY-user-manage-project-task'); //重载表格
+									} else if (obj.data.status == -1) {
+										layer.close(MyMsg);
+										layer.alert('表头错误，请重新下载模板', {
+											icon: 2
+										});
+									} else if (obj.data.status == -2) {
+										layer.close(MyMsg);
+										layer.alert('超出数据条数限制，请联系管理员', {
+											icon: 2
+										});
+									} else {
+										layer.close(MyMsg);
+										layer.alert('导入失败,请重试', {
+											icon: 2
+										});
+									}
+
+								}
+							}
+						});
+						//监听提交
+						form.on('submit(LAY-user-front-project_task_import_submit)', function (
+							data) {
+							var field = data.field; //获取提交的字段
+							MyMsg = layer.msg("正在导入，请稍等", {
+								icon: 16,
+								shade: [0.1, '#fff'],
+								time: false
+							})
+							layer.close(index); //执行关闭 
+						});
+
+
+
+
+
+
+					});
+				},
+				yes: function (index, layero) {
+					//layer.alert("实时导入")
+					layero.find('#project_task_import').click();
+
+				}
+
+			});
+
+		},
+
+		quick_import: function (task_id, project_id) { //快速导入数据
+
+			admin.popup({
+
+				title: '快速导入',
+
+				//area: ['50%', '45%'],
+
+				area: ['600px', '300px'],
+
+				id: 'LAY-popup-user-add',
+
+				btn: ['提交', '取消'],
+
+				success: function (layero, index) {
+
+					view(this.id).render('control/project_task/quick_import').done(function () {
+
+						form.render(null, 'layuiadmin-form-backlistbtachadd');
+
+						//监听提交
+
+						form.on('submit(LAY-user-front-project_task_quick_import_submit)',
+							function (data) {
+
+								var field = data.field; //获取提交的字段
+
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+
+								//$.ajax({});
+
+								layer.load();
+
+								admin.req({
+
+									type: "POST",
+
+									url: layui.setter.configUrl +
+										'admin/project_task/quick_import',
+
+									//async: true,
+
+									data: {
+
+										project_id: project_id,
+
+										task_id: task_id,
+
+										tels: $("#tels").val()
+
+									},
+
+									dataType: "json",
+
+									success: function (obj) {
+
+										layer.closeAll('loading');
+
+										if (obj.data.status == 0) {
+
+											layer.msg("快速导入成功" + obj.data
+												.success + "条，失败" + obj
+													.data.fail + "条", {
+												icon: 1
+											});
+
+											layui.table.reload(
+												'LAY-user-manage-project-task'
+											); //重载表格
+
+											layer.close(index); //执行关闭 
+
+										} else if (obj.data.status == -1) {
+											layer.msg("表头错误,请重新下载", {
+												icon: 2
+											});
+										} else if (obj.data.status == -2) {
+											layer.msg("超出数据条数限制，请联系管理员", {
+												icon: 2
+											});
+										} else {
+
+											layer.msg("操作失败,请重试", {
+												icon: 2
+											});
+
+										}
+
+									}
+
+								});
+
+							});
+
+					});
+
+				},
+
+				yes: function (index, layero) {
+
+					layero.find('#project_task_quick_import').click();
+
+				}
+
+			});
+
+		},
+
+		time_line: function (lines) {
+			let time_line = JSON.parse(lines);
+
+			alert(time_line);
+		},
+		downloadcsv: function () { //下载CSV模板
+
+			var downUrl = layui.setter.configUrl + "task/template?project_id=" + down_project_id +
+				"&access_token=" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
+
+			window.location = downUrl;
+
+			// var xhr = new XMLHttpRequest();
+			// xhr.open('post',layui.setter.configUrl + "admin/project_task/template?project_id=" + down_project_id);
+			// xhr.setRequestHeader("access_token", layui.data('layuiAdmin').access_token);
+			// xhr.setRequestHeader("Content-type", "application/json");
+			// xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+			// xhr.setRequestHeader("Access-Control-Allow-Credentials", true);
+			// xhr.send();
+
+
+
+		},
+
+		clear: function (task_id, project_id) { //清空未呼数据
+
+			layer.confirm('未呼数据清空后将无法恢复，请确认操作？', {
+
+				icon: 3,
+
+				title: '提示'
+
+			}, function (index) {
+
+				layer.load();
+
+				admin.req({
+
+					type: "POST",
+
+					url: layui.setter.configUrl + "admin/project_task/clear",
+
+					dataType: 'json',
+
+					data: {
+						project_id: project_id,
+						task_id: task_id
+
+					},
+
+					success: function (obj) {
+
+						layer.closeAll('loading');
+
+						if (obj.data > 0) {
+
+							layer.msg("已成功清除" + obj.data + "条数据", {
+								icon: 1
+							});
+
+							layer.close(index);
+
+							layui.table.reload('LAY-user-manage-project-task'); //重载表格
+
+						} else {
+
+							layer.msg("已成功清除" + obj.data + "条数据", {
+								icon: 1
+							});
+							layui.table.reload(
+								'LAY-user-manage-project-task'
+							); //重载表格
+
+						}
+
+					}
+
+				})
+
+			});
+
+		},
+
+		recovery: function (id, project_id) { //回收未接数据
+			admin.popup({
+
+				title: '回收数据',
+
+				//area: ['50%', '45%'],
+
+				area: ['700px', '500px'],
+
+				id: 'LAY-popup-user-recoveryd',
+
+				btn: ['提交', '取消'],
+
+				success: function (layero, index) {
+
+					view(this.id).render('control/project_task/recovery').done(function () {
+
+						var recoveryCount = {};
+						admin.req({ //客户状态下拉框
+							type: "POST",
+							url: layui.setter.configUrl + "admin/project_task/recoveryCount",
+							dataType: 'json',
+							async: false,
+							data: {
+								id: id
+							},
+							success: function (res) {
+								var r_data = res.data;
+
+								for (let i = 0; i < r_data.length; i++) {
+									const element = r_data[i];
+									recoveryCount[element.status] = element.count;
+
+								}
+							}
+						})
+
+						var result;
+						admin.req({ //客户状态下拉框
+							type: "POST",
+							url: layui.setter.configUrl + "admin/crm_field/listProjectStatus",
+							dataType: 'json',
+							async: false,
+							data: {
+								project_id: project_id
+							},
+							success: function (res) {
+								result = JSON.parse(res.data);
+								var temp = '';
+								temp += '<div class="layui-form-item">';
+
+								temp += '<label class="layui-form-label">未接电话</label>';
+								temp += '<div style="display: flex; width: 500px; flex-wrap: wrap;">';
+
+								var element = result[0];
+								var recoveryCount_one = 0;
+								if (recoveryCount.hasOwnProperty(0)) {
+									recoveryCount_one = recoveryCount[0];
+								}
+
+
+								element = element + "(" + recoveryCount_one + "条)";
+								temp += '<div class="layui-input-inline" id="like' + 0 + '" style="width: 220px;">';
+								temp += '<input type="checkbox" lay-filter = "likeCheckBox" name="like[' + 0 + ']" lay-skin="primary" title="' + element + '" checked="">';
+								temp += '</div>';
+
+								temp += '</div>';
+								temp += '</div>';
+								$("#recovery_noCall_id").append(temp);
+
+
+								temp = '';
+								temp += '<div class="layui-form-item">';
+								temp += '<label class="layui-form-label">已接电话</label>';
+								temp += '<div style="display: flex; width: 500px; flex-wrap: wrap;">';
+								for (let i = 1; i < result.length; i++) {
+									var element = result[i];
+									var recoveryCount_one = 0;
+									if (recoveryCount.hasOwnProperty(i)) {
+										recoveryCount_one = recoveryCount[i];
+									}
+									element = element + "(" + recoveryCount_one + "条)";
+									// if (i == 1) {
+									// 	temp += '<div class="layui-input-inline" id="like' + i + '" style="width: 220px;">';
+									// 	temp += '<input type="checkbox" lay-filter = "likeCheckBox" name="like[' + i + ']" lay-skin="primary" title="' + element + '" checked="">';
+									// } else {
+									// 	temp += '<div class="layui-input-inline" id="like' + i + '" style="width: 220px;">';
+									// 	temp += '<input type="checkbox" lay-filter = "likeCheckBox" name="like[' + i + ']" lay-skin="primary" title="' + element + '">';
+									// }
+									temp += '<div class="layui-input-inline" id="like' + i + '" style="width: 220px;">';
+									temp += '<input type="checkbox" lay-filter = "likeCheckBox" name="like[' + i + ']" lay-skin="primary" title="' + element + '">';
+									temp += '</div>';
+								}
+								temp += '</div>';
+								temp += '</div>';
+								$("#recovery_id").append(temp);
+								// var temp = '';
+								// temp += '<div class="layui-form-item">';
+
+								// temp += '<label class="layui-form-label">客户类型</label>';
+								// temp += '<div style="display: flex; width: 500px; flex-wrap: wrap;">';
+								// for (let i = 1; i < result.length; i++) {
+								// 	var element = result[i];
+								// 	var recoveryCount_one = 0;
+								// 	if (recoveryCount.hasOwnProperty(i)) {
+								// 		recoveryCount_one = recoveryCount[i];
+
+								// 	}
+
+								// 	temp += '<div class="layui-input-inline" style="width: 220px;">';
+
+								// 	element = element + "(" + recoveryCount_one + "条)";
+								// 	if (i == 0) {
+								// 		temp += '<input type="checkbox" name="like[' + i + ']" lay-skin="primary" title="' + element + '" checked="">';
+								// 	} else {
+								// 		temp += '<input type="checkbox" name="like[' + i + ']" lay-skin="primary" title="' + element + '">';
+								// 	}
+
+								// 	temp += '</div>';
+								// }
+								// temp += '</div>';
+								// temp += '</div>';
+								// $("#recovery_id").append(temp);
+							}
+						});
+						form.render(null, 'layuiadmin-form-project_task_recovery');
+
+						// form.on('radio(r_type)', function (data) {
+						// 	var r_type_val = data.value;
+						// 	if (r_type_val == 1) {
+						// 		$("#recovery_billsec").show();
+						// 		for (let i = 0; i < result.length; i++) {
+						// 			if (i == 0) {
+						// 				$('#like' + i).css("display", "none");
+						// 			} else {
+						// 				$('#like' + i).css("display", "");
+						// 			}
+						// 		}
+						// 	} else {
+						// 		$("#recovery_billsec").hide();
+						// 		for (let i = 0; i < result.length; i++) {
+						// 			if (i == 0) {
+						// 				$('#like' + i).show();
+						// 			} else {
+						// 				$('#like' + i).hide();
+						// 			}
+						// 		}
+						// 	}
+						// 	form.render();
+						// });
+
+						//判断未接时，时长大于框写值限制
+						var likeCheckBoxData = ['like[0]'];
+						form.on('checkbox(likeCheckBox)', function (data) {
+							console.log(123);
+							var likeCheckBox_val = data.value;
+							if (likeCheckBoxData.includes(data.elem.name)) {
+								var index = likeCheckBoxData.indexOf(data.elem.name);
+								likeCheckBoxData.splice(index, 1);
+							} else {
+								likeCheckBoxData.push(data.elem.name);
+							}
+							if (likeCheckBoxData.length == 0 || (likeCheckBoxData.length == 1 && likeCheckBoxData[0] == "like[0]")) {
+								$("#rec_billsec").val("");
+								$("#recovery_billsec").css("display", "none");
+							} else {
+								
+								$("#recovery_billsec").css("display", "");
+							}
+
+							form.render();
+						});
+
+						//监听提交
+
+						form.on('submit(LAY-user-front-project_task-recovery-submit)',
+							function (data) {
+
+								var field = data.field; //获取提交的字段
+								var type = 0;
+								if (field.hasOwnProperty("type")) {
+									type = 1;
+									delete field.type;
+								}
+								if (Object.keys(field).length == 0) {
+									return layer.msg("客户类型至少选择一项", { icon: 2 });
+								}
+								var statusIds = "";
+								var ringStatus = "";
+								for (var key in field) {
+									if (key.indexOf("like") != -1) {
+										if (statusIds == "") {
+											statusIds = key.replace("like[", "").replace("]", "");
+										} else {
+											statusIds += "," + key.replace("like[", "").replace("]", "");
+										}
+									}
+									if (key.indexOf("ringStatus") != -1) {
+										if (ringStatus == "") {
+											ringStatus = key.replace("ringStatus[", "").replace("]", "");
+										} else {
+											ringStatus += "," + key.replace("ringStatus[", "").replace("]", "");
+										}
+									}
+								}
+								// if (field.billsec == "") {
+								// 	field.billsec = 0;
+								// } else {
+								// 	if (/^[0-9]\d*(\d+)?$/.test(field.billsec) == false) { //大于0,不包含小数
+								// 		return layer.msg("时长大于多少秒必须填写正整数", { icon: 2 });
+								// 	}
+								// }
+								if (field.billsec !="") {
+									if (/^[0-9]\d*(\d+)?$/.test(field.billsec) == false) { //大于等于0,不包含小数
+										return layer.msg("时长大于多少秒必须填写正整数", { icon: 2 });
+									}
+									var newStatusIds = statusIds.split(",");
+									if (newStatusIds.length == 1 && newStatusIds[0] == 0) {
+										return layer.msg("时长大于0时，必须勾选一个已接的客户状态", { icon: 2 })
+									}
+								}
+								if (statusIds == "") {
+									return layer.msg("请选择至少选择一条客户状态", { icon: 2 })
+								}
+								if (ringStatus == "") {
+									return layer.msg("请选择至少选择一条剔除通话状态", { icon: 2 })
+								}
+
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								layer.load();
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl + "admin/project_task/recovery",
+									dataType: 'json',
+									data: {
+										id: id,
+										statusIds: statusIds,
+										type: type,
+										ringStatus: ringStatus,
+										billsec: field.billsec
+									},
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("已成功回收" + obj.data + "条数据", {
+												icon: 1
+											});
+											layer.close(index);
+											layui.table.reload('LAY-user-manage-project-task'); //重载表格
+										} else {
+											layer.msg("已成功回收" + obj.data + "条数据", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-project-task'
+											); //重载表格
+										}
+									}
+								})
+							});
+					});
+				},
+				yes: function (index, layero) {
+					layero.find('#project_task_recovery').click();
+				}
+
+			});
+
+			// layer.confirm('回收未接数据，请确认？', {
+
+			// 	icon: 3,
+
+			// 	title: '提示'
+
+			// }, function (index) {
+
+			// 	layer.load();
+
+			// 	admin.req({
+
+			// 		type: "POST",
+
+			// 		url: layui.setter.configUrl + "admin/project_task/recovery",
+
+			// 		dataType: 'json',
+
+			// 		data: {
+
+			// 			id: id,
+			// 			project_id: project_id
+
+			// 		},
+
+			// 		success: function (obj) {
+
+			// 			layer.closeAll('loading');
+
+			// 			if (obj.data > 0) {
+
+			// 				layer.msg("已成功回收" + obj.data + "条数据", {
+			// 					icon: 1
+			// 				});
+
+			// 				layer.close(index);
+
+			// 				layui.table.reload('LAY-user-manage-project-task'); //重载表格
+
+			// 			} else {
+
+			// 				layer.msg("已成功回收" + obj.data + "条数据", {
+			// 					icon: 1
+			// 				});
+			// 				layui.table.reload(
+			// 					'LAY-user-manage-project-task'
+			// 				); //重载表格
+			// 			}
+
+			// 		}
+
+			// 	})
+
+			// });
+
+		},
+		onTimeClose: function (id, timer) {
+			admin.popupRight({
+				title: '任务定时计划',
+				area: '600px',
+				id: 'LAY-popup-user-timer',
+				success: function (layero, index) {
+					view(this.id).render('control/project_task/timer').done(function () {
+						form.render(null, 'layuiadmin-form-project_task_timer');
+						if (timer != "") {
+							//var timers = JSON.parse(timer);
+							console.log(timer);
+						}
+						//监听提交
+
+						form.on('submit(LAY-user-front-project_task-timer-submit)',
+							function (data) {
+								var field = data.field; //获取提交的字段
+								field.id = id;
+								//提交 Ajax 成功后，关闭当前弹层并重载表格
+								var req = {};
+								req.weekDays = field.weekDays.split(",");
+								var reqTimer = [];
+								var timer_1 = {};
+								timer_1.start = field.timer.split(" - ")[0];
+								timer_1.end = field.timer.split(" - ")[1];
+								reqTimer.push(timer_1);
+
+								$('#nodes').children().each(function (i, n) {
+									var obj = $(n).find('input');
+									if ($(obj[0]).val() != "") {
+										var teach = {};
+										teach.start = $(obj[0]).val().split(" - ")[
+											0];
+										teach.end = $(obj[0]).val().split(" - ")[
+											1];
+										reqTimer.push(teach);
+									}
+								});
+
+								req.slots = reqTimer;
+								// console.log(req);
+								// return;
+								layer.load();
+								admin.req({
+									type: "POST",
+									url: layui.setter.configUrl +
+										'admin/project_task/setTimer',
+									//async: true,
+									data: {
+										id: id,
+										timer: JSON.stringify(req)
+									},
+									dataType: "json",
+									success: function (obj) {
+										layer.closeAll('loading');
+										if (obj.data > 0) {
+											layer.msg("设置成功", {
+												icon: 1
+											});
+											layui.table.reload(
+												'LAY-user-manage-project-task'
+											); //重载表格
+											layer.close();
+										} else {
+											layer.msg("操作失败,请重试", {
+												icon: 2
+											});
+										}
+									}
+								});
+							});
+					});
+
+				}
+
+			});
+		},
+		open: function (id) {
+
+			window.open("../start/monitor.html?id=" + id);
+
+		}
+
+	}
+
+	function filterRepeatStr(str) {
+		var ar2 = str.split(",");
+		var array = new Array();
+		var j = 0
+		for (var i = 0; i < ar2.length; i++) {
+			if ((array == "" || array.toString().match(new RegExp(ar2[i], "g")) == null) && ar2[i] != "") {
+				array[j] = ar2[i];
+				array.sort();
+				j++;
+			}
+		}
+		return array.toString();
+	}
+	function resetTaskWeek(task_week) {
+		return task_week.split(',').map(item => {
+			return String(((Number(item) + 1) % 7) || 7)
+		})
+	}
+</script>
+
+</html>

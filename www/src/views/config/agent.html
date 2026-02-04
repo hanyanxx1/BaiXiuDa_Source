@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist-agent">
+					<div class="layui-form-item">
+
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<select id="project_id-agent" name="project_id">
+									<option value="0">--选择项目--</option>
+								</select>
+							</div>
+							<div class="layui-input-inline">
+								<select id="group" name="group">
+
+								</select>
+							</div>
+							<div class="layui-input-inline">
+								<input type="text" name="extno" placeholder="请输入工号" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+
+						<div class="layui-btn-group" style="float: right;">
+							<button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit lay-filter="LAY-user-front-search-agent">
+            					<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+          					</button>
+							<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="设置标签组" data-type="group"><img src="../start/images/label.png"></img></button> 
+							<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="分配项目" data-type="addsearch"> <i class="layui-icon layui-icon-engine layuiadmin-button-btn"></i></button>
+							<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="批量修改密码" data-type="bupdatepassword"><img src="../start/images/passwd.png"></img></button>
+							<button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="批量修改角色" data-type="editrole"> <i class="layui-icon layui-icon-friends layuiadmin-button-btn"></i></button>
+							
+						</div>
+
+					</div>
+				</div>
+
+				<div class="layui-card-body">
+
+					<table id="LAY-user-manage-agent" lay-filter="LAY-user-manage-agent"></table>
+
+					<script type="text/html" id="barDemoAgent">
+						<a class="layui-btn layui-btn-xs" lay-event="editagentname">修改姓名</a>
+						<!--<a class="layui-btn layui-btn-xs" lay-event="editrole">角色</a>-->
+
+					</script>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<!--<style>
+		.layui-layer-content {
+			overflow: visible !important;
+		}
+	</style>-->
+	<script>
+		var $;
+		layui.use(['admin', 'table', 'dropdown', 'util'], function() {
+			var table = layui.table;
+			form = layui.form;
+			 $ = layui.$;
+			view = layui.view;
+			admin = layui.admin;
+			dropdown = layui.dropdown;
+			util = layui.util;
+
+
+			table.render({
+				method:'post',
+				elem: '#LAY-user-manage-agent',
+				url: layui.setter.configUrl + "admin/agent/grid",
+				height: 'full-180',
+				where:{
+					project_id:0,
+					group:"",
+					extno:""
+				},
+				cols: [
+					[{
+						type: 'checkbox'
+					}, {
+						field: 'id',
+						title: '编号',
+						align: 'center',
+						minWidth: 100,
+						hide: true
+					}, {
+						//field: 'extension',
+						title: '工号',
+						minWidth: 140,
+						sort: true,
+						align: 'center',
+						templet: function(d) {
+							return d.extno + "(" + d.name + ")";
+						}
+					}, {
+						field: 'passwd',
+						title: '密码',
+						minWidth: 130,
+						align: 'center',
+						templet:function(d){
+							return unescape(d.passwd);
+						}
+					},  {
+						field: 'sip_passwd',
+						title: 'SIP口令',
+						align: 'center',
+						minWidth: 350,
+						templet: function (d) {
+						return d.sip_passwd +
+								`&nbsp;&nbsp;<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copyVal" >复制</a>`;
+						}
+					}, {
+						field: 'group',
+						title: '标签组',
+						minWidth: 150,
+						align: 'center'
+					},{
+						field: 'projectName',
+						title: '项目',
+						minWidth: 150,
+						align: 'center'
+					}, {
+						field: 'roleName',
+						title: '角色',
+						minWidth: 100,
+						sort: true,
+						align: 'center'
+					}, {
+						field: 'registered',
+						title: '分机状态',
+						minWidth: 100,
+						sort: true,
+						align: 'center',
+						templet: function (d) {
+							if (d.reg == null) {
+								return '<span style="color: red;">未注册</span>';
+							} else {
+
+								return '<span style="color: green;">已注册</span>';
+							}
+						}
+					}, {
+						field: 'caozuo',
+						title: '操作',
+						minWidth: 100,
+						toolbar: '#barDemoAgent',
+						
+						align: 'center'
+					}]
+				],
+				limits:[10,20,50,100,300],
+				limit:10,
+				page: true
+			});
+			form.render(null, 'layadmin-userfront-formlist-agent');
+
+			//表格按钮伸缩点击有效
+			$(document).off('mousedown', '.layui-table-grid-down')
+				.on('mousedown', '.layui-table-grid-down', function(event) {
+					table._tableTrCurr = $(this).closest('td');
+				})
+			$(document).off('click', '.layui-table-tips-main [lay-event]')
+				.on('click', '.layui-table-tips-main [lay-event]', function(event) {
+					var elem = $(this);
+					var tableTrCurr = table._tableTrCurr;
+					if(!tableTrCurr) {
+						return;
+					}
+					var layerIndex = elem.closest('.layui-table-tips').attr('times');
+					layer.close(layerIndex);
+					table._tableTrCurr.find('[lay-event="' + elem.attr('lay-event') + '"]').first().click();
+				})
+
+			form.verify({
+				pass: [/^[\S]{8,16}$/, '密码必须8到16位，且不能出现空格'] //密码验证规则
+					,
+				characters: function(value, item) {
+					if(/[\u4E00-\u9FA5]/g.test(value)) {
+						return "格式错误,请不要输入汉字";
+					}
+					//var pwdRegex = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$).{6,}$/;
+					var pwdRegex=/^(?=.*\d)(?=.*[a-zA-Z])(?=.*[~!@#$%^&,.?\|/<>-_+=*])[\da-zA-Z~!@#$%^&,.?\|/<>-_+=*]{8,}$/;
+					if(!pwdRegex.test(value)) {
+						return "您的密码复杂度太低（密码中必须包含字母、数字,特殊字符）";
+					}
+					var arr = value.match(/(.)\1*/g);
+					for (let i = 0; i < arr.length; i++) {
+						if (arr[i].length>=3) {
+							return "密码包含3个或以上相同字符("+arr[i]+")";
+						}
+						
+					}
+					
+				}
+			});
+
+			//监听搜索
+			form.on('submit(LAY-user-front-search-agent)', function(data) {
+				var field = data.field;
+			
+
+				//执行重载
+				table.reload('LAY-user-manage-agent', {
+					where: field,
+					page: {
+						curr: 1
+					}
+				});
+			});
+
+			$(function() {
+
+				if(layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] != "super_admin") {
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + "admin/project/list",
+						dataType: 'json',
+						success: function(res) {
+							var data = res.data;
+							for(var i = 0; i < data.length; i++) {
+								$("#project_id-agent").append("<option value=" + data[i].id + ">" + data[i].name + "</option>");
+							}
+
+							layui.form.render("select");
+						}
+					});
+					
+					admin.req({
+						type: "POST",
+						url: layui.setter.configUrl + "admin/agent/getGroups",
+						dataType: 'json',
+						success: function(res) {
+							var data = res.data;
+							$("#group").append("<option value=''>--选择标签组--</option>");
+							for(var i = 0; i < data.length; i++) {
+								$("#group").append("<option value=" + data[i].key + ">" + data[i].value + "</option>");
+							}
+
+							layui.form.render("select");
+						}
+					});
+				}
+			})
+
+			//行监听工具
+			table.on('tool(LAY-user-manage-agent)', function(obj) {
+				var data = obj.data,
+					layEvent = obj.event;
+				if(layEvent === 'editagentname') {
+
+					admin.popup({
+						title: '修改坐席姓名',
+						//area: ["40%", "32%"],
+						area: ['450px', '200px'],
+						btn: ['提交', '取消'],
+						id: 'LAY-popup-user-nameupdate',
+						success: function(layero, index) {
+							view(this.id).render('config/agent/nameupdate').done(function() {
+								form.render(null, 'layuiadmin-form-agentnameupdate');
+								form.val('layuiadmin-form-agentnameupdate', data); //表单初始赋值
+
+								//监听提交
+								form.on('submit(LAY-agentnameupdate-front-submit)', function(data) {
+									layer.load();
+									var field = data.field; //获取提交的字段
+
+									//提交 Ajax 成功后，关闭当前弹层并重载表格
+									//$.ajax({});
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl + "admin/agent/editName",
+										//async: true,
+										data: field,
+										dataType: "json",
+
+										success: function(obj) {
+											layer.closeAll('loading');
+											if(obj.data > 0) {
+												layer.msg("修改成功", {
+													icon: 1
+												});
+												layui.table.reload('LAY-user-manage-agent'); //重载表格
+												layer.close(index); //执行关闭 
+											} else {
+												layer.msg("修改失败,请重试", {
+													icon: 2
+												});
+											}
+										}
+
+									});
+
+								});
+							});
+						},
+						yes: function(index, layero) {
+							layero.find('#agent-nameupdate').click();
+						}
+					});
+
+				} else if(layEvent === 'editrole') {
+					
+				}else if (layEvent === 'copyVal') {
+					const input = document.createElement('textarea');
+					input.name = 'txtName';
+					document.body.appendChild(input);
+					input.setAttribute('id', 'aa');
+					// input.setAttribute('value', '听说你想\n复制我');
+					var i = document.getElementById('aa');
+					i.innerHTML = data.sip_passwd;
+					input.select();
+					if (document.execCommand('copy')) {
+						document.execCommand('copy');
+						layer.msg("复制成功", {
+							icon: 1
+						});
+					}
+					document.body.removeChild(input);
+				}
+
+			})
+
+			//事件
+			var active = {
+				group: function() {
+					var checkStatus = table.checkStatus('LAY-user-manage-agent'),
+						checkData = checkStatus.data; //得到选中的数据
+					var ids = "";
+					for(var i = 0; i < checkData.length; i++) {
+						if(ids != "") {
+							ids = ids + "," + checkData[i].id;
+						} else
+							ids = checkData[i].id;
+					}
+					if(checkData.length === 0) {
+						return layer.msg('请选择数据', {
+							icon: 2
+						});
+					} else {
+						admin.popup({
+							title: '设置标签组',
+							//area: ["40%", "32%"],
+							area: ['450px', '200px'],
+							id: 'LAY-popup-user-label',
+							btn: ['提交', '取消'],
+							success: function(layero, index) {
+								view(this.id).render('config/agent/label').done(function() {
+									form.render(null, 'layuiadmin-form-label');
+									//	layero.find('.layui-layer-content').attr('style',"overflow: visible;");
+
+
+									var label_data;
+									admin.req({ //crm下拉列表
+										type: "POST",
+										async: false,
+										url: layui.setter.configUrl + "admin/agent/getGroups",
+										dataType: 'json',
+										success: function (res) {
+											label_data = res.data;
+										}
+									});
+
+									let label_d = [];
+									for (let i = 0; i < label_data.length; i++) {
+										var s = {};
+										s['id'] = label_data[i].key;
+										s['title'] = label_data[i].value;
+										label_d.push(s);
+
+									}
+									dropdown.render({
+										elem: '#text',
+										data: label_d,
+										click: function (obj) {
+											this.elem.val(obj.title)
+										},
+										style: 'width: 235px;'
+									});
+
+
+
+									//监听提交
+									form.on('submit(LAY-label-front-submit)', function(data) {
+										layer.load();
+										var field = data.field; //获取提交的字段
+										
+
+										//提交 Ajax 成功后，关闭当前弹层并重载表格
+										admin.req({
+											type: "POST",
+											url: layui.setter.configUrl + "admin/agent/batchGroup",
+											//async: true,
+											data: {
+												ids: ids,
+												group: $("#text").val()
+											},
+											dataType: "json",
+											success: function(obj) {
+												layer.closeAll('loading');
+												if(obj.data > 0) {
+													layer.msg("设置成功", {
+														icon: 1
+													});
+													layui.table.reload('LAY-user-manage-agent'); //重载表格
+													layer.close(index); //执行关闭 
+												} else {
+													layer.msg("设置失败,请重试", {
+														icon: 2
+													});
+												}
+											}
+
+										});
+
+									});
+								});
+							},
+							yes: function(index, layero) {
+								layero.find('#agent-label').click();
+							}
+						});
+					}
+
+				},
+				addsearch: function() {
+					var checkStatus = table.checkStatus('LAY-user-manage-agent'),
+						checkData = checkStatus.data; //得到选中的数据
+					var ids = "";
+					for(var i = 0; i < checkData.length; i++) {
+						if(ids != "") {
+							ids = ids + "," + checkData[i].id;
+						} else
+							ids = checkData[i].id;
+					}
+					if(checkData.length === 0) {
+						return layer.msg('请选择数据', {
+							icon: 2
+						});
+					} else {
+
+						admin.popup({
+							title: '项目分配',
+							//area: ["40%", "32%"],
+							area: ['450px', '200px'],
+							id: 'LAY-popup-user-add',
+							btn: ['提交', '取消'],
+							success: function(layero, index) {
+								view(this.id).render('config/agent/projectadd').done(function() {
+									form.render(null, 'layuiadmin-form-agentprojectadd');
+									//	layero.find('.layui-layer-content').attr('style',"overflow: visible;");
+
+									//监听提交
+									form.on('submit(LAY-agentprojectadd-front-submit)', function(data) {
+										layer.load();
+										var field = data.field; //获取提交的字段
+
+										//提交 Ajax 成功后，关闭当前弹层并重载表格
+										admin.req({
+											type: "POST",
+											url: layui.setter.configUrl + "admin/agent/batchProject",
+											//async: true,
+											data: {
+												ids: ids,
+												project_id: $("#project_name_role_add").val()
+											},
+											dataType: "json",
+											//where: field,
+
+											success: function(obj) {
+												layer.closeAll('loading');
+												if(obj.data > 0) {
+													layer.msg("分配成功", {
+														icon: 1
+													});
+													layui.table.reload('LAY-user-manage-agent'); //重载表格
+													layer.close(index); //执行关闭 
+												} else {
+													layer.msg("分配失败,请重试", {
+														icon: 2
+													});
+												}
+											}
+
+										});
+
+									});
+								});
+							},
+							yes: function(index, layero) {
+								layero.find('#agent-projectadd').click();
+							}
+						});
+					}
+				},
+				bupdatepassword: function() {
+					var checkStatus = table.checkStatus('LAY-user-manage-agent'),
+						checkData = checkStatus.data; //得到选中的数据
+					var ids = "";
+					for(var i = 0; i < checkData.length; i++) {
+						if(ids != "") {
+							ids = ids + "," + checkData[i].id;
+						} else
+							ids = checkData[i].id;
+					}
+					if(checkData.length === 0) {
+						return layer.msg('请选择数据', {
+							icon: 2
+						});
+					} else {
+						admin.popup({
+							title: '批量修改密码',
+							//area: ["40%", "32%"],
+							area: ['500px', '350px'],
+							id: 'LAY-popup-user-update',
+							btn: ['提交', '取消'],
+							success: function(layero, index) {
+								view(this.id).render('config/agent/pwdupdate').done(function() {
+									form.render(null, 'layuiadmin-form-agentpwdadd');
+									//form.val('layuiadmin-form-userupdate', checkData[0]); //表单初始赋值
+
+									//监听提交
+									form.on('submit(LAY-agentpwdadd-front-submit)', function(data) {
+										layer.load();
+										var field = data.field; //获取提交的字段
+										//field.pwd = util.escape(field.pwd);
+										let pwd = escape(field.pwd);
+										//提交 Ajax 成功后，关闭当前弹层并重载表格
+										admin.req({
+											type: "POST",
+											url: layui.setter.configUrl + "admin/agent/batchPass",
+											//async: true,
+											data: {
+												ids: ids,
+												passwd: escape($("#pwdroleupdate").val())
+											},
+											dataType: "json",
+											where: field,
+
+											success: function(obj) {
+												layer.closeAll('loading');
+												if(obj.data > 0) {
+													layer.msg("修改成功", {
+														icon: 1
+													});
+													layui.table.reload('LAY-user-manage-agent'); //重载表格
+													layer.close(index); //执行关闭 
+												} else if (obj.data == '-100') {
+													layer.msg(obj.msg, {icon: 2,time: 6000});
+												}else {
+													layer.msg("修改失败,请重试", {
+														icon: 2
+													});
+												}
+											}
+
+										});
+
+									});
+								});
+							},
+							yes: function(index, layero) {
+								layero.find('#agent-pwdupdate').click();
+							}
+						});
+					}
+
+				},
+				editrole:function(){
+					var checkStatus = table.checkStatus('LAY-user-manage-agent'),
+						checkData = checkStatus.data; //得到选中的数据
+					var ids = "";
+					for(var i = 0; i < checkData.length; i++) {
+						if(ids != "") {
+							ids = ids + "," + checkData[i].id;
+						} else
+							ids = checkData[i].id;
+					}
+					if(checkData.length === 0) {
+						return layer.msg('请勾选坐席', {
+							icon: 2
+						});
+					} else {
+						admin.popup({
+						title: '修改角色',
+						btn: ['提交', '取消'],
+						//area: ["35%", "32%"],
+						area: ['450px', '200px'],
+						id: 'LAY-popup-user-update',
+						success: function(layero, index) {
+							view(this.id).render('config/agent/roleupdate').done(function() {
+								form.render(null, 'layuiadmin-form-agentroleadd');
+								//form.val('layuiadmin-form-agentroleadd', data); //表单初始赋值
+								band_role();
+
+								//监听提交
+								form.on('submit(LAY-agentroleadd-front-submit)', function(data) {
+									layer.load();
+									var field = data.field; //获取提交的字段
+
+									//提交 Ajax 成功后，关闭当前弹层并重载表格
+									//$.ajax({});
+									admin.req({
+										type: "POST",
+										url: layui.setter.configUrl + "admin/agent/batchRole",
+										//async: true,
+										data: {
+											ids:ids,
+											role:$("#nameroleupdate").val()
+										},
+										dataType: "json",
+										
+
+										success: function(obj) {
+											layer.closeAll('loading');
+											if(obj.data > 0) {
+												layer.msg("修改成功", {
+													icon: 1
+												});
+												layui.table.reload('LAY-user-manage-agent'); //重载表格
+												layer.close(index); //执行关闭 
+											} else {
+												layer.msg("修改失败,请重试", {
+													icon: 2
+												});
+											}
+										}
+
+									});
+
+								});
+							});
+						},
+						yes: function(index, layero) {
+							layero.find('#agent-roleupdate').click();
+						}
+					});
+					}
+				}
+
+			};
+
+			$('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+				var type = $(this).data('type');
+				active[type] ? active[type].call(this) : '';
+			});
+
+		});
+	</script>
+
+</html>

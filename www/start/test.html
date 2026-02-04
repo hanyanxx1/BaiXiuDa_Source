@@ -1,0 +1,330 @@
+<template>
+  <div class="wrap">
+    <div
+      style="
+        width: 100%;
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      "
+    >
+      <span
+        style="margin-right: 8px; font-size: 14px; color: #606266"
+      >时间维度：</span>
+      <el-select
+        v-model="timeDimension"
+        size="mini"
+        placeholder="请选择时间维度"
+        @change="timeDimensionChange"
+      >
+        <el-option
+          v-for="item in timeDimensionOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </div>
+    <div
+      v-for="(item, index) in echartsMapData"
+      :id="item.domId"
+      :key="index"
+      class="echart_item_wrap"
+      style="width: 50%; height: 350px"
+    />
+  </div>
+</template>
+
+<script>
+import { getActive, getNewActive } from '@/api/control/monitor'
+let intervalControlAllData = null
+const echartsTitleMap = {
+  answerList: '实时应答数',
+  callList: '实时应答率',
+  concurrencyList: '实时并发数',
+  transferList: '实时转接率'
+}
+const colors = ['#5a6fc0', '#9eca7f', '#f2ca6b', '#de6e6a', '#85bedb']
+
+import * as echarts from 'echarts'
+export default {
+  name: 'MonitorChart',
+  props: {
+    mapData: {
+      type: Array,
+      default: () => []
+    },
+    projectId: {
+      type: Number,
+      required: true
+    },
+    monitorData: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data() {
+    return {
+      timeDimension: 360,
+      timeDimensionOptions: [
+        {
+          label: '30分钟',
+          value: 30
+        },
+        {
+          label: '1小时',
+          value: 60
+        },
+        {
+          label: '6小时',
+          value: 360
+        },
+        {
+          label: '1天',
+          value: 1440
+        },
+        {
+          label: '2天',
+          value: 2880
+        },
+        {
+          label: '8天',
+          value: 10880
+        }
+      ],
+      echartsMapData: []
+    }
+  },
+  watch: {
+    projectId() {
+      this.mountedEcharts()
+    }
+  },
+  async mounted() {
+    await this.mountedEcharts()
+    // 监听网页刷新，缓存监控数据
+    window.addEventListener('beforeunload', this.claerAllDomAndInterval)
+  },
+  beforeDestroy() {
+    // 清除网页刷新监听
+    window.removeEventListener('beforeunload', this.claerAllDomAndInterval)
+    // 清除所有单表折线图dom渲染及定时器
+    this.claerAllDomAndInterval()
+  },
+  methods: {
+    async mountedEcharts() {
+      await this.getActive(this.timeDimension)
+    },
+    timeDimensionChange(val) {
+      this.getActive(val)
+    },
+    realTimeRendering() {
+      if (intervalControlAllData) {
+        clearInterval(intervalControlAllData)
+      }
+      intervalControlAllData = setInterval(async() => {
+        const formData = new FormData()
+        formData.append('project_id', this.projectId)
+        const res = await getNewActive(formData)
+        const allMonitorData = formDataAllMonitorData(res.data)
+        // 数据处理----------------------------------------
+        const timeDimension = new Date()
+        timeDimension.setMinutes(
+          timeDimension.getMinutes() - this.timeDimension
+        )
+        this.echartsMapData.forEach(echartsMapDataItem => {
+          echartsMapDataItem.data.forEach(gateItem => {
+            const findGateWay = allMonitorData[echartsMapDataItem.domId].find(allMonitorDataItem => allMonitorDataItem.gateway_id === gateItem.gateway_id)
+            if (!findGateWay) return
+            if (gateItem.data[0] && gateItem.data[0][0] < timeDimension.getTime()) {
+              gateItem.data.shift()
+            }
+            gateItem.data.push(...findGateWay.data)
+          })
+        })
+        // 数据渲染------------------------------------------
+        this.echartsMapData.forEach(item => {
+          item.dom.setOption({
+            series: item.data
+          })
+        })
+      }, 10000)
+    },
+    async getActive(value) {
+      try {
+        const formData = new FormData()
+        const date1 = new Date()
+        date1.setMinutes(date1.getMinutes() - value)
+        const date2 = new Date()
+        formData.append('project_id', this.projectId)
+        formData.append('startTime', formatDateToString(date1))
+        formData.append('endTime', formatDateToString(date2))
+        const res = await getActive(formData)
+        const allMonitorData = formDataAllMonitorData(res.data)
+        this.echartsMapData = initEchartsMap(allMonitorData)
+        this.$nextTick(() => {
+          this.echartsMapData.forEach((item) => {
+            this.initEcharts(item)
+          })
+        })
+        this.realTimeRendering()
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // 渲染单表
+    initEcharts(echartsMapItem) {
+      if (echartsMapItem.dom) {
+        echartsMapItem.dom.clear()
+        echartsMapItem.dom.dispose()
+        echartsMapItem.dom = null
+      }
+      echartsMapItem.dom = echarts.init(
+        document.getElementById(echartsMapItem.domId)
+      )
+      const option = {
+        title: {
+          text: echartsMapItem.title,
+          left: 'center'
+        },
+        grid: {
+          left: 40,
+          right: 40
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            animation: false
+          }
+        },
+        dataZoom: [
+          {
+            type: 'inside',
+            start: 0,
+            end: 100
+          },
+          {
+            start: 0,
+            end: 100
+          }
+        ],
+        legend: {
+          data: echartsMapItem.data.map((item) => item.name),
+          top: '30px'
+        },
+        xAxis: {
+          type: 'time',
+          splitLine: {
+            show: true
+          },
+          axisLabel: {
+            rotate: 15,
+            formatter: function(value) {
+              return `${new Date(value).toLocaleString().split(' ')[1]}`
+            }
+          }
+        },
+        yAxis: {
+          type: 'value',
+          boundaryGap: [0, '100%'],
+          splitLine: {
+            show: true
+          }
+        },
+        series: echartsMapItem.data
+      }
+      echartsMapItem.dom.setOption(option)
+    },
+    // 监听页面刷新和离开清除定时器和DOM
+    claerAllDomAndInterval() {
+      // 清除数据监控定时器
+      if (intervalControlAllData) {
+        clearInterval(intervalControlAllData)
+      }
+      this.echartsMapData.forEach((item) => {
+        if (item.dom) {
+          item.dom.clear()
+          item.dom.dispose()
+          item.dom = null
+        }
+      })
+    }
+  }
+}
+
+// 格式化日期
+function formatDateToString(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  return formattedDate
+}
+// 格式化后端数据 表包裹线
+function formDataAllMonitorData(allMonitorData) {
+  return allMonitorData.reduce((acc, curr) => {
+    for (const key in curr.statNewVOS) {
+      if (acc[key]) {
+        acc[key].push({
+          gateway_id: curr.gateway_id,
+          gatewayName: curr.gatewayName,
+          data: curr.statNewVOS[key]
+        })
+      } else {
+        acc[key] = [
+          {
+            gateway_id: curr.gateway_id,
+            gatewayName: curr.gatewayName,
+            data: curr.statNewVOS[key]
+          }
+        ]
+      }
+    }
+    return acc
+  }, {})
+}
+// 初始化折线表折线映射数据
+function initEchartsMap(allMonitorData) {
+  const echartsMapData = Object.entries(allMonitorData).map(([key, value]) => {
+    return { name: key, data: value }
+  })
+  return echartsMapData.map((item) => {
+    return {
+      dom: null,
+      domId: item.name,
+      title: echartsTitleMap[item.name],
+      data: item.data.map((itemData, index) => {
+        let name = itemData.gatewayName
+        if (itemData.gatewayName === '总数' && (item.name === 'callList' || item.name === 'transferList')) {
+          name = '总占比'
+        }
+        return {
+          name: name,
+          gateway_id: itemData.gateway_id,
+          type: 'line',
+          showSymbol: false,
+          data: itemData.data,
+          lineStyle: {
+            color: colors[index % 5]
+          }
+        }
+      })
+    }
+  })
+}
+</script>
+
+<style lang="scss" scoped>
+.wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  overflow: auto;
+}
+
+</style>

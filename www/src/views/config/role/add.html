@@ -1,0 +1,267 @@
+<div class="layui-form" lay-filter="layuiadmin-form-roleadd" style="padding: 20px 0 0 0;">
+
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">角色名称:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="names" name="name" lay-verify="required|exist_roleName" autocomplete="off"
+				placeholder="请输入角色名" class="layui-input">
+		</div>
+
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">附属权限:</label>
+			<div class="layui-input-block">
+				<input type="checkbox" checked="" name="allow_down" lay-skin="switch" lay-filter="switch_allow_down" lay-text="下载文件|下载文件">
+				<input type="checkbox" id="allow_inspection" name="allow_inspection" lay-skin="switch"
+				lay-filter="switch_allow_inspection" lay-text="质检|质检">
+				<input type="checkbox" id="all_projects" name="all_projects" lay-skin="switch" lay-filter="switch_allow_down" lay-text="所有项目|所有项目">
+			</div>
+			
+		</div>
+	</div>
+
+	<!-- <div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">录音质检:</label>
+			<div class="layui-input-inline">
+				<input type="checkbox" checked="" name="allow_inspection" lay-skin="switch"
+					lay-filter="switch_allow_inspection" lay-text="允许|禁止">
+			</div>
+		</div>
+	</div> -->
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">号码脱敏:</label>
+			<div class="layui-input-inline">
+				<select id="hide_tel" name="hide_tel" lay-verify="required" lay-search="">
+					<option value="none" checked="true">不加密</option>
+					<option value="hide">隐藏四位</option>
+					<option value="md5">MD5加密</option>
+					<option value="asc">ASC加密</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">权限:</label>
+			<div class="layui-input-inline">
+				<select id="permission" name="permission" lay-verify="required" lay-filter="fomselect" lay-search="">
+					<option value="1" checked="true">全局</option>
+					<option value="2">项目</option>
+					<option value="3">标签组</option>
+					<option value="4">个人</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">选择权限</label>
+		<div class="layui-input-block">
+			<!-- <div id="LAY-auth-tree-index" name="menus"></div> -->
+			<div id="test12" class="demo-tree-more"></div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="role-add" lay-submit lay-filter="LAY-role-front-submit-true" value="提交"
+				class="layui-btn">
+		</div>
+	</div>
+	<!-- <div class="layui-form-item">
+		<label class="layui-form-label">树形组件</label>
+		<div class="layui-input-block">
+			<div id="test12" class="demo-tree-more"></div>
+
+		</div>
+	</div> -->
+
+
+</div>
+<script>
+	layui.use(['jquery', 'authtree', 'form', 'layer', 'admin', 'tree', 'util'], function () {
+		var $ = layui.jquery;
+		var authtree = layui.authtree;
+		var form = layui.form;
+		var layer = layui.layer;
+		admin = layui.admin;
+		view = layui.view;
+		var tree = layui.tree,
+			layer = layui.layer,
+			util = layui.util;
+		// 	,data = [{
+		//     title: '一级1'
+		//     ,id: 1
+		//     //,spread: true
+		//     ,children: [{
+		//       title: '二级1-1'
+		// 	  ,checked: true
+		//       ,id: 3
+		//     },{
+		//       title: '二级1-2'
+		//       ,id: 4
+		//     },{
+		//       title: '二级1-3'
+		//       ,id: 20
+		//     }]
+		//   },{
+		//     title: '一级2'
+		//     ,id: 2
+		//     //,spread: true
+		//     ,children: [{
+		//       title: '二级2-1'
+		//       ,id: 5
+		//     },{
+		//       title: '二级2-2'
+		//       ,id: 6
+		//       ,field: ''
+		//     }]
+		//   }];
+
+
+
+		// 初始化
+		admin.req({
+			type: "post",
+			url: layui.setter.configUrl + 'admin/role/getMenus',
+
+			dataType: 'json',
+			data: {
+				permission_id: $("#permission").val(),
+				menus: ""
+			},
+			success: function (res) {
+				//基本演示
+				tree.render({
+					elem: '#test12',
+					data: res.data.trees,
+					showCheckbox: true //是否显示复选框
+						,
+					id: 'demoId1'
+				});
+			}
+
+		})
+
+		//获得选中的节点
+		//var checkData = tree.getChecked('demoId1');
+
+
+		$(function () {
+
+			// 初始化
+			admin.req({
+				type: "post",
+				url: layui.setter.configUrl + 'admin/role/getMenus',
+
+				dataType: 'json',
+				data: {
+					permission_id: $("#permission").val(),
+					menus: ""
+				},
+				success: function (data) {
+					// 渲染时传入渲染目标ID，树形结构数据（具体结构看样例，checked表示默认选中），以及input表单的名字
+					authtree.render('#LAY-auth-tree-index', data.data.trees, {
+						inputname: 'ids[]',
+						layfilter: 'lay-check-auth'
+
+							,
+						openchecked: false
+
+							,
+						'theme': 'auth-skin-default',
+						autowidth: true
+					});
+
+					authtree.on('change(lay-check-auth)', function (data) {
+						//console.log('监听 authtree 触发事件数据', data);
+						// 获取所有节点
+						var all = authtree.getAll('#LAY-auth-tree-index');
+						// 获取所有已选中节点
+						var checked = authtree.getChecked('#LAY-auth-tree-index');
+						// 获取所有未选中节点
+						var notchecked = authtree.getNotChecked(
+						'#LAY-auth-tree-index');
+						// 获取选中的叶子节点
+						var leaf = authtree.getLeaf('#LAY-auth-tree-index');
+						// 获取最新选中
+						var lastChecked = authtree.getLastChecked(
+							'#LAY-auth-tree-index');
+						// 获取最新取消
+						var lastNotChecked = authtree.getLastNotChecked(
+							'#LAY-auth-tree-index');
+						// console.log(
+						// 	'all', all, "\n",
+						// 	'checked', checked, "\n",
+						// 	'notchecked', notchecked, "\n",
+						// 	'leaf', leaf, "\n",
+						// 	'lastChecked', lastChecked, "\n",
+						// 	'lastNotChecked', lastNotChecked, "\n"
+						// );
+					});
+					authtree.on('deptChange(lay-check-auth)', function (data) {
+						console.log('监听到显示层数改变', data);
+					});
+					authtree.on('dblclick(lay-check-auth)', function (data) {
+						console.log('监听到双击事件', data);
+					});
+				},
+				error: function (xml, errstr, err) {
+					layer.alert(errstr + '，获取样例数据失败，请检查是否部署在本地服务器中！');
+				}
+			});
+
+			//下拉框选择时
+			form.on('select(fomselect)', function (data) {
+				var value = data.value;
+				if(value == 4){
+					value =3;
+				}
+				let str = "";
+				var checkData = tree.getChecked('demoId1');
+				
+				for (let i = 0; i < checkData.length; i++) {
+					if (str == "") {
+						str = checkData[i].id;
+					} else {
+						str = str + "," + checkData[i].id;
+					}
+					var children = checkData[i].children;
+					for (let j = 0; j < children.length; j++) {
+						str = str + "," + children[j].id;
+					}
+				}
+				// 初始化
+				admin.req({
+					type: "post",
+					url: layui.setter.configUrl + 'admin/role/getMenus',
+					dataType: 'json',
+					data: {
+						permission_id:value,
+						menus: str
+					},
+					success: function (res) {
+						//基本演示
+						tree.render({
+							elem: '#test12',
+							data: res.data.trees,
+							showCheckbox: true //是否显示复选框
+								,
+							id: 'demoId1'
+						});
+					}
+				});
+			})
+		})
+
+	});
+</script>

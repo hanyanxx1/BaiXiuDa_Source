@@ -1,0 +1,43 @@
+<div class="layui-form" lay-filter="layuiadmin-form-project_task_editBot" style="padding: 0px 0 0 0;">
+    <div class="layui-form-item">
+		<label class="layui-form-label">AI机器人:</label>
+		<div class="layui-input-inline" style="width: 300px;">
+			<select id="bot_id" name="bot_id">
+
+			</select>
+		</div>
+	</div>
+
+    <div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="project_task_editBot" lay-submit lay-filter="LAY-user-front-project_task-editBot-submit"
+				value="提交" class="layui-btn">
+		</div>
+	</div>
+</div>
+<style>
+	.layui-layer-content {
+		overflow: visible !important;
+	}
+</style>
+<script>
+
+    function editBotSelect(bot_id){
+        admin.req({ //机器人下拉列表
+			type: "POST",
+			url: layui.setter.configUrl + "admin/bot/grid",
+			async: false,
+			dataType: 'json',
+			success: function (res) {
+				var result = res.data;
+				$("#bot_id").append("<option value=''>--请选择--</option>");
+				for (var i = 0; i < result.length; i++) {
+					$("#bot_id").append("<option value=" + result[i].id + ">" + result[i].name + "</option>");
+				}
+                $("#bot_id").val(bot_id);
+				layui.form.render("select");
+			}
+		});
+    }
+</script>

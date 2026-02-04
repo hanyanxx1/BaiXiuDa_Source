@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+                lay-filter="layadmin-userfront-formlist-push_record">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">时间</label>
+                        <div class="layui-input-inline" style="width: 350px;">
+                            <input type="text" class="layui-input" id="newDateStamp" placeholder=" ~ "
+                                autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">微信名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="wechatName" name="wechatName" autocomplete="off" placeholder="请输入微信名称"
+                                class="layui-input">
+                        </div>
+                    </div>
+
+                    <!-- <div  class="layui-inline">
+                        <label class="layui-form-label">工号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="jobNumber" name="jobNumber" autocomplete="off" placeholder="请输入工号"
+                                class="layui-input">
+                        </div>
+                    </div> -->
+
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+                            lay-filter="LAY-user-front-search-push_record">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                        </button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="导出"
+                            data-type="export_push_record"> <i
+                                class="layui-icon layui-icon-export layuiadmin-button-btn"></i>导出</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="layui-card-body">
+
+                <table id="LAY-user-manage-push_record" lay-filter="LAY-user-manage-push_record"></table>
+            </div>
+        </div>
+    </div>
+
+</body>
+<style>
+    .layui-table-cell {
+        height: 50px;
+        /* 设置行高为50px */
+        line-height: 55px;
+    }
+
+    .layui-laydate-range {
+        width: 547px;
+    }
+</style>
+<script src="/start/js/publicmethod.js"></script>
+<script>
+    layui.use(['admin', 'table', 'util', 'laydate'], function () {
+        var table = layui.table;
+        form = layui.form;
+        var $ = layui.$;
+        view = layui.view;
+        admin = layui.admin;
+        setter = layui.setter;
+        router = layui.router(),
+            search = router.search;
+        util = layui.util;
+        let laydate = layui.laydate;
+
+        // if(layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]['role']!='agent'){
+        //     $("#cdr_record_jobNumber_div").show();
+        //     $("#cdr_record_remove_div").show();
+
+        // }else{
+        //     $("#jobNumber").val(window.sessionStorage.getItem("name"));
+        // }
+
+        // var date = new Date();
+        // let newEndTime = formatDateToString(date);
+        // date.setHours(date.getHours() - 1);
+        // let newStartTime = formatDateToString(date);
+        // laydate.render({
+        // 	elem: '#newDateStamp',
+        // 	type: 'datetime',
+        // 	value: newStartTime + " ~ " + newEndTime,
+        // 	range: "~"
+        // });
+
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        if (month < 10)
+            month = "0" + month;
+        var day = date.getDate();
+        if (day < 10)
+            day = "0" + day;
+        var timestamp = year + "-" + month + "-" + day;
+        laydate.render({
+            elem: '#newDateStamp'
+            , type: 'datetime'
+            , value: timestamp + " 00:00:00" + " ~ " + timestamp + " 23:59:59"
+            , range: "~"
+        });
+
+        table.render({
+            method: 'post',
+            elem: '#LAY-user-manage-push_record',
+            url: layui.setter.configUrl + 'admin/wechat/getPage',
+            where: {
+                startDate: timestamp + " 00:00:00",
+                endDate: timestamp + " 23:59:59",
+                jobNumber: "",
+                wechatName: ""
+            },
+            height: 'full-180',
+            cellMinHeight: 100,
+            escape: true,
+            cols: [
+                [{
+                    title: '微信头像',
+                    align: 'center',
+                    minWidth: 80,
+                    templet: function (d) {
+                        if (d.userInfo != null) {
+                            var userInfo = JSON.parse(d.userInfo);
+                            if (userInfo.hasOwnProperty("headimgurl")) {
+                                return '<img style="width:50px;height:50px;" src="' + userInfo.headimgurl + '" />';
+                            }
+                        }
+                        return "";
+                    }
+                }, {
+                    field: 'consumes',
+                    title: '微信名称',
+                    align: 'center',
+                    minWidth: 100,
+                    templet: function (d) {
+                        if (d.userInfo != null) {
+                            var userInfo = JSON.parse(d.userInfo);
+                            if (userInfo.hasOwnProperty("nickname")) {
+                                return userInfo.nickname;
+                            }
+                        }
+                        return "";
+                    }
+                }, {
+                    title: '总条数',
+                    align: 'center',
+                    minWidth: 95,
+                    field: 'total'
+                }, {
+                    title: '成功数',
+                    align: 'center',
+                    minWidth: 140,
+                    field: 'successNum'
+                }, {
+                    title: '失败数',
+                    align: 'center',
+                    minWidth: 150,
+                    field: 'failNum'
+                }, {
+                    field: 'readNum',
+                    title: '已读数',
+                    align: 'center',
+                    minWidth: 150
+                }, {
+                    field: 'unreadNum',
+                    title: '未读数',
+                    align: 'center',
+                    minWidth: 200
+                }, {
+                    field: 'createTime',
+                    title: '日期',
+                    align: 'center',
+                    minWidth: 180
+                }]
+            ]
+
+            ,
+            // done: function (res, curr, count) {
+            // 	$(".layui-table-main tr").each(function (index, val) {
+            // 		$($(".layui-table-fixed .layui-table-body tbody tr")[index]).height($(val).height());
+            // 	});
+            // },
+            page: true
+        });
+        form.render(null, 'layadmin-userfront-formlist-push_record');
+
+        //监听搜索
+        form.on('submit(LAY-user-front-search-push_record)', function (data) {
+            var field = data.field;
+            field.startDate = $('#newDateStamp').val().split(" ~ ")[0];
+            field.endDate = $('#newDateStamp').val().split(" ~ ")[1];
+            //执行重载
+            table.reload('LAY-user-manage-push_record', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        //事件
+        var active = {
+            export_push_record: function () {
+                $.ajax({
+                    url: layui.setter.configUrl + "admin/wechat/exportRecord",
+                    type: 'POST',
+                    xhrFields: {
+                        responseType: 'arraybuffer'
+                    },
+                    headers: {
+                        access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+                    },
+                    data: {
+                        startDate: $('#newDateStamp').val().split(" ~ ")[0],
+                        endDate: $('#newDateStamp').val().split(" ~ ")[1],
+                        jobNumber: "",
+                        wechatName: $("#wechatName").val()
+                    },
+                    success: function (response) {
+                        var blob = new Blob([response],{ type: 'text/csv' });
+                        var downloadUrl = URL.createObjectURL(blob);
+                        window.location = downloadUrl;
+                    }
+                })
+
+
+            }
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>
+
+</html>

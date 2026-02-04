@@ -1,0 +1,446 @@
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <!-- 头部区域 -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item layadmin-flexible" lay-unselect>
+        <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+          <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+        </a>
+      </li>
+      <!--<li class="layui-nav-item layui-this layui-hide-xs layui-hide-sm layui-show-md-inline-block">
+        <a lay-href="" title="">
+          控制台
+        </a>
+      </li>-->
+      <!-- <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="http://www.baidu.com#/" target="_blank" title="前台">
+          <i class="layui-icon layui-icon-website"></i>
+        </a>
+      </li> -->
+      <li class="layui-nav-item" lay-unselect>
+        <a href="javascript:;" layadmin-event="refresh" title="刷新">
+          <i class="layui-icon layui-icon-refresh-3"></i>
+        </a>
+      </li>
+      <!-- <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <input type="text" placeholder="" autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search/keywords="> 
+      </li> -->
+    </ul>
+    <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+      <!--  新版UI  -->
+
+      <!-- <li class="layui-nav-item" id="switchUI" lay-unselect>
+        <a href="javascript:;">
+          新版UI
+        </a>
+      </li> -->
+
+      <!--  新版UI  -->
+
+      <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="javascript:;" layadmin-event="theme">
+          <i class="layui-icon layui-icon-theme"></i>
+        </a>
+      </li>
+      <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="javascript:;" layadmin-event="note">
+          <i class="layui-icon layui-icon-note"></i>
+        </a>
+      </li>
+      <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="javascript:;" layadmin-event="fullscreen">
+          <i class="layui-icon layui-icon-screen-full"></i>
+        </a>
+      </li>
+      <li class="layui-nav-item" id="console" style="display: none;" lay-unselect>
+        <a href="javascript:;">
+          工作台
+        </a>
+      </li>
+      <li class="layui-nav-item" style="margin-right: 12px;" lay-unselect>
+        <script type="text/html" template lay-url="" lay-done="layui.element.render('nav', 'layadmin-layout-right');">
+          <a href="javascript:;">
+            <cite id="lname"></cite>
+          </a>
+          <dl class="layui-nav-child">
+            <!-- <dd><a lay-href="set/user/info">基本资料</a></dd> -->
+            <dd><a lay-href="user/password">修改密码</a></dd>
+            <hr>
+            <!-- {{# if(layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] =='agent'){ }}
+            <dd><a href="javascript:;" onclick="bindWechat();">绑定微信</a></dd>
+            <hr>
+            {{# } }} -->
+
+
+            <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+          </dl>
+        </script>
+      </li>
+
+      <!-- <li class="layui-nav-item layui-hide-xs" lay-unselect>
+        <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
+      </li>
+      <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+        <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
+      </li> -->
+    </ul>
+  </div>
+
+  <!-- 侧边菜单 -->
+  <!-- lay-url="{{ layui.setter.configUrl }}menu/get?own={{ window.sessionStorage.getItem('own') }}" -->
+  <div class="layui-side layui-side-menu">
+    <div class="layui-side-scroll">
+      <script type="text/html" template
+        lay-url="{{ layui.setter.configUrl }}menu/get?own={{ window.sessionStorage.getItem('own') }}"
+        lay-done="layui.element.render('nav', 'layadmin-system-side-menu');" id="TPL_layout">
+        <div class="layui-logo">
+          <span id="logos"></span>
+        </div>
+
+        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+          lay-filter="layadmin-system-side-menu">
+          {{# 
+          var path =  layui.router().path
+          ,pathURL = layui.admin.correctRouter(path.join('/'))
+          ,dataName = layui.setter.response.dataName;
+          
+          layui.each(d[dataName], function(index, item){ 
+            var hasChildren = typeof item.list === 'object' && item.list.length > 0
+            ,classSelected = function(){
+              var match = path[0] == item.name || (index == 0 && !path[0]) 
+              || (item.jump && pathURL == layui.admin.correctRouter(item.jump)) || item.spread;
+              if(match){
+                return hasChildren ? 'layui-nav-itemed' : 'layui-this';
+              }
+              return '';
+            }
+            ,url = (item.jump && typeof item.jump === 'string') ? item.jump : item.name;
+        }}
+          <li data-name="{{ item.name || '' }}" data-jump="{{ item.jump || '' }}"
+            class="layui-nav-item {{ classSelected() }}">
+            <a href="javascript:;" {{ hasChildren ? '' : 'lay-href="'+ url +'"' }} lay-tips="{{ item.title }}"
+              lay-direction="2">
+              <i class="layui-icon {{ item.icon }}"></i>
+              <cite>{{ item.title }}</cite>
+            </a>
+            {{# if(hasChildren){ }}
+            <dl class="layui-nav-child">
+              {{# layui.each(item.list, function(index2, item2){ 
+                var hasChildren2 = typeof item2.list == 'object' && item2.list.length > 0
+                ,classSelected2 = function(){
+                  var match = (path[0] == item.name && path[1] == item2.name) 
+                  || (item2.jump && pathURL == layui.admin.correctRouter(item2.jump)) || item2.spread;
+                  if(match){
+                    return hasChildren2 ? 'layui-nav-itemed' : 'layui-this';
+                  }
+                  return '';
+                }
+                ,url2 = (item2.jump && typeof item2.jump === 'string') 
+                  ? item2.jump 
+                : [item.name, item2.name, ''].join('/');
+              }}
+              <dd data-name="{{ item2.name || '' }}" data-jump="{{ item2.jump || '' }}"
+                {{ classSelected2() ? ('class="'+ classSelected2() +'"') : '' }}>
+                <a href="javascript:;" {{ hasChildren2 ? '' : 'lay-href="'+ url2 +'"' }}>{{ item2.title }}</a>
+                {{# if(hasChildren2){ }}
+                <dl class="layui-nav-child">
+                  {{# layui.each(item2.list, function(index3, item3){ 
+                        var match = (path[0] == item.name && path[1] == item2.name && path[2] == item3.name) 
+                        || (item3.jump && pathURL == layui.admin.correctRouter(item3.jump))
+                        ,url3 = (item3.jump && typeof item3.jump === 'string') 
+                          ? item3.jump 
+                        : [item.name, item2.name, item3.name].join('/')
+                      }}
+                  <dd data-name="{{ item3.name || '' }}" data-jump="{{ item3.jump || '' }}"
+                    {{ match ? 'class="layui-this"' : '' }}>
+                    <a href="javascript:;" lay-href="{{ url3 }}"
+                      {{ item3.iframe ? 'lay-iframe="true"' : '' }}>{{ item3.title }}</a>
+                  </dd>
+                  {{# }); }}
+                </dl>
+                {{# } }}
+              </dd>
+              {{# }); }}
+            </dl>
+            {{# } }}
+          </li>
+          {{# }); }}
+        </ul>
+      </script>
+    </div>
+    <div class="version_wrap" >旗舰版 V5.3.8</div>
+  </div>
+  <style>
+    .layui-side-scroll {
+      position: relative;
+    }
+    .version_wrap {
+      position: absolute;
+      bottom: 10px;
+      left: 20px;
+    }
+  </style>
+  <!-- 页面标签 -->
+  <script type="text/html" template lay-done="layui.element.render('nav', 'layadmin-pagetabs-nav')">
+    {{# if(layui.setter.pageTabs){ }}
+    <div class="layadmin-pagetabs" id="LAY_app_tabs">
+      <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-down">
+        <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:;"></a>
+            <dl class="layui-nav-child layui-anim-fadein">
+              <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+              <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+              <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+            </dl>
+          </li>
+        </ul>
+      </div>
+      <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+        <ul class="layui-tab-title" id="LAY_app_tabsheader">
+          <li lay-id="/"><i class="layui-icon layui-icon-home"></i></li>
+        </ul>
+      </div>
+    </div>
+    {{# } }}
+  </script>
+
+
+  <!-- 主体内容 -->
+  <div class="layui-body" id="LAY_app_body">
+    <div class="layadmin-tabsbody-item layui-show"></div>
+  </div>
+
+  <!-- 辅助元素，一般用于移动设备下遮罩 -->
+  <div class="layadmin-body-shade" layadmin-event="shade"></div>
+
+</div>
+
+<script>
+  if (window.sessionStorage.getItem("routerName")) {
+    window.sessionStorage.setItem("name", window.sessionStorage.getItem("routerName"));
+    window.sessionStorage.removeItem("routerName");
+  }
+
+  const myElement = document.querySelector('.version_wrap');
+  const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+      const { width } = entry.contentRect;
+      if (width < 86) {
+        myElement.style.opacity = 0; // 如果宽度小于 100px，则设置透明度为 0.5
+      } else {
+        myElement.style.opacity = 1; // 恢复完全不透明
+      }
+    }
+  });
+  resizeObserver.observe(myElement);
+
+
+  var is_open = 0;
+  layui.use('admin', function () {
+    view = layui.view;
+    admin = layui.admin;
+    setter = layui.setter;
+    $ = layui.$;
+    router = layui.router(),
+      search = router.search;
+
+    // window.onload = function () {
+    //   console.log('你好，欢迎光临'); //各浏览器均正常弹出
+    // }
+    // window.onbeforeunload = function () {
+    //   console.log('谢谢光临'); //IE 火狐浏览器提示
+    // }
+    // // $(window).on('beforeunload', function () {
+    // //   console.log('谢谢光临');
+    // // });
+    // window.onunload = function () {
+    //   console.log('再见'); //只有IE正常弹出
+    // }
+
+    // window.onbeforeunload = function () {
+
+    //     if (layui.data('layuiAdmin').super_admin_name != 'admin') {
+    //       var storage = window.localStorage;
+    //       storage.clear();
+    //     } 
+
+    // }
+    $.ajax({
+      type: "post",
+      url: layui.setter.configUrl + "common/logo",
+      success: function (res) {
+        $("#logos").html(res.data);
+      }
+    })
+
+    //监听浏览器异常关闭
+    var beginTime = 0; //执行onbeforeunload的开始时间
+    var differTime = 0; //时间差
+    window.onunload = function () {
+      differTime = new Date().getTime() - beginTime;
+      if (differTime <= 5) {
+        alert("浏览器关闭")
+        //触发关闭事件，清空所有会话
+        // if (layui.data('layuiAdmin').super_admin_name != 'admin') {
+        //   var storage = window.localStorage;
+        //   storage.clear();
+        // }
+      } else {
+        alert("浏览器刷新");
+      }
+
+    }
+    
+
+    if (!window.sessionStorage.getItem("load") && window.sessionStorage.getItem("name") != "admin") {
+   
+      window.sessionStorage.setItem("load", "true");
+      window.location.reload();
+    }
+
+
+
+
+    window.onbeforeunload = function () {
+      beginTime = new Date().getTime();
+    };
+    var super_own = window.sessionStorage.getItem("own");
+    admin.req({
+      type: "get",
+      url: layui.setter.configUrl + 'menu/info',
+      //async: false,
+      done: function (res) {
+        if (super_own == "super_admin") {
+          $("#lname").html(layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["super_admin_name"]);
+        } else {
+          $("#lname").html(res.data.name);
+        }
+        if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["role"] == "agent") { //判断是否显示软电话
+          $("#console").css("display", "");
+        }
+      }
+
+    })
+    if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")] == undefined) {
+      location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/user/login';
+      
+      return;
+    } else {
+      var super_own = window.sessionStorage.getItem("own");
+      var own = "null";
+      if (super_own == "super_admin") {
+        //location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/plat/plat_info';
+        own = "super_admin";
+      }
+
+      // console.log("应跳转的路径："+jump);
+      admin.req({
+        type: 'get',
+        url: layui.setter.configUrl + "/menu/get?own=" + own,
+        async: false,
+        dataType: "json",
+        success: function (obj) {
+          var jump;
+          var jumps;
+          if (obj.data != "") {
+
+            jump = obj.data[0].list[0].jump;
+            let menusTT = [];
+            for (var i = 0; i < obj.data.length; i++) {
+              var menuList = obj.data[i].list;
+              for (let j = 0; j < menuList.length; j++) {
+                menusTT.push(menuList[j].jump);
+              }
+            }
+            window.sessionStorage.setItem("menu", JSON.stringify(menusTT));
+            location.hash = search.redirect ? decodeURIComponent(search.redirect) : '/' + jump;
+          }
+        }
+
+      })
+
+
+    }
+
+    $(function () {
+
+
+
+      //监听浏览器异常关闭
+      // var beginTime = 0; //执行onbeforeunload的开始时间
+      // var differTime = 0; //时间差
+      // window.onunload = function () {
+      //   differTime = new Date().getTime() - beginTime;
+      //   console.log(differTime)
+      //   if (differTime <= 5) {
+      //     console.log("浏览器关闭")
+      //     //触发关闭事件，清空所有会话
+      //     logout_web();
+      //     if (layui.data('layuiAdmin').super_admin_name != 'admin') {
+      //       var storage = window.localStorage;
+      //       storage.clear();
+      //     }
+      //   } else {
+      //     console.log(layui.data('layuiAdmin').super_admin_name != 'admin')
+      //     console.log("浏览器刷新");
+      //   }
+
+      // }
+      // window.onbeforeunload = function () {
+      //   beginTime = new Date().getTime();
+      // };
+
+
+
+
+
+
+
+    })
+    //切换新版UI
+    $("#switchUI").click(function () {
+      const layuiAdmin = JSON.parse(localStorage.getItem('layuiAdmin'))
+      const href = `http://${window.location.hostname}:8891/${window.location.hash}?loginInfo=${JSON.stringify(layuiAdmin)}`
+      window.location.href = href
+    })
+    //点击控制台
+    $("#console").click(function () {
+      if (layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["isOpen"] == 0) {
+        layui.data(setter.tableName, {
+          key: "isOpen",
+          value: 1
+        });
+        window.open("../start/console.html");
+        window.sessionStorage.setItem("name", window.sessionStorage.getItem("name"));
+      } else {
+        alert("请先关闭已打开的工作台")
+      }
+
+
+    })
+
+  })
+
+  function bindWechat() {
+    // layer.open({
+    //   title:"微信扫码关注公众号",
+    //   type: 1,
+    //   offset: '150px',
+    //   skin: 'layui-layer-demo', //样式类名
+    //   closeBtn: 1, //不显示关闭按钮,0:不显示，1:显示
+    //   anim: 2,
+    //   shadeClose: true, //开启遮罩关闭
+    //   content: '<img src="/start/images/wechat.jpg" />'
+    // });
+    let recordUrl = window.location.origin;
+    let ipAddre = window.location.hostname;
+    window.open("http://wechat.psycall.cn/weixin/bind.html?jobNumber=" + window.sessionStorage.getItem("name") + "&recordUrl=" + recordUrl + "&ipAddre=" + ipAddre);
+
+
+
+
+  }
+</script>

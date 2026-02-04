@@ -1,0 +1,137 @@
+<div class="layui-form" lay-filter="layuiadmin-form-greeting-add" style="padding: 0px 0 0 0;">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="greeting_name" name="name"  onmouseleave="onleave_greeting()" lay-verify="required" autocomplete="off" placeholder="请输入名称" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux" style="display: none;">
+			<span style="color: red;" id="existnames"></span>
+		</div>
+	</div>
+
+	<!--<div class="layui-form-item">
+		<label class="layui-form-label">文件:</label>
+		<div class="layui-input-inline">
+			<button type="button" class="layui-btn" id="test6"><i class="layui-icon"></i>上传音频</button>
+		</div>
+
+	</div>-->
+
+	<label class="layui-form-label">文件:</label>
+	<div class="layui-upload">
+		<button type="button" class="layui-btn" id="test6"><i class="layui-icon"></i>上传音频</button>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline" style="width: 350px;">
+			<span style="color: red;">*文件如果为WAV格式,录音文件的格式必须是PCM编码,16 Bit采样宽度,8000Hz采样率</span>
+		</div>
+	</div>
+
+	<!-- <div class="layui-form-item">
+		<label class="layui-form-label">转接:</label>
+		<div class="layui-input-inline">
+			<select id="dtmf_type" name="dtmf_type" lay-filter="dtmf_type_select">
+				<option value="1">播放完转接</option>
+				<option value="2">按键转接</option>
+
+			</select>
+		</div>
+		<div id="dtmp_id" class="layui-hide" >
+			<label class="layui-form-label" style="width: 50px;">按键:</label>
+			<div class="layui-input-inline" style="width: 90px;">
+				<input type="text" id="dtmf" name="dtmf " autocomplete="off" placeholder="" class="layui-input">
+			</div>
+		</div>
+	</div> -->
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">备注:</label>
+		<div class="layui-input-block">
+			<textarea placeholder="请输入内容" id="greeting_remark" name="description" class="layui-textarea" style="width: 350px;"></textarea>
+		</div>
+	</div>
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="greeting_add" lay-submit lay-filter="LAY-user-front-greeting-add-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	layui.use(['form', 'element', 'table', 'upload'], function() {
+		var $ = layui.jquery;
+		element = layui.element;
+		table = layui.table;
+		var form = layui.form;
+		upload = layui.upload;
+
+		// form.on('select(dtmf_type_select)', function(data) { //监听  转接  下拉列表
+		// 	if($("#dtmf_type").val() == 2) {
+		// 		$("#dtmp_id").removeClass('layui-hide');
+				
+		// 	} else if($("#dtmf_type").val() == 1) {
+		// 		$("#dtmp_id").addClass('layui-hide');
+		// 	}
+		// });
+
+		uploadListIns = upload.render({ //音频提交
+			
+			type: 'POST',
+			elem: '#test6',
+			url: layui.setter.configUrl + '/admin/audioFile/add',
+			headers: {
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+			},
+			before: function() {
+				uploadListIns.config.data.name = $("#greeting_name").val();
+				//uploadListIns.config.data.dtmf_type = $("#dtmf_type").val();
+				//uploadListIns.config.data.dtmf = $("#dtmf").val();
+				uploadListIns.config.data.description = $("#greeting_remark").val();
+
+			},
+			auto: false,
+			accept: 'audio', //音频
+			exts: 'wav',
+			data: {
+				name: $("#greeting_name").val(),
+				//dtmf_type: $("#dtmf_type").val(),
+				//dtmf: $("#dtmf").val(),
+				description: $("#greeting_remark").val(),
+			},
+			bindAction: '#greeting_add', //指向按钮触发
+			done: function(obj) {
+				if(obj.data > 0) {
+					layer.msg("新增成功",{icon:1});
+					layui.table.reload('LAY-user-manage-greeting'); //重载表格
+				} else {
+					layer.msg("新增失败,请重试",{icon:2});
+				}
+			}
+		});
+
+	})
+	
+	function onleave_greeting() {//验证欢迎语名称
+		admin.req({
+			type:"POST",
+			url: layui.setter.configUrl + "admin/audioFile/exist",
+			dataType: 'json',
+			data: {
+				name: $("#greeting_name").val(),
+			},
+			success: function(res) {
+				if(res.data == true) {
+					$("#existnames").html("名称已存在");
+					layer.tips("名称已被使用,请重试",'#greeting_name',{tips:[2,'red']})
+					
+				} else {
+					$("#existnames").html("");
+				}
+			}
+
+		})
+	}
+</script>

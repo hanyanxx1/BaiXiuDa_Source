@@ -1,0 +1,119 @@
+<form class="layui-form" lay-filter="layuiadmin-form-management-senior" style="padding: 20px 0 0 0;">
+
+	<!-- <div class="layui-form-item">
+		<label class="layui-form-label">前置语音按键:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="greeting_digits" name="greeting_digits" autocomplete="off" placeholder="" class="layui-input">
+		</div>
+	 <div>
+			<label class="layui-form-label" style="width: 50px;">按键:</label>
+			<div class="layui-input-inline" style="width: 90px;">
+				<input type="text" id="greeting_digits" name="greeting_digits " autocomplete="off" placeholder="" class="layui-input">
+			</div>
+		</div>
+	</div> -->
+	
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">排队语音:</label>
+			<div class="layui-input-inline">
+				<!-- <select name="waiting_file" id="waiting_file" style="width: 50px;">
+					<option value="waiting.wav">默认</option>
+					<option value="silence_stream">静音</option>
+				</select> -->
+				<input type="radio" name="waiting_file" value="waiting.wav" title="默认" checked="">
+      			<input type="radio" name="waiting_file" value="silence_stream" title="静音">
+			</div>
+		</div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">提示录音:</label>
+            <div class="layui-input-inline">
+                <!-- <select id="prompt_recording" name="prompt_recording" style="width: 50px;">
+                    <option value="true">提示</option>
+                    <option value="false">不提示</option>
+                </select> -->
+				<input type="radio" name="prompt_recording" value="true" title="是" checked="">
+      			<input type="radio" name="prompt_recording" value="false" title="否">
+            </div>
+        </div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">播报排队数:</label>
+            <div class="layui-input-inline">
+				<input type="radio" name="prompt_waiting" value="true" title="是" checked="">
+      			<input type="radio" name="prompt_waiting" value="false" title="否">
+            </div>
+        </div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">播报工号:</label>
+		<div class="layui-input-inline">
+			<!-- <select id="play_extno" name="play_extno" style="width: 50px;">
+				<option value="true">播报</option>
+				<option value="false">不播报</option>
+			</select> -->
+
+			<input type="radio" name="play_extno" value="true" title="是" checked="">
+      		<input type="radio" name="play_extno" value="false" title="否">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">号码状态检测:</label>
+		<div class="layui-input-inline">
+
+			<input type="radio" name="detect_ringing" value="true" title="是">
+      		<input type="radio" name="detect_ringing" value="false" title="否" checked="">
+		</div>
+	</div>
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">抖动缓冲器:</label>
+		<div class="layui-input-inline">
+
+			<input type="radio" name="jitterbuffer" value="true" title="是">
+      		<input type="radio" name="jitterbuffer" value="false" title="否" checked="">
+		</div>
+	</div>
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">用户静默检测:</label>
+		<div class="layui-input-inline">
+
+			<input type="radio" name="vad_silence" value="true" title="是">
+      		<input type="radio" name="vad_silence" value="false" title="否" checked="">
+		</div>
+	</div>
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">ACD:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="acd" autocomplete="off" placeholder="请输入" value="5" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">呼叫超时(秒):</label>
+		<div class="layui-input-inline">
+			<input type="text" name="originate_timeout" lay-verify="required|number|crm_timeout" value="30" autocomplete="off" placeholder="请输入" class="layui-input">
+		</div>
+	</div>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;"></fieldset>
+	<div class="layui-form-item">
+		<label class="layui-form-label">触发时长:</label>
+		<div class="layui-input-inline">
+			<input type="text" name="msg" lay-verify="required" value="-1" autocomplete="off" placeholder="请输入" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux">-1 不发送;0 全部发送;>0 接听多少秒发送</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">短信内容:</label>
+		<div class="layui-input-inline">
+			<textarea placeholder="请输入内容" id="msg_content" name="msg_content" class="layui-textarea" style="width: 350px;"></textarea>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="project-senior" lay-submit lay-filter="LAY-user-front-management-senior-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+</form>

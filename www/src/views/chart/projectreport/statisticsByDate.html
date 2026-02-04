@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-card">
+
+
+				<div class="layui-card-body">
+
+					<table id="LAY-user-manage-project-report-list" lay-filter="LAY-user-manage-project-report-list"></table>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<style>
+		/*.layui-form-label {
+			width: 60px;
+		}*/
+	</style>
+	<script>
+		layui.use(['admin', 'table'], function() {
+			var table = layui.table;
+			form = layui.form;
+			var $ = layui.$;
+			view = layui.view;
+			admin = layui.admin;
+
+		});
+	</script>
+
+</html>

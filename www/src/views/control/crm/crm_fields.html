@@ -1,0 +1,427 @@
+<div class="layui-form" lay-filter="layuiadmin-form-crm_fields" style="padding: 0px 0 0 0; height: 100%;">
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label">id:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="crm_ids" name="id" lay-verify="required" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div style="padding: 5px; background-color: #F2F2F2; height:auto; ">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md5">
+				<div class="layui-card">
+					<!--<div class="layui-card-header">
+						<div class="layui-btn-group layuiadmin-btn-group">
+							<button onclick="field_tool.add()" class="layui-btn layui-btn-primary layui-btn-xs">添加</button>
+							<button onclick="field_tool.edit()" class="layui-btn layui-btn-primary layui-btn-xs layui-btn-normal">修改</button>
+							<button onclick="field_tool.remove()" class="layui-btn layui-btn-primary layui-btn-xs layui-btn-danger">删除</button>
+						</div>
+
+					</div>-->
+					<!--卡片头部-->
+					<div class="layui-card-body">
+						<table id="LAY-user-crm-fields" lay-filter="LAY-user-crm-fields"></table>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-md7">
+				<div class="layui-card">
+					<div class="layui-card-header"></div>
+					<!--卡片头部-->
+					<div class="layui-card-body">
+
+						<form class="layui-form" id="fields-form" action="" lay-filter="crm_fields_two_form">
+
+							<div class="layui-form-item" style="display: none;">
+								<label class="layui-form-label">control:</label>
+								<div class="layui-input-inline">
+									<input type="text" id="control" value="0" name="control" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								<label class="layui-form-label">字段名称:</label>
+								<div class="layui-input-inline">
+									<input type="text" id="field_name" name="field_name" lay-verify="required" autocomplete="off" placeholder="请不要输入特殊字符" class="layui-input">
+								</div>
+							</div>
+
+							<div class="layui-form-item layui-form-text">
+								<label class="layui-form-label">话术(问卷):</label>
+								<div class="layui-input-block">
+									<textarea id="issue_c" name="issue" style="height: 200px;" placeholder="请输入" class="layui-textarea"></textarea>
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								<div class="layui-inline">
+									<label class="layui-form-label">是否显示:</label>
+									<div class="layui-input-inline">
+										<!-- <select id="is_display" name="is_display" lay-verify="required" lay-search="">
+											<option value="1">是</option>
+											<option value="0">否</option>
+
+										</select> -->
+										<input type="radio" name="is_display" value="1" title="是" checked="">
+      									<input type="radio" name="is_display" value="0" title="否">
+									</div>
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								<div class="layui-inline">
+									<label class="layui-form-label">允许修改:</label>
+									<div class="layui-input-inline">
+										<!-- <select id="is_edit" name="is_edit" lay-verify="required" lay-search="">
+											<option value="1">是</option>
+											<option value="0">否</option>
+
+										</select> -->
+
+										<input type="radio" name="is_edit" value="1" title="是" checked="">
+      									<input type="radio" name="is_edit" value="0" title="否">
+									</div>
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								<div class="layui-inline">
+									<label class="layui-form-label">高级查询:</label>
+									<div class="layui-input-inline">
+										<!-- <select id="is_display" name="is_display" lay-verify="required" lay-search="">
+											<option value="1">是</option>
+											<option value="0">否</option>
+
+										</select> -->
+										<input type="radio" name="is_search" value="1" title="是">
+      									<input type="radio" name="is_search" value="0" title="否"  checked="">
+									</div>
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								
+								<div class="layui-inline">
+									<label class="layui-form-label">输入类型:</label>
+									
+										<div class="layui-input-inline" style="width: 140px;">
+											<select id="input_type" name="input_type" lay-verify="required" lay-filter="type_select" lay-search="">
+												<option value="1">短文本</option>
+												<option value="4">长文本</option>
+												<option value="2">单选</option>
+												<option value="3">多选</option>
+
+											</select>
+
+										</div>
+									
+									<div id="on_type" class="layui-input-inline" style="display: none;">
+										<button type="button" onclick="field_tool.addnode()" class="layui-btn">添加选项</button>
+									</div>
+
+									<!--<a id="on_type" onclick="field_tool.addnode()" class="layui-hide">
+										<div class="layui-form-mid">添加选项</div>
+									</a>-->
+								</div>
+								
+							</div>
+
+							<div id="nodes">
+
+							</div>
+
+						</form>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="layui-form-item" style="display: none;">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" id="crm_field_add" lay-submit lay-filter="LAY-user-front-crm_field-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+
+</div>
+<script>
+	layui.use(['element', 'layer', 'table', 'form'], function() {
+		var element = layui.element;
+		var layer = layui.layer;
+		table = layui.table;
+		form = layui.form;
+		var $ = layui.$;
+
+		form.on('select(type_select)', function(data) { //监听  转接  下拉列表
+			if($("#input_type").val() == 2 || $("#input_type").val() == 3) {
+				$("#on_type").css('display', '');
+				$("#nodes").text('');
+			} else if($("#input_type").val() == 1 || $("#input_type").val() == 4) {
+				$("#on_type").css('display', 'none');
+				$("#nodes").text('');
+			}
+		});
+
+		//监听折叠
+		/*element.on('collapse(test)', function(data) {
+			layer.msg('展开状态：' + data.show);
+		});*/
+
+		//监听头工具栏事件
+		table.on('toolbar(LAY-user-crm-fields)', function(obj) {
+			var checkStatus = table.checkStatus(obj.config.id),
+				data = checkStatus.data; //获取选中的数据
+
+			var ids = "";
+			for(var i = 0; i < data.length; i++) {
+				if(ids != "") {
+					ids = ids + "," + data[i].id;
+				} else
+					ids = data[i].id;
+			}
+
+			switch(obj.event) {
+				case 'add':
+					$('#input_type').attr("disabled",false);
+					$("#control").val("0");
+					$("#on_type").css('display', 'none');
+					$("#fields-form")[0].reset();
+					$("#nodes").text('');
+					
+					break;
+				case 'update':
+					if(data.length === 0) {
+						layer.msg('请选择一行',{icon:2});
+					} else if(data.length > 1) {
+						layer.msg('只能同时编辑一个',{icon:2});
+					}else {
+						admin.req({
+							type: "POST",
+							url: layui.setter.configUrl + "admin/crm_field/get",
+							dataType: 'json',
+							data: {
+								id: data[0].id
+							},
+							success: function(obj) {
+								if(obj.data) {
+									var objs = obj.data;
+									// $("#control").val(objs[0].id);
+									// $("#field_name").val(objs[0].field_name);
+									// $("#issue_c").val(objs[0].issue);
+									// $("#is_display").val(objs[0].is_display);
+									// $("#is_edit").val(objs[0].is_edit);
+									// $("#input_type").val(objs[0].input_type);
+									objs[0]['control']=objs[0].id;
+									form.val('crm_fields_two_form',objs[0]);
+								//form.render();
+									$("#nodes").text('');
+									
+									if(objs[0].input_type == 2) {
+										$("#on_type").css('display', '');
+										var o = JSON.parse(objs[0].field_json) ;
+										for(i = 0; i < o.length; i++) {
+											$("#nodes").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" style="width: 100px;"><input type="text" name="price_min" value="' + o[i].name + '" autocomplete="off" class="layui-input"></div><div class="layui-form-mid">跳转到</div><div class="layui-input-inline" style="width: 60px;"><input type="text" name="price_max" value="' + o[i].next + '" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>')
+
+										}
+									} else if(objs[0].input_type == 3) {
+										$("#on_type").css('display', '');
+										var o = JSON.parse(objs[0].field_json);
+										for(i = 0; i < o.length; i++) {
+											$("#nodes").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" value="' + o[i].name + '" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+
+										}
+									} else if(objs[0].input_type == 1 || objs[0].input_type == 4) {
+										$("#on_type").css('display', 'none');
+									}
+									if(objs[0].field_name=="客户状态"){
+										$('#input_type').attr("disabled",true);
+									}else{
+										$('#input_type').attr("disabled",false);
+									}
+									
+									form.render('select');
+									//layui.table.reload('LAY-user-crm-fields'); //重载表格
+								} else {
+									layer.msg("操作错误,请重新操作",{icon:2});
+								}
+							}
+
+						})
+					}
+					break;
+				case 'delete':
+					if(data.length === 0) {
+						layer.msg('请选择数据',{icon:2});
+					} else {
+						layer.confirm('是否确认删除?', {
+							icon: 3,
+							title: '提示'
+						}, function(index) {
+							layer.load();
+							admin.req({
+								type: "POST",
+								url: layui.setter.configUrl + "admin/crm_field/remove",
+								dataType: 'json',
+								data: {
+									ids: ids,
+									crm_id: $("#crm_ids").val()
+								},
+								success: function(obj) {
+									layer.closeAll('loading');
+									if(obj.data > 0) {
+										layer.msg("已成功删除 " + data.length + " 条数据",{icon:1});
+										layui.table.reload('LAY-user-crm-fields'); //重载表格
+										$("#on_type").css('display', 'none');
+										$("#fields-form")[0].reset();
+										$("#nodes").text('');
+									} else {
+										layer.msg("操作错误,请重新操作",{icon:2});
+									}
+								}
+
+							})
+						})
+
+					}
+					break;
+			};
+		});
+
+	});
+
+	field_tool = {
+		displacement: function(id, value, jump) {
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "/admin/crm_field/displacement",
+				dataType: 'json',
+				data: {
+					id: id,
+					value: value,
+					jump: jump,
+					crm_id: $("#crm_ids").val()
+				},
+				success: function(obj) {
+					if(obj.data > 0) {
+						layui.table.reload('LAY-user-crm-fields'); //重载表格
+					} else {
+						layer.msg("操作错误,请重新操作",{icon:2});
+					}
+				}
+
+			})
+		},
+		addnode: function() {
+			if($("#input_type").val() == 2)
+				//$("#nodes").append('<div class="layui-form-item"><div class="layui-input-inline"><input type="text" name="ssname" lay-verify="required" style="margin-left:120px;width:120px;" class="layui-input"></div><div id="" style="margin-left:250px;width:120px;">跳转到</div><div class="layui-input-inline"  style="margin-top: -24px;"><input type="text" name="namesss" lay-verify="required" style="margin-left:100px;width:50px;" class="layui-input"></div><a style="margin-top: 40px;margin-left: -40px;" onclick="$(this).parent().remove();">删除</a></div>')
+				$("#nodes").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" style="width: 100px;"><input type="text" name="price_min" autocomplete="off" class="layui-input"></div><div class="layui-form-mid">跳转到</div><div class="layui-input-inline" style="width: 60px;"><input type="text" name="price_max" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>')
+			else if($("#input_type").val() == 3)
+				//$("#nodes").append('<div style="width: 140px;margin-left: 120px;"><input type="text" name="sname"  lay-verify="required" class="layui-input">&nbsp;<a onclick="$(this).parent().remove();">删除</a></div>');
+				$("#nodes").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+		},
+		add: function() {
+			$("#on_type").css('display', 'none');
+			$("#fields-form")[0].reset();
+			$("#nodes").text('');
+		},
+		edit: function() {
+			var checkStatus = table.checkStatus('LAY-user-crm-fields'),
+				checkData = checkStatus.data; //得到选中的数据
+
+			if(checkData.length === 0) {
+				return layer.msg('请选择数据',{icon:2});
+			} else if(checkData.length > 1) {
+				return layer.msg('警告!  只能选择一条数据进行编辑',{icon:2})
+			}
+			
+			
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "admin/crm_field/entity",
+				dataType: 'json',
+				data: {
+					id: checkData[0].id
+				},
+				success: function(obj) {
+					if(obj.data) {
+						var objs = obj.data;
+						$("#control").val(objs[0].id);
+						$("#field_name").val(objs[0].field_name);
+						$("#issue_c").val(objs[0].issue);
+						$("#is_display").val(objs[0].is_display);
+						$("#is_edit").val(objs[0].is_edit);
+						$("#input_type").val(objs[0].input_type);
+
+						$("#nodes").text('');
+						if(objs[0].input_type == 2) {
+							$("#on_type").css('display', '');
+							var o = $.parseJSON(objs[0].field_json);
+							for(i = 0; i < o.length; i++) {
+								$("#nodes").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" style="width: 100px;"><input type="text" name="price_min" value="' + o[i].id + '" autocomplete="off" class="layui-input"></div><div class="layui-form-mid">跳转到</div><div class="layui-input-inline" style="width: 60px;"><input type="text" name="price_max" value="' + o[i].text + '" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>')
+
+							}
+						} else if(objs[0].input_type == 3) {
+							$("#on_type").css('display', '');
+							var o = $.parseJSON(objs[0].field_json);
+							for(i = 0; i < o.length; i++) {
+								$("#nodes").append('<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label"></label><div class="layui-input-inline" ><input type="text" name="price_minsss" value="' + o[i].id + '" autocomplete="off" class="layui-input"></div></div><a onclick="$(this).parent().remove();">删除</a></div>');
+
+							}
+						} else if(objs[0].input_type == 1 || objs[0].input_type == 4) {
+							$("#on_type").css('display', 'none');
+						}
+						form.render('select');
+						//layui.table.reload('LAY-user-crm-fields'); //重载表格
+					} else {
+						layer.msg("操作错误,请重新操作",{icon:2});
+					}
+				}
+
+			})
+
+		},
+		remove: function() {
+			var checkStatus = table.checkStatus('LAY-user-crm-fields'),
+				checkData = checkStatus.data; //得到选中的数据
+
+			var ids = "";
+			for(var i = 0; i < checkData.length; i++) {
+				if(ids != "") {
+					ids = ids + "," + checkData[i].id;
+				} else
+					ids = checkData[i].id;
+			}
+
+			if(checkData.length === 0) {
+				return layer.msg('请选择数据',{icon:2});
+			}
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "admin/crm_field/delete",
+				dataType: 'json',
+				data: {
+					ids: ids,
+					crm_id: $("#crm_ids").val()
+				},
+				success: function(obj) {
+					if(obj.data > 0) {
+						layer.msg("已成功删除 " + checkData.length + " 条数据",{icon:1});
+						layui.table.reload('LAY-user-crm-fields'); //重载表格
+						$("#on_type").css('display', 'none');
+						$("#fields-form")[0].reset();
+						$("#nodes").text('');
+					} else {
+						layer.msg("操作错误,请重新操作",{icon:2});
+					}
+				}
+
+			})
+
+		}
+
+	}
+</script>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-collapse" lay-filter="component-panel">
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">授权配置<i class="layui-icon layui-colla-icon"></i></h2>
+                            <div class="layui-colla-content layui-show">
+
+
+                                <table class="layui-table">
+                                    <colgroup>
+                                        <col width="150">
+                                        <col>
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>属性</th>
+                                            <th>值</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>序列号</td>
+                                            <td id="serial"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>系统并发</td>
+                                            <td id="concurrency"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>授权坐席数</td>
+                                            <td id="authorization_seats"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>使用期限</td>
+                                            <td id="use_period"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>服务期限</td>
+                                            <td id="service_period"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>LOGO</td>
+                                            <td id="logo"></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>工号长度</td>
+                                            <td id="ext_length"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>回调地址</td>
+                                            <td id="callback_url"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>密钥</td>
+                                            <td>
+                                                <div class="layui-form-item">
+                                                    <div class="layui-input-1">
+                                                        <input id="secret" name="secret" autocomplete="off"
+                                                            class="layui-input">
+                                                    </div>
+                                                    <button class="layui-btn" lay-submit
+                                                        lay-filter="LAY-user-front-secret-submit">授权</button>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+
+                    <div class="layui-colla-item">
+                        <h2 class="layui-colla-title">其他配置<i class="layui-icon layui-colla-icon"></i></h2>
+                        <div class="layui-colla-content layui-show">
+                            <form class="layui-form" action="">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" style="margin-top: 20px;">
+                                        <div><span style="color: red">备注:</span>开启系统防火墙拦截</div>
+                                        <label class="layui-form-label">SIP防火墙</label>
+                                        <div class="layui-input-inline">
+                                            <input type="checkbox" checked=""  id="firewall" name="firewall" lay-skin="switch" lay-filter="firewall" lay-text="开启|关闭">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="layui-inline" style="margin-top: 20px;">
+                                        <div><span style="color: red">备注:</span>该值为是时，每晚12点服务器将自动重启</div>
+                                        <label class="layui-form-label">自动重启</label>
+                                        <div class="layui-input-inline">
+                                            <input type="checkbox" checked="" id="auto_restart" name="auto_restart" lay-skin="switch" lay-filter="auto_restart" lay-text="是|否">
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-inline" style="margin-top: 20px;">
+                                        <div><span style="color: red">备注:</span>是否允许拨打陌生号码</div>
+                                        <label class="layui-form-label">陌生号码</label>
+                                        <div class="layui-input-inline">
+                                            <!-- <input type="checkbox" checked="" id="unfamiliar_ban" name="unfamiliar_ban" lay-skin="switch" lay-filter="unfamiliar_ban" lay-text="允许|禁止"> -->
+                                            <select id="unfamiliar_ban" name="unfamiliar_ban">
+                                                <option value="false">允许</option>
+                                                <option value="true">禁止</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-inline" style="margin-top: 20px;">
+                                        <div><span style="color: red">备注:</span>批次导入导出数据最大条数</div>
+                                        <label class="layui-form-label">操作条数</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="max_rows" name="max_rows"
+                                                lay-verify="required|number" autocomplete="off" placeholder="请输入"
+                                                class="layui-input">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="layui-inline" style="margin-top: 20px;">
+                                        <div><span style="color: red">备注:</span>录音下载ZIP文件保存天数</div>
+                                        <label class="layui-form-label">ZIP保存天数</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="zip_days" name="zip_days"
+                                                lay-verify="required|number" autocomplete="off" placeholder="请输入"
+                                                class="layui-input">
+                                        </div>
+                                    </div>
+
+                                        <div class="layui-inline"  style="margin-top: 20px;">
+                                            <div><span style="color: red">备注:</span>坐席呼出时段控制</div>
+                                            <label class="layui-form-label">工作时间</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" class="layui-input" id="working_time_limit" placeholder=" - ">
+                                            </div>
+                                        </div>
+
+                                        <div class="layui-inline" style="margin-top: 20px;">
+                                            <div><span style="color: red">备注:</span>系统通话录音的类型</div>
+                                            <label class="layui-form-label">录音类型</label>
+                                            <div class="layui-input-inline">
+                                                <select id="recording_mode" name="recording_mode">
+                                                    <option value="mono">单声道</option>
+                                                    <option value="stereo">立体声</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    
+
+                            </form>
+
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item" style="margin-top: 20px;">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="editConfig_api_submit">更新参数</button>
+                            <input type="button" class="layui-btn" lay-submit lay-filter="LAY-user-front-reboot-submit"
+                                id="reboot" value="重启服务器">
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+<body>
+
+</body>
+<script>
+    layui.use(['admin', 'form','laydate'], function () {
+        element = layui.element;
+        router = layui.router();
+        view = layui.view;
+        var laydate = layui.laydate;
+        form = layui.form;
+        var $ = layui.$,
+            admin = layui.admin;
+        form.render();
+
+         //时间范围
+         laydate.render({
+            elem: '#working_time_limit',
+            type: 'time',
+            range: true
+        });
+
+        $(function () {
+            admin.req({
+                type: 'post',
+                url: layui.setter.configUrl + "super_admin/getSettings",
+                dataType: "json",
+                success: function (obj) {
+                    $("#serial").html(obj.data.serial);
+                    if (obj.data.firewall == true) {
+                        $("#firewall").attr("checked","checked");
+                    } else {
+                        $("#firewall").removeAttr("checked");
+                    }
+                    if (obj.data.auto_restart == true) {
+                        $("#auto_restart").attr("checked","checked");
+                    } else {
+                        $("#auto_restart").removeAttr("checked");
+                    }
+
+                    if (obj.data.unfamiliar_ban==true) {
+                        obj.data.unfamiliar_ban="true";
+                        //$("#unfamiliar_ban").attr("checked","checked");
+                    }else{
+                       // $("#unfamiliar_ban").removeAttr("checked");
+                        obj.data.unfamiliar_ban="false";
+                    }
+                    $("#working_time_limit").val(obj.data.working_time_limit);
+                    //$("#register_failure").val(obj.data.register_failure);
+                    $("#recording_mode").val(obj.data.recording_mode);
+                    $("#logo").html(obj.data.logo);
+                    $("#concurrency").html(obj.data.concurrency);
+                    $("#authorization_seats").html(obj.data.authorization_seats);
+                    $("#unfamiliar_ban").val(obj.data.unfamiliar_ban);
+                    $("#use_period").html(obj.data.use_period);
+                    $("#service_period").html(obj.data.service_period);
+                    $("#max_rows").val(obj.data.max_rows);
+                    $("#zip_days").val(obj.data.zip_days);
+                    $("#ext_length").html(obj.data.ext_length);
+                    $("#callback_url").html(obj.data.callback_url);
+
+                    form.render();
+                }
+
+            })
+        })
+
+        form.on('submit(LAY-user-front-secret-submit)', function (data) {
+
+            if ($("#secret").val() == "") {
+                return;
+            }
+
+            admin.req({
+                type: "post",
+                url: layui.setter.configUrl + 'super_admin/authorize',
+                data: {
+                    secret: $("#secret").val()
+                },
+                done: function (res) {
+                    layui.index.render();
+                    layer.msg("操作成功", {
+                        icon: 1
+                    });
+
+                }
+            })
+
+            return false;
+        })
+
+
+
+        form.on('submit(editConfig_api_submit)', function (data) {
+            var field = data.field;
+            var json = {};
+            json.zip_days = $("#zip_days").val();
+            json.firewall = $("#firewall").is(':checked');
+            // = $("#register_failure").val();
+            //json.illegal_call = $("#illegal_call").val();
+            json.max_rows = $("#max_rows").val();
+            json.auto_restart = $("#auto_restart").is(':checked');
+            json.unfamiliar_ban = $("#unfamiliar_ban").is(':checked');
+
+            //console.log(json);
+            admin.req({
+                type: "post",
+                url: layui.setter.configUrl + 'super_admin/editConfig',
+                data: {
+                    //config: JSON.stringify(json)
+                    zip_days:$("#zip_days").val(),
+                    firewall:$("#firewall").is(':checked'),
+                    max_rows:$("#max_rows").val(),
+                    auto_restart:$("#auto_restart").is(':checked'),
+                    working_time_limit:$("#working_time_limit").val(),
+                    unfamiliar_ban:$("#unfamiliar_ban").val(),
+                    recording_mode:$("#recording_mode").val()
+                },
+                done: function (res) {
+                    layer.msg("操作成功", {
+                        icon: 1
+                    });
+
+                }
+            })
+        })
+
+        form.on('submit(LAY-user-front-reboot-submit)', function (data) {
+            //询问框
+            layer.confirm('重启操作可能导致现有通话中断，请确认操作？', function (index) {
+                layer.close(index)
+                admin.req({
+                    type: "post",
+                    url: layui.setter.configUrl + 'super_admin/restart',
+                    done: function (res) {
+                        layer.msg("操作成功", {
+                            icon: 1
+                        });
+
+                    }
+                })
+
+            })
+
+        })
+
+    })
+</script>
+
+</html>

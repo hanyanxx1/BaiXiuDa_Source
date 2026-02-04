@@ -1,0 +1,40 @@
+<div class="layui-form" lay-filter="layuiadmin-form-agentroleadd" style="padding: 0px 0 0 0;">
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">角色名:</label>
+			<div class="layui-input-inline">
+				<select id="nameroleupdate" name="role" lay-verify="required" lay-search="">
+				</select>
+			</div>
+			<input type="button" id="agent-roleupdate" style="display: none;" lay-submit lay-filter="LAY-agentroleadd-front-submit" value="提交" class="layui-btn">
+		</div>
+	</div>
+
+	
+</div>
+<style>
+		.layui-layer-content {
+			overflow: visible !important;
+		}
+	</style>
+
+<script>
+	function band_role() {
+			admin.req({
+				type: "POST",
+				url: layui.setter.configUrl + "admin/role/list",
+				dataType: 'json',
+				success: function(res) {
+					var result = res.data;
+					$("#nameroleupdate").append("<option value='0'>--请选择--</option>");
+					for(var i = 0; i < result.length; i++) {
+						$("#nameroleupdate").append("<option value=" + result[i].id + ">" + result[i].name + "</option>");
+					}
+					
+					layui.form.render("select");
+				}
+			});
+		}
+	
+</script>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto"
+                lay-filter="layadmin-userfront-formlist-bot">
+                <div class="layui-form-item">
+                    <div class="layui-btn-group" style="float: right;">
+                        <button class="layui-btn layuiadmin-btn-useradmin" title="查询" lay-submit
+                            lay-filter="LAY-user-front-search-bot">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>查询
+                        </button>
+                        <button class="layui-btn layuiadmin-btn-primary layuiadmin-btn-useradmin" title="增加"
+                            data-type="add"> <i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i></button>
+
+                    </div>
+                </div>
+            </div>
+            <br />
+            <!-- <div class="layui-fluid">
+                <div class="layui-row layui-col-space15"> -->
+
+            <!-- </div>
+            </div> -->
+        </div>
+        <div class="layui-row layui-col-space15" id="bot_div">
+            
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script>
+    function mangement(val) {
+        layui.data(setter.tableName, {
+            key: "bot_id",
+            value: val
+        });
+        window.open(layui.setter.configUrl + "/index.html?rnd=" + Math.random());
+    }
+
+    function removes(val) {
+        layer.confirm('确定删除吗？', {
+            icon: 3
+        }, function (index) {
+            layer.load();
+            admin.req({
+                type: 'post',
+                url: layui.setter.configUrl +
+                    'admin/bot/delete',
+                data: {
+                    id: val
+                },
+                success: function (obj) {
+                    layer.closeAll('loading');
+                    if (obj.data > 0) {
+                        layer.msg("已删除", {
+                            icon: 1
+                        });
+                    } else {
+                        layer.msg("删除失败,请重试", {
+                            icon: 2
+                        });
+                    }
+                    restBot();
+                }
+
+            })
+        })
+
+    }
+
+    function statistics(bot_id) {
+        var state = "";
+        admin.req({
+            type: 'post',
+            async: false,
+            url: layui.setter.configUrl +
+                'admin/botRecord/statistics',
+            data: {
+                bot_id: bot_id
+            },
+            success: function (obj) {
+                state = obj.data.state;
+            }
+        })
+        return state;
+    }
+
+    function restBot() {
+        layer.load();
+        admin.req({
+            type: 'post',
+            url: layui.setter.configUrl + 'admin/bot/grid',
+            success: function (obj) {
+                layer.closeAll('loading');
+                $("#bot_div").empty();
+                var result = obj.data;
+                for (let i = 0; i < result.length; i++) {
+                    var statistics_status = statistics(result[i].id);
+                    if (statistics_status == "已发布") {
+                        statistics_status = '<span style="color:green">' + statistics_status + '</span>';
+                    } else {
+                        statistics_status = '<span style="color:red">' + statistics_status + '</span>';
+                    }
+                    $("#bot_div").append(
+                        '<div class="layui-col-md3"><div class="layui-card"><div class="layui-card-header">' +
+                        result[i].name +
+                        '<a href="javascript:;" class="layui-a-tips">' + statistics_status +
+                        '</a></div><div class="layui-card-body layui-text layadmin-text">' +
+                        '<blockquote class="layui-elem-quote">Bot ID：' + result[i].id +
+                        '<br><br>场景：' + result[i].scene + '<br><br> 更新时间：' + result[i].stamp +
+                        '<br><br><div class="layui-btn-group">' +
+                        '<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="mangement(' +
+                        result[i].id + ');">管理</button>' +
+                        '<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="removes(' +
+                        result[i].id + ');">删除</button></div></blockquote></div></div>');
+
+                }
+            }
+        })
+    }
+    layui.use(['admin', 'table', 'upload', 'carousel', 'laydate'], function () {
+        var table = layui.table;
+
+        form = layui.form;
+
+        $ = layui.$;
+
+        view = layui.view;
+
+        admin = layui.admin;
+
+        upload = layui.upload;
+        var laydate = layui.laydate;
+        carousel = layui.carousel;
+        //轮播切换
+        $('.layadmin-carousel').each(function () {
+            var othis = $(this);
+            carousel.render({
+                elem: this,
+                width: '100%',
+                arrow: 'none',
+                height: "500px",
+                interval: othis.data('interval'),
+                autoplay: othis.data('autoplay') === true,
+                trigger: (device.ios || device.android) ? 'click' : 'hover',
+                anim: othis.data('anim')
+            });
+        });
+
+        admin.req({
+            type: 'post',
+            url: layui.setter.configUrl + 'admin/bot/grid',
+            success: function (obj) {
+                $("#bot_div").empty();
+                var result = obj.data;
+                for (let i = 0; i < result.length; i++) {
+                    var statistics_status = statistics(result[i].id);
+                    if (statistics_status == "已发布") {
+                        statistics_status = '<span style="color:green">' + statistics_status +
+                            '</span>';
+                    } else {
+                        statistics_status = '<span style="color:red">' + statistics_status +
+                            '</span>';
+                    }
+                    $("#bot_div").append(
+                        '<div class="layui-col-md3"><div class="layui-card"><div class="layui-card-header">' +
+                        result[i].name +
+                        '<a href="javascript:;" class="layui-a-tips">' + statistics_status +
+                        '</a></div><div class="layui-card-body layui-text layadmin-text">' +
+                        '<blockquote class="layui-elem-quote">Bot ID：' + result[i].id +
+                        '<br><br>场景：' + result[i].scene + '<br><br> 更新时间：' + result[i].stamp +
+                        '<br><br><div class="layui-btn-group">' +
+                        '<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="mangement(' +
+                        result[i].id + ');">管理</button>' +
+                        '<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="removes(' +result[i].id + ');">删除</button></div></blockquote></div></div>');
+
+                }
+            }
+        })
+
+        form.render(null, 'layadmin-userfront-formlist-bot');
+
+        //监听搜索
+        form.on('submit(LAY-user-front-search-bot)', function (data) {
+            restBot()
+        });
+
+
+        table.on('tool(LAY-user-manage-inbound)', function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'edit') {
+                admin.popupRight({
+                    title: '修改',
+                    //area: ['45%', '57%'],
+                    area: '650px',
+                    id: 'LAY-popup-bot-edit',
+                    btn: ['提交', '取消'],
+                    success: function (layero, index) {
+                        view(this.id).render('control/bot/edit').done(function () {
+                            form.render(null, 'layuiadmin-form-bot-edit');
+
+                            form.val('layuiadmin-form-bot-edit', data); //表单初始赋值
+                            //监听提交
+                            form.on('submit(LAY-user-front-inboundedit-submit)',
+                                function (datas) {
+                                    var field = datas.field; //获取提交的字段
+                                    field.id = data.id;
+
+                                    admin.req({
+                                        type: 'post',
+                                        url: layui.setter.configUrl +
+                                            'admin/bot/edit',
+                                        data: field,
+                                        success: function (obj) {
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            table.reload(
+                                                "LAY-user-manage-inbound"
+                                            );
+                                        }
+
+                                    })
+
+                                    //提交 Ajax 成功后，关闭当前弹层并重载表格
+                                    //$.ajax({});
+                                    layer.close(index); //执行关闭 
+                                });
+                        });
+                    },
+                    yes: function (index, layero) {
+
+                        layero.find('#bot_edit').click();
+
+                    }
+                });
+            }
+
+        })
+
+
+        //事件
+        var active = {
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-user-manage-inbound'),
+                    checkData = checkStatus.data; //得到选中的数据
+
+                var ids = "";
+                for (var i = 0; i < checkData.length; i++) {
+                    if (ids != "") {
+                        ids = ids + "," + checkData[i].id;
+                    } else
+                        ids = checkData[i].id;
+                }
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据', {
+                        icon: 2
+                    });
+                }
+
+                layer.confirm('确定删除吗？', {
+                    icon: 3
+                }, function (index) {
+
+                    //执行 Ajax 后重载
+                    layer.load();
+                    admin.req({
+                        type: "post",
+                        url: layui.setter.configUrl + 'admin/inbound/remove',
+                        //async: true,
+                        //dataType: "json",
+                        data: {
+                            ids: ids
+                        },
+
+                        success: function (obj) {
+                            layer.closeAll('loading');
+                            if (obj.data > 0) {
+                                layer.msg("已删除", {
+                                    icon: 1
+                                });
+                                table.reload('LAY-user-manage-inbound');
+                            } else {
+                                layer.msg("删除失败,请重试", {
+                                    icon: 2
+                                });
+                            }
+                        }
+                    });
+
+                });
+            },
+            add: function () {
+                admin.popup({
+                    title: '新增',
+                    //area: ['45%', '57%'],
+                    area: '450px',
+                    id: 'LAY-popup-bot-add',
+                    btn: ['提交', '取消'],
+                    success: function (layero, index) {
+                        view(this.id).render('control/bot/add').done(function () {
+                            form.render(null, 'layuiadmin-form-bot-add');
+
+                            //监听提交
+                            form.on('submit(LAY-user-front-bot-add-submit)',
+                                function (data) {
+                                    var field = data.field; //获取提交的字段
+                                    layer.load();
+                                    admin.req({
+                                        type: 'post',
+                                        url: layui.setter.configUrl +
+                                            'admin/bot/add',
+                                        data: {
+                                            name: field.name,
+                                            scene: field
+                                                .scene
+                                        },
+                                        success: function (obj) {
+                                            layer.closeAll(
+                                                'loading');
+                                            layer.msg("操作成功", {
+                                                icon: 1
+                                            });
+                                            layer.close(
+                                                index); //执行关闭 
+                                            restBot();
+                                        }
+
+                                    })
+
+                                });
+                        });
+                    },
+                    yes: function (index, layero) {
+
+                        layero.find('#bot_add').click();
+
+                    }
+                });
+            }
+
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    })
+</script>
