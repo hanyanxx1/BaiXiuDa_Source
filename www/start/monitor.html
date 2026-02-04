@@ -1454,10 +1454,11 @@
 					templet: function (d) {
 						var text = d.successfulNumber + "(" + (d.successfulPercent == null ? d.successfulPercent : (d.successfulPercent + "%")) + ")";
 						var p = parseFloat(d.successfulPercent);
+						var pb = parseFloat(d.phone_bill);
 						if (!isNaN(p)) {
 							if (p > 0.8) {
 								text += ' <img src="images/good.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">';
-							} else if (p < 0.5) {
+							} else if (p < 0.5 && !isNaN(pb) && pb > 20) {
 								text += ' <img src="images/warm.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">';
 							}
 						}
