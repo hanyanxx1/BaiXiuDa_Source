@@ -1,6 +1,5 @@
 import os
 import shutil
-import argparse
 from collections import defaultdict
 
 def organize_files(target_dir):
@@ -50,11 +49,10 @@ def organize_files(target_dir):
                 print(f"移动文件 {file_name} 出错: {e}")
 
 if __name__ == "__main__":
-    # 设置命令行参数解析
-    parser = argparse.ArgumentParser(description="根据文件名标识符自动整理指定目录下的 CSV 文件")
-    parser.add_argument("path", help="需要整理的目标目录路径")
-    
-    args = parser.parse_args()
-    
-    organize_files(args.path)
-    print("\n任务完成！")
+    while True:
+        path_input = input("\n请拖入文件夹并按回车 (输入 exit 退出): ")
+        if path_input.lower() == 'exit':
+            break
+        path_input = path_input.strip().replace('"', '')
+        organize_files(path_input)
+        print("\n任务完成！")
