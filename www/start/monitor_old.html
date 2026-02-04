@@ -498,11 +498,9 @@
 	var urls = location.href;
 	var req_project_id = urlToObj(urls).id;
 	var interval = 0;
-	var taskInterval = 0;    // 专门用于 taskReportData (任务报表)
 	var url = '/../';
 	var timestamp = "";
 	var table;
-	var taskTableIns = null;
 
 	var monitorData = {}; //moitor 实时数据
 
@@ -606,12 +604,6 @@
 		});
 		carousel.on('change(LAY-index-pagethree)', function (obj) { //监听轮播图
 			clearInterval(interval);
-			// 2. 【新增】清除任务报表定时器 (防止重复)
-			if(taskInterval) {
-					clearInterval(taskInterval);
-					taskInterval = 0;
-			}
-
 			active6IsHaveData = 0;
 			$("#agents").empty();
 			var project_id = $("#project_active").val();
@@ -624,9 +616,6 @@
 				echarts_earth();
 			} else if (obj.index == 1) {
 				taskReportData(project_id, timestamp);
-				taskInterval = setInterval(function () {
-					taskReportData(project_id, timestamp);
-				}, 5000);
 			} else if (obj.index == 2) {
 				projectReportData(project_id);
 			} else if (obj.index == 4) {
@@ -1300,78 +1289,10 @@
 		});
 	}
 
-	function getFormattedTaskReportData(res) {
-		var data = [];
-		for (let i = 0; i < res.data.length; i++) {
-			var element = res.data[i];
-			var avgAnswerBillsec = 0
-			if (!element.seconds || !element.answer) {
-				avgAnswerBillsec = 0;
-			} else {
-				avgAnswerBillsec = (element.seconds / element.answer).toFixed(2);
-			}
-			element['avgAnswerBillsec'] = avgAnswerBillsec;
-			data.push(element);
-		}
-
-		//By:hy 修改排序规则，先按状态排序，再按成功统计排序 2026-02-03 14:30:00
-		data.sort(function (a, b) {
-			var aStatus = (a.status != 0) ? 1 : 0;
-			var bStatus = (b.status != 0) ? 1 : 0;
-			if (aStatus != bStatus) {
-				return bStatus - aStatus;
-			}
-			var aSucc = parseFloat(a.successfulPercent) || 0;
-			var bSucc = parseFloat(b.successfulPercent) || 0;
-			return bSucc - aSucc;
-		});
-		return data;
-	}
-
 	function taskReportData(project_id, timestamp) {
-		if (taskTableIns) {
-			$.ajax({
-				url: url + "admin/getTaskReport",
-				type: 'post',
-				dataType: 'json',
-				headers: {
-					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
-				},
-				data: {
-					project_id: project_id,
-					date: timestamp,
-					type: 1
-				},
-				success: function (res) {
-					var data = getFormattedTaskReportData(res);
-					var scrollSelector = ".layui-table-view[lay-id='LAY-user-manage-active4'] .layui-table-main";
-					var currScrollTop = $(scrollSelector).scrollTop();
-					taskTableIns.reload({
-						url: '',
-						data: data,
-						done: function (res, curr, count) {
-							$(scrollSelector).scrollTop(currScrollTop);
-							element.render();
-							//记录筛选状态
-							var that = this;
-							that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
-								var input = $(this).prev()[0];
-								if (input.checked === true) {  // 复选框取消，则加入本地缓存标识
-									layui.data('table-filter-monitor-getTaskReport', { key: input.name, value: !input.checked })
-								} else {  // 复选框勾上，则移除本地标识
-									layui.data('table-filter-monitor-getTaskReport', { key: input.name, remove: true });
-								}
-							});
-						}
-					});
-				}
-			});
-			return;
-		}
-		taskTableIns = table.render({
+		table.render({
 			method: 'post',
 			elem: '#LAY-user-manage-active4',
-			id: 'LAY-user-manage-active4',
 			url: url + "admin/getTaskReport",
 			dataType: 'json',
 			height: 'full-120',
@@ -1383,8 +1304,19 @@
 				date: timestamp,
 				type: 1
 				//date:timestamp
-			}, parseData: function (res) {
-				var data = getFormattedTaskReportData(res);
+			},parseData: function (res) {
+				var data = [];
+				for (let i = 0; i < res.data.length; i++) {
+					var element = res.data[i];
+					var avgAnswerBillsec = 0
+					if (!element.seconds || !element.answer) {
+						avgAnswerBillsec = 0;
+					} else {
+						avgAnswerBillsec = (element.seconds / element.answer).toFixed(2);
+					}
+					element['avgAnswerBillsec'] = avgAnswerBillsec;
+					data.push(element);
+				}
 				return {
 					code: 0,
 					msg: res.msg,
@@ -1403,7 +1335,7 @@
 					title: '执行状态',
 					align: 'center',
 					minWidth: 120,
-					// sort: true,
+					sort: true,
 					templet: function (d) {
 						if (d.status == 0) {
 							return '<a class="layui-btn layui-btn-xs layui-btn-danger" title="点击执行该项目" onclick="monitor_tool.editStatus(' + d.taskId + ',1);">已停止</a>'
@@ -1450,60 +1382,47 @@
 					title: '成功统计',
 					align: 'center',
 					minWidth: 100,
-					// sort: true,
+					sort: true,
 					templet: function (d) {
-						var text = d.successfulNumber + "(" + (d.successfulPercent == null ? d.successfulPercent : (d.successfulPercent + "%")) + ")";
-						var p = parseFloat(d.successfulPercent);
-						if (!isNaN(p)) {
-							if (p > 0.8) {
-								text += ' <img src="images/good.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">';
-							} else if (p < 0.5) {
-								text += ' <img src="images/warm.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">';
-							}
+						if (d.successfulPercent == null) {
+							return d.successfulNumber + "（" + d.successfulPercent + "）";
+						} else {
+							return d.successfulNumber + "（" + d.successfulPercent + "%）";
 						}
-						return text;
+
+
 					}
-				}, 
-				// {
-				// 	field: 'loss',
-				// 	title: '呼损数',
-				// 	align: 'center',
-				// 	minWidth: 100,
-				// 	sort: true,
-				// 	templet: function (d) {
-				// 		if (d.lossPercent == null) {
-				// 			return d.loss + "（" + d.lossPercent + "）";
-				// 		} else {
-				// 			return d.loss + "（" + d.lossPercent + "%）";
-				// 		}
-				// 	}
-				// },
-				// {
-				// 	field: 'avg_answer',
-				// 	title: '平均通话时长(秒)',
-				// 	align: 'center',
-				// 	sort: true,
-				// 	minWidth: 160
-				// },
-				// {
-				// 	field: 'avg_progress',
-				// 	title: '平均人工通时(秒)',
-				// 	align: 'center',
-				// 	sort: true,
-				// 	minWidth: 160
-				// },
-				{
+				}, {
+					field: 'loss',
+					title: '呼损数',
+					align: 'center',
+					minWidth: 100,
+					sort: true,
+					templet: function (d) {
+						if (d.lossPercent == null) {
+							return d.loss + "（" + d.lossPercent + "）";
+						} else {
+							return d.loss + "（" + d.lossPercent + "%）";
+						}
+					}
+				}, {
+					field: 'avg_answer',
+					title: '平均通话时长(秒)',
+					align: 'center',
+					sort: true,
+					minWidth: 160
+				}, {
+					field: 'avg_progress',
+					title: '平均人工通时(秒)',
+					align: 'center',
+					sort: true,
+					minWidth: 160
+				}, {
 					field: 'costAccounting',
 					title: '成本核算（元）',
 					align: 'center',
 					sort: true,
 					minWidth: 150
-				}, {
-					field: 'phone_bill',
-					title: '话费金额(元)',
-					minWidth: 150,
-					sort: true,
-					align: 'center'
 				}]
 
 				//初始化筛选状态
