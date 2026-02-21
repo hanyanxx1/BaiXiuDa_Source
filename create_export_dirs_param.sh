@@ -79,7 +79,7 @@ echo ""
 echo "🎉🎉🎉 **所有目录创建任务 (${START_DATE} 到 ${END_DATE}) 已成功完成！** 🎉🎉🎉"
 echo "-------------------------------------------------------------------------"
 
---- 使用方式： ./create_export_dirs_param.sh 2026-01-08 2026-01-31
+--- 使用方式： ./create_export_dirs_param.sh 2026-02-01 2026-02-28
 
 --- 给脚本授权：
 --- chmod +x create_export_dirs_param.sh

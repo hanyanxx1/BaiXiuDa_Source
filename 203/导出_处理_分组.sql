@@ -210,6 +210,17 @@ END //
 DELIMITER ;
 
 -- 203
-CALL ExportDistinctGroupedCallData('e_cdr_20260119','/var/lib/mysql-files/e_cdr_20260119/','holdtime <= 0');
-CALL ExportDistinctGroupedCallData('e_cdr_20260120','/var/lib/mysql-files/e_cdr_20260120/','holdtime <= 0');
-CALL ExportDistinctGroupedCallData('e_cdr_20260121','/var/lib/mysql-files/e_cdr_20260121/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260122','/var/lib/mysql-files/e_cdr_20260122/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260123','/var/lib/mysql-files/e_cdr_20260123/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260124','/var/lib/mysql-files/e_cdr_20260124/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260125','/var/lib/mysql-files/e_cdr_20260125/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260126','/var/lib/mysql-files/e_cdr_20260126/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260127','/var/lib/mysql-files/e_cdr_20260127/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260128','/var/lib/mysql-files/e_cdr_20260128/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260129','/var/lib/mysql-files/e_cdr_20260129/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260130','/var/lib/mysql-files/e_cdr_20260130/','holdtime <= 0');
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260131','/var/lib/mysql-files/e_cdr_20260131/','holdtime <= 0');
+CALL ExportDistinctGroupedCallData('e_cdr_20260201','/var/lib/mysql-files/e_cdr_20260201/','holdtime <= 0');
+CALL ExportDistinctGroupedCallData('e_cdr_20260202','/var/lib/mysql-files/e_cdr_20260202/','holdtime <= 0');
+CALL ExportDistinctGroupedCallData('e_cdr_20260203','/var/lib/mysql-files/e_cdr_20260203/','holdtime <= 0');
+CALL ExportDistinctGroupedCallData('e_cdr_20260204','/var/lib/mysql-files/e_cdr_20260204/','holdtime <= 0');
