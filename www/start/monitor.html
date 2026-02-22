@@ -489,6 +489,35 @@
         padding: 0 10px !important;
     }
 </style>
+<script type="text/html" id="taskTableToolbar">
+  <div class="layui-form" lay-filter="taskToolbarForm" style="display: flex; align-items: center; gap: 20px;">
+    
+    <div style="display: flex; align-items: center;">
+      <span style="white-space: nowrap; margin-right: 5px;">成功统计：</span>
+      <div style="width: 100px;"> <select lay-filter="successfulNumberFilter">
+          <option value="0.5%">0.5%</option>
+          <option value="0.6%">0.6%</option>
+          <option value="0.7%">0.7%</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center;">
+      <span style="white-space: nowrap; margin-right: 5px;">话费金额(元)：</span>
+      <div style="width: 100px;">
+        <select lay-filter="callFeeFilter">
+          <option value="15">15</option>
+          <option value="17">17</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center;">
+      <input type="checkbox" name="switchStatus" lay-skin="switch" lay-text="自动模式|手动模式" lay-filter="autoModeFilter">
+    </div>    
+  </div>
+</script>
 <script>
 	layui.config({
 		base: '../src/',
@@ -688,6 +717,10 @@
 			})
 			return false;
 		})
+
+		form.on('switch(autoModeFilter)', function(data){
+				console.log("开关当前状态: ", data.elem.checked); 
+		});
 	})
 
 	function urlToObj(str) { //截取url
@@ -1352,6 +1385,9 @@
 						done: function (res, curr, count) {
 							$(scrollSelector).scrollTop(currScrollTop);
 							element.render();
+
+							form.render(null, 'taskToolbarForm');
+
 							//记录筛选状态
 							var that = this;
 							that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
@@ -1376,7 +1412,7 @@
 			dataType: 'json',
 			height: 'full-120',
 			async: true,
-			toolbar: true,
+			toolbar: '#taskTableToolbar', 
 			defaultToolbar: ['filter', 'print', 'exports'],
 			where: {
 				project_id: project_id,
