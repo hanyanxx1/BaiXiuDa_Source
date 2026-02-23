@@ -60,30 +60,6 @@
 												onclick="monitor_tool.newconcurrent_edit()">修改</a>
 
 										</td>
-										<!-- <td>
-											<div class="layui-input-inline">
-
-
-
-
-												<table>
-													<tbody>
-														<tr>
-															<td>
-																<input type="text" name="outbound_param"
-																	id="outbound_param" autocomplete="off"
-																	class="layui-input">
-															</td>
-															<td>
-																<a class="layui-btn"
-																	onclick="monitor_tool.newconcurrent_edit()">修改</a>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-
-											</div>
-										</td> -->
 									</tr>
 									<tr>
 										<td>接通率</td>
@@ -496,8 +472,8 @@
       <span style="white-space: nowrap; margin-right: 5px;">成功统计：</span>
       <div style="width: 100px;"> <select lay-filter="successfulNumberFilter">
           <option value="0.5%">0.5%</option>
+          <option value="0.55%">0.55%</option>
           <option value="0.6%">0.6%</option>
-          <option value="0.7%">0.7%</option>
         </select>
       </div>
     </div>
@@ -532,7 +508,13 @@
 	var timestamp = "";
 	var table;
 	var taskTableIns = null;
-
+	
+	// 【修改】从本地缓存读取状态，没有则给默认值（加 monitor_ 前缀防止和其他页面冲突）
+	var isTaskAutoMode = localStorage.getItem('monitor_isTaskAutoMode') === 'true'; 
+	var savedSuccessRate = localStorage.getItem('monitor_savedSuccessRate') || "0.5%";
+	var savedCallFee = localStorage.getItem('monitor_savedCallFee') || "15";
+	
+	var isPauseTaskRefresh = false; // 记录是否暂停任务列表刷新
 	var monitorData = {}; //moitor 实时数据
 
 	var echarts2 = echarts;
@@ -598,11 +580,6 @@
 			});
 			return;
 		}
-
-
-
-
-
 
 
 		$.ajax({ //执行项目下拉列表
@@ -718,8 +695,63 @@
 			return false;
 		})
 
-		form.on('switch(autoModeFilter)', function(data){
-				console.log("开关当前状态: ", data.elem.checked); 
+		// 【新增】监听成功率下拉框切换，并保存到本地
+		form.on('select(successfulNumberFilter)', function(data){
+			savedSuccessRate = data.value;
+			localStorage.setItem('monitor_savedSuccessRate', data.value);
+		});
+
+		// 【新增】监听话费下拉框切换，并保存到本地
+		form.on('select(callFeeFilter)', function(data){
+			savedCallFee = data.value;
+			localStorage.setItem('monitor_savedCallFee', data.value);
+		});
+
+		form.on('switch(autoModeFilter)', function(data) {
+			var isChecked = data.elem.checked; // 获取想要切换到的状态
+			var $toolbar = $('div[lay-filter="taskToolbarForm"]'); // 获取工具栏容器
+			
+			if (isChecked) {
+				// 尝试开启自动模式
+				var successRate = $toolbar.find('select[lay-filter="successfulNumberFilter"] option:selected').text();
+				var callFee = $toolbar.find('select[lay-filter="callFeeFilter"] option:selected').text();
+
+				isPauseTaskRefresh = true; // 弹出确认框前，暂停定时刷新
+				
+				layer.confirm('开启自动模式后，所有成功率低于' + successRate + '，话费高于' + callFee + '的任务会被自动停止，确认开启吗？', {
+					icon: 3, 
+					title: '提示',
+					cancel: function() {
+						// 点击右上角X关闭弹窗：恢复 switch 为关闭状态
+						data.elem.checked = false;
+						form.render('checkbox', 'taskToolbarForm');
+						isPauseTaskRefresh = false; // 恢复定时刷新
+					}
+				}, function (index) {
+					// 点击【确认】
+					layer.close(index);
+					isTaskAutoMode = true; // 更新全局状态
+					isPauseTaskRefresh = false; // 恢复定时刷新
+					
+					// 刷新表格，让执行状态列变成不可点击
+					var project_id = $("#project_active").val();
+					taskReportData(project_id, timestamp); 
+					
+				}, function (index) {
+					// 点击【取消】
+					data.elem.checked = false; // 恢复 switch 为关闭状态
+					form.render('checkbox', 'taskToolbarForm');
+					isPauseTaskRefresh = false; // 恢复定时刷新
+				});
+				
+			} else {
+				// 关闭自动模式 (不需要弹窗，直接恢复)
+				isTaskAutoMode = false;
+				
+				// 刷新表格，让执行状态列恢复可点击
+				var project_id = $("#project_active").val();
+				taskReportData(project_id, timestamp);
+			}
 		});
 	})
 
@@ -1153,53 +1185,32 @@
 			})
 		},
 		editStatus: function (id, status) { //1-开启 ，0-关闭
-
 			layer.load();
-
 			$.ajax({
-
 				type: "POST",
-
 				url: layui.setter.configUrl + "admin/project_task/editStatus",
-
 				dataType: 'json',
-
 				headers: {
 					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
 				},
-
 				data: {
-
 					id: id,
-
 					status: status
-
 				},
-
 				success: function (obj) {
-
 					layer.closeAll('loading');
-
 					if (obj.data > 0) {
-
 						layer.msg("操作成功", {
 							icon: 1
 						});
-
 						taskReportData($("#project_active").val(), timestamp);
-
 					} else {
-
 						layer.msg("操作失败,请重试", {
 							icon: 2
 						});
-
 					}
-
 				}
-
 			})
-
 		}
 	}
 
@@ -1308,9 +1319,7 @@
 							}
 						});
 						return arr;
-
 					}()
-
 					],
 					data: res.data,
 					done: function (obj) {
@@ -1362,6 +1371,11 @@
 	}
 
 	function taskReportData(project_id, timestamp) {
+		// 如果处于暂停状态，直接返回不执行刷新
+		if (isPauseTaskRefresh) {
+			return;
+		}
+
 		if (taskTableIns) {
 			$.ajax({
 				url: url + "admin/getTaskReport",
@@ -1376,6 +1390,11 @@
 					type: 1
 				},
 				success: function (res) {
+					// 拦截弹窗前发出、此时刚好返回的请求
+					if (isPauseTaskRefresh) {
+						return; // 强制丢弃这个数据包，不执行重载
+					}
+
 					var data = getFormattedTaskReportData(res);
 					var scrollSelector = ".layui-table-view[lay-id='LAY-user-manage-active4'] .layui-table-main";
 					var currScrollTop = $(scrollSelector).scrollTop();
@@ -1386,7 +1405,16 @@
 							$(scrollSelector).scrollTop(currScrollTop);
 							element.render();
 
-							form.render(null, 'taskToolbarForm');
+							// 【新增区域开始】恢复头部工具栏状态
+							var $toolbar = $('div[lay-filter="taskToolbarForm"]');
+							if (isTaskAutoMode) {
+								$toolbar.find('input[name="switchStatus"]').prop('checked', true);
+							} else {
+								$toolbar.find('input[name="switchStatus"]').prop('checked', false);
+							}
+							form.render('checkbox', 'taskToolbarForm'); // 重新渲染 checkbox
+							form.render('select', 'taskToolbarForm');   // 重新渲染 select，确保显示正常
+							// 【新增区域结束】
 
 							//记录筛选状态
 							var that = this;
@@ -1434,19 +1462,28 @@
 					title: '任务名称',
 					align: 'center',
 					minWidth: 180
-				}, {
+				},
+				{
 					field: 'status',
 					title: '执行状态',
 					align: 'center',
 					minWidth: 120,
 					templet: function (d) {
+						// if (isTaskAutoMode) {
+						// 	if (d.status == 0) {
+						// 		// 保留 layui-btn-danger(红色)，去掉 onclick，增加 cursor: not-allowed 和半透明效果
+						// 		return '<a class="layui-btn layui-btn-xs layui-btn-danger" style="cursor: not-allowed; opacity: 0.6;" title="自动模式下由系统接管，不可手动操作">已停止</a>';
+						// 	} else {
+						// 		// 保留默认颜色(通常是墨绿色)，去掉 onclick，增加 cursor: not-allowed 和半透明效果
+						// 		return '<a class="layui-btn layui-btn-xs" style="cursor: not-allowed; opacity: 0.6;" title="自动模式下由系统接管，不可手动操作">正在执行</a>';
+						// 	}
+						// }
 						if (d.status == 0) {
-							return '<a class="layui-btn layui-btn-xs layui-btn-danger" title="点击执行该项目" onclick="monitor_tool.editStatus(' + d.taskId + ',1);">已停止</a>'
+							return '<a class="layui-btn layui-btn-xs layui-btn-danger" title="点击执行该项目" onclick="monitor_tool.editStatus(' + d.taskId + ',1);">已停止</a>';
 						} else {
-							return '<a class="layui-btn layui-btn-xs" title="点击停止该项目" onclick="monitor_tool.editStatus(' + d.taskId + ',0);">正在执行</a>'
+							return '<a class="layui-btn layui-btn-xs" title="点击停止该项目" onclick="monitor_tool.editStatus(' + d.taskId + ',0);">正在执行</a>';
 						}
 					},
-
 				},
 				{
 					field: 'noCalls',
@@ -1527,6 +1564,18 @@
 			],
 			done: function (obj) {
 				element.render();
+
+				// 【新增区域开始】恢复头部工具栏状态
+				var $toolbar = $('div[lay-filter="taskToolbarForm"]');
+				if (isTaskAutoMode) {
+					$toolbar.find('input[name="switchStatus"]').prop('checked', true);
+				} else {
+					$toolbar.find('input[name="switchStatus"]').prop('checked', false);
+				}
+				form.render('checkbox', 'taskToolbarForm'); // 重新渲染 checkbox
+				form.render('select', 'taskToolbarForm');   // 重新渲染 select
+				// 【新增区域结束】
+
 				//记录筛选状态
 				var that = this;
 				that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
