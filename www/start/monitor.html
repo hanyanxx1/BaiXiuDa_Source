@@ -516,6 +516,7 @@
 	var isTaskAutoMode = false; 
 	var savedSuccessRate = "0.5%";
 	var savedCallFee = "15";
+	var lastSaveTime = 0; // 【新增】记录最后一次保存的时间锁
 
 	/**
 	 * 从云端加载配置
@@ -556,6 +557,8 @@
 			return; 
 		}
 
+		lastSaveTime = new Date().getTime(); // 【新增】每次保存时，打上当前时间戳
+
 		var payload = {
 			project_id: String(current_project_id), 
 			isTaskAutoMode: isTaskAutoMode === true,
@@ -583,6 +586,12 @@
 		if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
 			return; 
 		}
+
+		// 【新增核心修复】时间锁：如果距离自己上一次手动保存不足 3 秒，强制退出，不读取云端！防止读到还没来得及落盘的旧数据。
+		if (new Date().getTime() - lastSaveTime < 3000) {
+			return; 
+		}
+
 		$.ajax({
 			url: CLOUD_API + "?project_id=" + project_id,
 			type: 'GET',
@@ -1492,7 +1501,7 @@
 			return;
 		}
 
-		// 【新增】每5秒跟随任务列表刷新时，悄悄看一眼云端配置有没有被其他同事修改过
+		// 【新增】每5秒刷新时，异步静默检测云端最新配置
 		syncConfigFromServerAsync(project_id);
 
 		if (taskTableIns) {
@@ -1693,9 +1702,6 @@
 			}, limits: [10, 1000],
 			limit: 1000
 		});
-
-		// 【新增核心修复】在表格骨架刚画完、正在异步等待任务列表数据的这段空白期，立即把内存里正确的数据库配置渲染上去！彻底消除 HTML 默认值闪烁！
-		syncToolbarUI();
 	}
 
 	function echarts_earth() {
