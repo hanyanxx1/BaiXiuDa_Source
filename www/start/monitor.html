@@ -576,6 +576,37 @@
 		});
 	}
 	
+	/**
+	 * 【新增】异步静默同步云端配置（用于定时器后台更新，绝对不卡顿UI）
+	 */
+	function syncConfigFromServerAsync(project_id) {
+		if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
+			return; 
+		}
+		$.ajax({
+			url: CLOUD_API + "?project_id=" + project_id,
+			type: 'GET',
+			async: true, // 【关键】必须异步！让它在后台悄悄获取，不影响页面任何操作
+			success: function(res) {
+				if (res && typeof res === 'object') {
+					var newAutoMode = res.isTaskAutoMode === true; 
+					var newSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%"; 
+					var newCallFee = res.savedCallFee ? String(res.savedCallFee) : "15";
+					
+					// 【核心逻辑】只有当云端数据和本地内存不一致时（说明别的同事刚刚修改了），才更新内存并重绘UI，避免无意义的重绘打断用户的操作
+					if (isTaskAutoMode !== newAutoMode || savedSuccessRate !== newSuccessRate || savedCallFee !== newCallFee) {
+						isTaskAutoMode = newAutoMode;
+						savedSuccessRate = newSuccessRate;
+						savedCallFee = newCallFee;
+						
+						syncToolbarUI(); // 调用现成的方法，瞬间更新开关和下拉框
+						console.log("检测到其他用户修改了云端配置，已自动静默同步到本地。");
+					}
+				}
+			}
+		});
+	}
+
 	// 【新增】封装工具栏 UI 同步方法，瞬间消除视觉闪烁
 	function syncToolbarUI() {
 		var $toolbar = $('div[lay-filter="taskToolbarForm"]');
@@ -1460,6 +1491,9 @@
 		if (isPauseTaskRefresh) {
 			return;
 		}
+
+		// 【新增】每5秒跟随任务列表刷新时，悄悄看一眼云端配置有没有被其他同事修改过
+		syncConfigFromServerAsync(project_id);
 
 		if (taskTableIns) {
 			$.ajax({
