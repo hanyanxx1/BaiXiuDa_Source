@@ -470,7 +470,7 @@
     
     <div style="display: flex; align-items: center;">
       <span style="white-space: nowrap; margin-right: 5px;">成功统计：</span>
-      <div style="width: 100px;"> <select lay-filter="successfulNumberFilter">
+      <div style="width: 100px;"> <select lay-filter="savedSuccessRate">
           <option value="0.5%">0.5%</option>
           <option value="0.55%">0.55%</option>
           <option value="0.6%">0.6%</option>
@@ -481,7 +481,7 @@
     <div style="display: flex; align-items: center;">
       <span style="white-space: nowrap; margin-right: 5px;">话费金额(元)：</span>
       <div style="width: 100px;">
-        <select lay-filter="callFeeFilter">
+        <select lay-filter="savedCallFee">
           <option value="15">15</option>
           <option value="17">17</option>
           <option value="20">20</option>
@@ -509,11 +509,89 @@
 	var table;
 	var taskTableIns = null;
 	
-	// 【修改】从本地缓存读取状态，没有则给默认值（加 monitor_ 前缀防止和其他页面冲突）
-	var isTaskAutoMode = localStorage.getItem('monitor_isTaskAutoMode') === 'true'; 
-	var savedSuccessRate = localStorage.getItem('monitor_savedSuccessRate') || "0.5%";
-	var savedCallFee = localStorage.getItem('monitor_savedCallFee') || "15";
+	// ===================== 云端配置接管模块 开始 =====================
+	var CLOUD_API = "https://viwl6dnnp9.sealosbja.site/sync_config"; 
 	
+	// 【数据去处】：这里是系统状态的唯一信源，初始赋予安全默认值兜底
+	var isTaskAutoMode = false; 
+	var savedSuccessRate = "0.5%";
+	var savedCallFee = "15";
+
+	/**
+	 * 从云端加载配置
+	 * @param {String|Number} project_id - 【数据来处】：由外部显式传入
+	 */
+	function loadConfigFromServer(project_id) {
+		if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
+			console.warn("loadConfigFromServer拦截：非法的 project_id (" + project_id + ")，使用默认兜底值。");
+			return; 
+		}
+
+		$.ajax({
+			url: CLOUD_API + "?project_id=" + project_id,
+			type: 'GET',
+			async: false, // 必须同步阻塞，保障渲染前数据就位
+			success: function(res) {
+				if (res && typeof res === 'object') {
+					isTaskAutoMode = res.isTaskAutoMode === true; 
+					savedSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%"; 
+					savedCallFee = res.savedCallFee ? String(res.savedCallFee) : "15";
+				}
+			},
+			error: function(err) {
+				console.error("loadConfigFromServer异常：网络或接口请求失败。", err);
+			}
+		});
+	}
+
+	/**
+	 * 保存配置到云端
+	 * 【数据来处】：主动抓取当前页面下拉框的真实选中值
+	 */
+	function saveConfigToServer() {
+		var current_project_id = $("#project_active").val();
+
+		if (current_project_id === undefined || current_project_id === null || current_project_id === "" || current_project_id == 0 || current_project_id == "0") {
+			console.warn("saveConfigToServer拦截：当前未选中有效项目 (" + current_project_id + ")，跳过保存。");
+			return; 
+		}
+
+		var payload = {
+			project_id: String(current_project_id), 
+			isTaskAutoMode: isTaskAutoMode === true,
+			savedSuccessRate: String(savedSuccessRate),
+			savedCallFee: String(savedCallFee)
+		};
+
+		$.ajax({
+			url: CLOUD_API,
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(payload),
+			success: function(res) {
+				if (res && res.code === 200) {
+					console.log("项目 " + current_project_id + " 的配置已同步至云端。");
+				}
+			}
+		});
+	}
+	
+	// 【新增】封装工具栏 UI 同步方法，瞬间消除视觉闪烁
+	function syncToolbarUI() {
+		var $toolbar = $('div[lay-filter="taskToolbarForm"]');
+		// 如果工具栏还没加载到 DOM 里，直接跳过
+		if ($toolbar.length === 0) return; 
+		
+		$toolbar.find('input[name="switchStatus"]').prop('checked', isTaskAutoMode === true);
+		$toolbar.find('select[lay-filter="savedSuccessRate"]').val(savedSuccessRate);
+		$toolbar.find('select[lay-filter="savedCallFee"]').val(savedCallFee);
+		
+		form.render('checkbox', 'taskToolbarForm'); 
+		form.render('select', 'taskToolbarForm');
+	}
+	
+	// ===================== 云端配置接管模块 结束 =====================
+
 	var isPauseTaskRefresh = false; // 记录是否暂停任务列表刷新
 	var monitorData = {}; //moitor 实时数据
 
@@ -605,6 +683,7 @@
 
 					getProject(req_project_id);
 					monitor_tool.monitor(req_project_id);
+					loadConfigFromServer(req_project_id); // 【新增】刚进页面，根据 req_project_id 读取对应配置
 					getProjectReport(req_project_id, timestamp);
 					getProjectTaskReport(req_project_id, timestamp);
 				}
@@ -665,6 +744,7 @@
 				} else {
 					getProject(project_id);
 					monitor_tool.monitor(project_id);
+					loadConfigFromServer(project_id); // 【新增】切换下拉框，重新读取新项目的云端配置
 					getProjectReport(project_id, timestamp);
 					getProjectTaskReport(project_id, timestamp);
 				}
@@ -695,16 +775,16 @@
 			return false;
 		})
 
-		// 【新增】监听成功率下拉框切换，并保存到本地
-		form.on('select(successfulNumberFilter)', function(data){
+		// 监听成功率下拉框切换，触发云端保存
+		form.on('select(savedSuccessRate)', function(data){  // 【修改此处】
 			savedSuccessRate = data.value;
-			localStorage.setItem('monitor_savedSuccessRate', data.value);
+			saveConfigToServer();
 		});
 
-		// 【新增】监听话费下拉框切换，并保存到本地
-		form.on('select(callFeeFilter)', function(data){
+		// 监听话费下拉框切换，触发云端保存
+		form.on('select(savedCallFee)', function(data){      // 【修改此处】
 			savedCallFee = data.value;
-			localStorage.setItem('monitor_savedCallFee', data.value);
+			saveConfigToServer();
 		});
 
 		form.on('switch(autoModeFilter)', function(data) {
@@ -713,8 +793,8 @@
 			
 			if (isChecked) {
 				// 尝试开启自动模式
-				var successRate = $toolbar.find('select[lay-filter="successfulNumberFilter"] option:selected').text();
-				var callFee = $toolbar.find('select[lay-filter="callFeeFilter"] option:selected').text();
+				var successRate = $toolbar.find('select[lay-filter="savedSuccessRate"] option:selected').text();
+				var callFee = $toolbar.find('select[lay-filter="savedCallFee"] option:selected').text();
 
 				isPauseTaskRefresh = true; // 弹出确认框前，暂停定时刷新
 				
@@ -732,6 +812,8 @@
 					layer.close(index);
 					isTaskAutoMode = true; // 更新全局状态
 					isPauseTaskRefresh = false; // 恢复定时刷新
+
+					saveConfigToServer(); // 【新增】持久化开启状态到云端
 					
 					// 刷新表格，让执行状态列变成不可点击
 					var project_id = $("#project_active").val();
@@ -747,6 +829,8 @@
 			} else {
 				// 关闭自动模式 (不需要弹窗，直接恢复)
 				isTaskAutoMode = false;
+
+				saveConfigToServer(); // 【新增】持久化关闭状态到云端
 				
 				// 刷新表格，让执行状态列恢复可点击
 				var project_id = $("#project_active").val();
@@ -779,6 +863,7 @@
 			layer.load();
 			getProject(p_id);
 			monitor_tool.monitor(p_id);
+			loadConfigFromServer(p_id); // 【新增】手动刷新，强制同步最新云配置
 			getProjectReport(p_id, timestamp);
 			getProjectTaskReport(p_id, timestamp);
 
@@ -1233,7 +1318,7 @@
 				layer.closeAll("loading");
 				table.render({
 					elem: '#LAY-user-manage-active5',
-					height: 'full-120',
+					height: 780,
 					toolbar: true,
 					defaultToolbar: ['filter', 'print', 'exports'],
 					cols: [function () {
@@ -1405,16 +1490,8 @@
 							$(scrollSelector).scrollTop(currScrollTop);
 							element.render();
 
-							// 【新增区域开始】恢复头部工具栏状态
-							var $toolbar = $('div[lay-filter="taskToolbarForm"]');
-							if (isTaskAutoMode) {
-								$toolbar.find('input[name="switchStatus"]').prop('checked', true);
-							} else {
-								$toolbar.find('input[name="switchStatus"]').prop('checked', false);
-							}
-							form.render('checkbox', 'taskToolbarForm'); // 重新渲染 checkbox
-							form.render('select', 'taskToolbarForm');   // 重新渲染 select，确保显示正常
-							// 【新增区域结束】
+							// 恢复头部工具栏状态（自动同步开关和下拉框）
+							syncToolbarUI();
 
 							//记录筛选状态
 							var that = this;
@@ -1438,7 +1515,7 @@
 			id: 'LAY-user-manage-active4',
 			url: url + "admin/getTaskReport",
 			dataType: 'json',
-			height: 'full-120',
+			height: 780,
 			async: true,
 			toolbar: '#taskTableToolbar', 
 			defaultToolbar: ['filter', 'print', 'exports'],
@@ -1565,16 +1642,8 @@
 			done: function (obj) {
 				element.render();
 
-				// 【新增区域开始】恢复头部工具栏状态
-				var $toolbar = $('div[lay-filter="taskToolbarForm"]');
-				if (isTaskAutoMode) {
-					$toolbar.find('input[name="switchStatus"]').prop('checked', true);
-				} else {
-					$toolbar.find('input[name="switchStatus"]').prop('checked', false);
-				}
-				form.render('checkbox', 'taskToolbarForm'); // 重新渲染 checkbox
-				form.render('select', 'taskToolbarForm');   // 重新渲染 select
-				// 【新增区域结束】
+				// 恢复头部工具栏状态（自动同步开关和下拉框）
+				syncToolbarUI();
 
 				//记录筛选状态
 				var that = this;
@@ -1590,6 +1659,9 @@
 			}, limits: [10, 1000],
 			limit: 1000
 		});
+
+		// 【新增核心修复】在表格骨架刚画完、正在异步等待任务列表数据的这段空白期，立即把内存里正确的数据库配置渲染上去！彻底消除 HTML 默认值闪烁！
+		syncToolbarUI();
 	}
 
 	function echarts_earth() {

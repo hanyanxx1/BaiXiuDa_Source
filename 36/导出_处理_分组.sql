@@ -231,6 +231,32 @@ END //
 DELIMITER ;
 
 -- 调用示例
+CALL ExportDistinctGroupedCallData('e_cdr_20260110', '/var/lib/mysql-files/e_cdr_20260110', 
+    'calleee164 NOT LIKE "%QIANHAO%" 
+    AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
+    AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
+    AND calleee164 NOT LIKE "%/%" 
+    AND calleee164 NOT LIKE "%?%" 
+    AND calleee164 NOT LIKE "%,%" 
+    AND calleee164 NOT LIKE "%#%" 
+    AND calleee164 NOT LIKE "%\\\\%" 
+    AND calleee164 NOT LIKE "%*%" 
+    AND calleee164 NOT LIKE "%-" 
+    AND holdtime <= 0'
+);
+CALL ExportDistinctGroupedCallData('e_cdr_20260111', '/var/lib/mysql-files/e_cdr_20260111', 
+    'calleee164 NOT LIKE "%QIANHAO%" 
+    AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
+    AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
+    AND calleee164 NOT LIKE "%/%" 
+    AND calleee164 NOT LIKE "%?%" 
+    AND calleee164 NOT LIKE "%,%" 
+    AND calleee164 NOT LIKE "%#%" 
+    AND calleee164 NOT LIKE "%\\\\%" 
+    AND calleee164 NOT LIKE "%*%" 
+    AND calleee164 NOT LIKE "%-" 
+    AND holdtime <= 0'
+);
 CALL ExportDistinctGroupedCallData('e_cdr_20260112', '/var/lib/mysql-files/e_cdr_20260112', 
     'calleee164 NOT LIKE "%QIANHAO%" 
     AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
