@@ -491,7 +491,15 @@
 
     <div style="display: flex; align-items: center;">
       <input type="checkbox" name="switchStatus" lay-skin="switch" lay-text="自动模式|手动模式" lay-filter="autoModeFilter">
-    </div>    
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 15px; margin-left: 20px; font-size: 15px; font-weight: 500;">
+      <span style="color: #333;">正在执行: <span id="ov-executing" style="font-weight: bold;">0</span></span>
+      <span style="color: #16baaa;">赞: <span id="ov-good" style="font-weight: bold;">0</span></span>
+      <span style="color: #ffb800;">观察: <span id="ov-observe" style="font-weight: bold;">0</span></span>
+      <span style="color: #ff5722;">差: <span id="ov-bad" style="font-weight: bold;">0</span></span>
+    </div>
+
   </div>
 </script>
 <script>
@@ -616,16 +624,59 @@
 		});
 	}
 
-	// 【新增】封装工具栏 UI 同步方法，瞬间消除视觉闪烁
-	function syncToolbarUI() {
+	// 【修改】封装工具栏 UI 同步方法，并接收 tableData 用于计算概览
+	function syncToolbarUI(tableData) {
 		var $toolbar = $('div[lay-filter="taskToolbarForm"]');
 		// 如果工具栏还没加载到 DOM 里，直接跳过
 		if ($toolbar.length === 0) return; 
-		
+
 		$toolbar.find('input[name="switchStatus"]').prop('checked', isTaskAutoMode === true);
 		$toolbar.find('select[lay-filter="savedSuccessRate"]').val(savedSuccessRate);
 		$toolbar.find('select[lay-filter="savedCallFee"]').val(savedCallFee);
-		
+
+		// ===================== 【新增】自动模式下禁用下拉框 开始 =====================
+		if (isTaskAutoMode) {
+			$toolbar.find('select[lay-filter="savedSuccessRate"]').prop('disabled', true);
+			$toolbar.find('select[lay-filter="savedCallFee"]').prop('disabled', true);
+		} else {
+			$toolbar.find('select[lay-filter="savedSuccessRate"]').prop('disabled', false);
+			$toolbar.find('select[lay-filter="savedCallFee"]').prop('disabled', false);
+		}
+		// ===================== 【新增】自动模式下禁用下拉框 结束 =====================
+
+		// 【新增】计算并更新任务状态概览
+		if (tableData && tableData.length > 0) {
+			var countExecuting = 0;
+			var countGood = 0;
+			var countObserve = 0;
+			var countBad = 0;
+
+			var limitSuccessRate = parseFloat(savedSuccessRate);
+			var limitCallFee = parseFloat(savedCallFee);
+
+			for (var i = 0; i < tableData.length; i++) {
+				var task = tableData[i];
+				if (task.status != 0) { // 只统计正在执行的任务
+					countExecuting++;
+					var actualSuccessRate = parseFloat(task.successfulPercent) || 0;
+					var actualCallFee = parseFloat(task.phone_bill) || 0; // 【新增】取实际话费金额
+
+					// 【修改】大于0.8为优；小于0.6 且 话费大于20 才算差
+					if (actualSuccessRate > 0.8) {
+						countGood++; // 优 (赞)
+					} else if (actualSuccessRate < 0.6 && actualCallFee > 20) {
+						countBad++;  // 差 (花够了钱还不出业绩)
+					} else {
+						countObserve++; // 还没花够钱，或者成功率在0.6~0.8之间，都算观察
+					}
+				}
+			}
+			$toolbar.find('#ov-executing').text(countExecuting);
+			$toolbar.find('#ov-good').text(countGood);
+			$toolbar.find('#ov-observe').text(countObserve);
+			$toolbar.find('#ov-bad').text(countBad);
+		}
+
 		form.render('checkbox', 'taskToolbarForm'); 
 		form.render('select', 'taskToolbarForm');
 	}
@@ -1534,7 +1585,7 @@
 							element.render();
 
 							// 恢复头部工具栏状态（自动同步开关和下拉框）
-							syncToolbarUI();
+							syncToolbarUI(data);
 
 							//记录筛选状态
 							var that = this;
@@ -1646,13 +1697,18 @@
 					templet: function (d) {
 						var text = d.successfulNumber + "(" + (d.successfulPercent == null ? d.successfulPercent : (d.successfulPercent + "%")) + ")";
 						var p = parseFloat(d.successfulPercent);
-						var pb = parseFloat(d.phone_bill);
+						var pb = parseFloat(d.phone_bill); // 【新增】取出话费用于判断
+
 						if (!isNaN(p)) {
+							// 优：> 0.8
 							if (p > 0.8) {
-								text += ' <img src="images/good.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">';
-							} else if (p < 0.5 && !isNaN(pb) && pb > 20) {
-								text += ' <img src="images/warm.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">';
+								text += ' <img src="images/good.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;" title="优">';
+							} 
+							// 差：< 0.6 并且 话费 > 20
+							else if (p < 0.6 && !isNaN(pb) && pb > 20) {
+								text += ' <img src="images/warm.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;" title="差">';
 							}
+							// 剩下的情况就是“观察”，不显示任何图标
 						}
 						return text;
 					}
@@ -1686,7 +1742,7 @@
 				element.render();
 
 				// 恢复头部工具栏状态（自动同步开关和下拉框）
-				syncToolbarUI();
+				syncToolbarUI(obj.data);
 
 				//记录筛选状态
 				var that = this;
