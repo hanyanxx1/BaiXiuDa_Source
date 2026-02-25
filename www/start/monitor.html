@@ -111,6 +111,18 @@
 										<td>大于1分钟</td>
 										<td><span id="minuteCount">0</span></td>
 									</tr>
+									<tr>
+										<td>正在执行</td>
+										<td><span id="left-ov-executing" style="font-weight: bold; color: #333;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></td>
+										<td><span style="color: #16baaa;">赞</span></td>
+										<td><span id="left-ov-good" style="font-weight: bold; color: #16baaa;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></td>
+									</tr>
+									<tr>
+										<td><span style="color: #ffb800;">观察</span></td>
+										<td><span id="left-ov-observe" style="font-weight: bold; color: #ffb800;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></td>
+										<td><span style="color: #ff5722;">差</span></td>
+										<td><span id="left-ov-bad" style="font-weight: bold; color: #ff5722;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -497,27 +509,14 @@
 		});
 	}
 
-	// 【修改】封装工具栏 UI 同步方法，并接收 tableData 用于计算概览
+	// 【修改】封装工具栏 UI 同步方法，解耦左侧面板的更新逻辑，彻底解决初始化显示0的Bug
 	function syncToolbarUI(tableData) {
-		var $toolbar = $('div[lay-filter="taskToolbarForm"]');
-		// 如果工具栏还没加载到 DOM 里，直接跳过
-		if ($toolbar.length === 0) return;
+		// 1. 先计算最新数据，并设置 Loading 为兜底
+		var executingText = '<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>';
+		var goodText = executingText;
+		var observeText = executingText;
+		var badText = executingText;
 
-		$toolbar.find('input[name="switchStatus"]').prop('checked', isTaskAutoMode === true);
-		$toolbar.find('select[lay-filter="savedSuccessRate"]').val(savedSuccessRate);
-		$toolbar.find('select[lay-filter="savedCallFee"]').val(savedCallFee);
-
-		// ===================== 【新增】自动模式下禁用下拉框 开始 =====================
-		if (isTaskAutoMode) {
-			$toolbar.find('select[lay-filter="savedSuccessRate"]').prop('disabled', true);
-			$toolbar.find('select[lay-filter="savedCallFee"]').prop('disabled', true);
-		} else {
-			$toolbar.find('select[lay-filter="savedSuccessRate"]').prop('disabled', false);
-			$toolbar.find('select[lay-filter="savedCallFee"]').prop('disabled', false);
-		}
-		// ===================== 【新增】自动模式下禁用下拉框 结束 =====================
-
-		// 【新增】计算并更新任务状态概览
 		if (tableData) {
 			var countExecuting = 0;
 			var countGood = 0;
@@ -532,22 +531,51 @@
 				if (task.status != 0) { // 只统计正在执行的任务
 					countExecuting++;
 					var actualSuccessRate = parseFloat(task.successfulPercent) || 0;
-					var actualCallFee = parseFloat(task.phone_bill) || 0; // 【新增】取实际话费金额
+					var actualCallFee = parseFloat(task.phone_bill) || 0; 
 
-					// 【修改】大于0.8为优；小于0.6 且 话费大于20 才算差
+					// 大于0.8为优；小于0.6 且 话费大于20 才算差
 					if (actualSuccessRate > 0.8) {
 						countGood++; // 优 (赞)
 					} else if (actualSuccessRate < 0.6 && actualCallFee > 20) {
-						countBad++;  // 差 (花够了钱还不出业绩)
+						countBad++;  // 差 
 					} else {
-						countObserve++; // 还没花够钱，或者成功率在0.6~0.8之间，都算观察
+						countObserve++; // 观察
 					}
 				}
 			}
-			$toolbar.find('#ov-executing').text(countExecuting);
-			$toolbar.find('#ov-good').text(countGood);
-			$toolbar.find('#ov-observe').text(countObserve);
-			$toolbar.find('#ov-bad').text(countBad);
+			executingText = countExecuting;
+			goodText = countGood;
+			observeText = countObserve;
+			badText = countBad;
+		}
+
+		// 2. 【核心修复】无视右侧表格是否隐藏，第一优先级先强制把数据渲染到左侧面板！
+		$('#left-ov-executing').html(executingText);
+		$('#left-ov-good').html(goodText);
+		$('#left-ov-observe').html(observeText);
+		$('#left-ov-bad').html(badText);
+
+		// 3. 然后再去处理右侧工具栏（如果工具栏还没加载到 DOM 里，安全跳过）
+		var $toolbar = $('div[lay-filter="taskToolbarForm"]');
+		if ($toolbar.length === 0) return; 
+
+		$toolbar.find('input[name="switchStatus"]').prop('checked', isTaskAutoMode === true);
+		$toolbar.find('select[lay-filter="savedSuccessRate"]').val(savedSuccessRate);
+		$toolbar.find('select[lay-filter="savedCallFee"]').val(savedCallFee);
+
+		if (isTaskAutoMode) {
+			$toolbar.find('select[lay-filter="savedSuccessRate"]').prop('disabled', true);
+			$toolbar.find('select[lay-filter="savedCallFee"]').prop('disabled', true);
+		} else {
+			$toolbar.find('select[lay-filter="savedSuccessRate"]').prop('disabled', false);
+			$toolbar.find('select[lay-filter="savedCallFee"]').prop('disabled', false);
+		}
+
+		if (tableData) {
+			$toolbar.find('#ov-executing').html(executingText);
+			$toolbar.find('#ov-good').html(goodText);
+			$toolbar.find('#ov-observe').html(observeText);
+			$toolbar.find('#ov-bad').html(badText);
 		}
 
 		form.render('checkbox', 'taskToolbarForm');
@@ -673,16 +701,16 @@
 			if (obj.index == 3) {
 				echarts_earth();
 			} else if (obj.index == 1) { // 【新增】切回到任务列表时
-				// 【核心修复】首次切入时，如果底层因为初始化隐藏而显示“无数据”，瞬间替换为高级 Loading 动画
+				// 瞬间注入 Loading 动画，盖掉初次渲染时的“无数据”空洞感
 				var $tableMain = $('.layui-table-view[lay-id="LAY-user-manage-active4"] .layui-table-main');
 				if ($tableMain.find('.layui-none').length > 0) {
 					$tableMain.html('<div style="text-align:center; padding-top: 150px;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 40px; color: #009688;"></i><div style="margin-top: 20px; font-size: 16px; color: #999;">正在拉取实时数据...</div></div>');
 				}
 
 				if (taskTableIns) {
-					table.resize('LAY-user-manage-active4'); // 解决隐藏div下表格宽高度计算为0导致显示“无数据”的Layui底层Bug
+					table.resize('LAY-user-manage-active4'); 
 				}
-				taskReportData(project_id, timestamp); // 立即请求一次最新数据，告别干等5秒的尴尬
+				taskReportData(project_id, timestamp);
 			} else if (obj.index == 2) {
 				projectReportData(project_id);
 			} else if (obj.index == 4) {
@@ -1489,11 +1517,11 @@
 					}
 					// ===================== 【新增】核心自动挂断算法 结束 =====================
 
-					// 【核心修复】如果当前表格被隐藏（用户切到了其他选项卡），只更新顶部数据概览，绝对拦截 reload！
-					// 防止 Layui 在 display:none 下执行 reload 导致高度坍塌成“无数据”
+					// 【核心修复】如果当前表格被隐藏（用户切到了其他图表），绝对拦截 reload！
+					// 只调用 syncToolbarUI 刷新左侧面板，防止 Layui 在隐藏状态下执行 reload 导致高度坍塌成“无数据”
 					var $tableView = $('.layui-table-view[lay-id="LAY-user-manage-active4"]');
 					if ($tableView.length > 0 && !$tableView.is(':visible')) {
-						syncToolbarUI(data); // 依旧保持顶部概览的实时联动
+						syncToolbarUI(data); 
 						return; // 强制终止，冻结表格 DOM
 					}
 
