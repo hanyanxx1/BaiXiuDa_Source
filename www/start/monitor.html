@@ -777,16 +777,22 @@
 					loadConfigFromServer(req_project_id); // 【新增】刚进页面，根据 req_project_id 读取对应配置
 					getProjectReport(req_project_id, timestamp);
 					getProjectTaskReport(req_project_id, timestamp);
+
+					// 【新增】全局启动任务列表和概览的数据拉取，不受选项卡限制
+					taskReportData(req_project_id, timestamp);
+					if (!taskInterval) {
+						taskInterval = setInterval(function () {
+							var current_p_id = $("#project_active").val();
+							if (current_p_id && current_p_id != 0) {
+								taskReportData(current_p_id, timestamp);
+							}
+						}, 5000);
+					}
 				}
 			}
 		});
 		carousel.on('change(LAY-index-pagethree)', function (obj) { //监听轮播图
 			clearInterval(interval);
-			// 2. 【新增】清除任务报表定时器 (防止重复)
-			if(taskInterval) {
-					clearInterval(taskInterval);
-					taskInterval = 0;
-			}
 
 			active6IsHaveData = 0;
 			$("#agents").empty();
@@ -798,11 +804,6 @@
 				// 	echarts_earth();
 				// })
 				echarts_earth();
-			} else if (obj.index == 1) {
-				taskReportData(project_id, timestamp);
-				taskInterval = setInterval(function () {
-					taskReportData(project_id, timestamp);
-				}, 5000);
 			} else if (obj.index == 2) {
 				projectReportData(project_id);
 			} else if (obj.index == 4) {
@@ -838,6 +839,8 @@
 					loadConfigFromServer(project_id); // 【新增】切换下拉框，重新读取新项目的云端配置
 					getProjectReport(project_id, timestamp);
 					getProjectTaskReport(project_id, timestamp);
+
+					taskReportData(project_id, timestamp); // 【新增】切换项目时立即拉取任务列表更新概览
 				}
 
 				echarts_init();
@@ -957,6 +960,8 @@
 			loadConfigFromServer(p_id); // 【新增】手动刷新，强制同步最新云配置
 			getProjectReport(p_id, timestamp);
 			getProjectTaskReport(p_id, timestamp);
+
+			taskReportData(p_id, timestamp); // 【新增】手动刷新时立即拉取任务列表更新概览
 
 			layer.closeAll('loading');
 		}
@@ -1575,6 +1580,40 @@
 					}
 
 					var data = getFormattedTaskReportData(res);
+
+					// ===================== 【新增】核心自动挂断算法 开始 =====================
+					if (isTaskAutoMode) {
+						// 将下拉框设定的阈值转为浮点数，方便比对 (例如 "0.5%" -> 0.5, "15" -> 15.0)
+						var limitSuccessRate = parseFloat(savedSuccessRate);
+						var limitCallFee = parseFloat(savedCallFee);
+
+						for (var i = 0; i < data.length; i++) {
+							var task = data[i];
+							
+							// 只审查正在执行的任务 (status != 0)
+							if (task.status != 0) {
+								var actualSuccessRate = parseFloat(task.successfulPercent) || 0; // 实际成功率
+								var actualCallFee = parseFloat(task.phone_bill) || 0;            // 实际产生的话费
+
+								// 触发条件：实际花费 >= 设定话费阈值，且 实际成功率 < 设定成功率阈值
+								if (actualCallFee >= limitCallFee && actualSuccessRate < limitSuccessRate) {
+									console.warn("【系统自动拦截】发现不达标任务: [" + task.taskName + "], 话费:" + actualCallFee + ", 成功率:" + actualSuccessRate + "%。正在执行自动停止！");
+									
+									// 弹出右下角气泡提示（不阻挡用户视线）
+									layer.msg("已为您自动停止不达标任务: <br>" + task.taskName, {
+										icon: 0,
+										offset: 'rb', // 右下角弹出
+										time: 4000
+									});
+
+									// 静默调用后端的停止接口 (调用现成的方法，传入 taskId 和 0表示停止)
+									monitor_tool.editStatus(task.taskId, 0); 
+								}
+							}
+						}
+					}
+					// ===================== 【新增】核心自动挂断算法 结束 =====================
+
 					var scrollSelector = ".layui-table-view[lay-id='LAY-user-manage-active4'] .layui-table-main";
 					var currScrollTop = $(scrollSelector).scrollTop();
 					taskTableIns.reload({
