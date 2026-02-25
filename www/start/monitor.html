@@ -25,9 +25,9 @@
 						<div class="layui-card-header">
 							项目
 
-							<a href="JavaScript:;" style="float: right;line-height:1em;margin-top:15px;"
-								onclick="refrush();" title="刷新" class="layui-a-tips"><i
-									class="layui-icon layui-icon-refresh-3" style="line-height:30px"></i></a>
+							<a href="JavaScript:;" style="float: right;line-height:1em;margin-top:15px;" onclick="refrush();"
+								title="刷新" class="layui-a-tips"><i class="layui-icon layui-icon-refresh-3"
+									style="line-height:30px"></i></a>
 						</div>
 						<div class="layui-card-body">
 							<table class="layui-table">
@@ -42,9 +42,7 @@
 											<form class="layui-form" action="">
 												<div class="layui-form-item">
 													<div class="layui-input-block">
-														<select id="project_active" name="project_active"
-															lay-filter="project_active">
-
+														<select id="project_active" name="project_active" lay-filter="project_active">
 														</select>
 													</div>
 												</div>
@@ -54,11 +52,9 @@
 									<tr>
 										<td>参数</td>
 										<td class="twoTdClass">
-											<input type="text" name="outbound_param" id="outbound_param"
-												autocomplete="off" class="layui-input">
-											<a class="layui-btn" style="margin-left: 5px;"
-												onclick="monitor_tool.newconcurrent_edit()">修改</a>
-
+											<input type="text" name="outbound_param" id="outbound_param" autocomplete="off"
+												class="layui-input">
+											<a class="layui-btn" style="margin-left: 5px;" onclick="monitor_tool.newconcurrent_edit()">修改</a>
 										</td>
 									</tr>
 									<tr>
@@ -75,10 +71,8 @@
 										<td>成功率</td>
 										<td id="成功率">加载中</td>
 									</tr>
-
 								</tbody>
 							</table>
-
 							<table class="layui-table" style="margin-top: 20px;">
 								<colgroup>
 									<col width="25%">
@@ -87,42 +81,6 @@
 									<col>
 								</colgroup>
 								<tbody>
-									<!-- <tr>
-										<td>客户数</td>
-										<td><span id="mtotal">0</span></td>
-									</tr>
-									<tr>
-										<td>应答数</td>
-										<td><span id="manswer">0</span></td>
-									</tr>
-									<tr>
-										<td>IVR</td>
-										<td><span id="mivr">0</span></td>
-									</tr>
-									<tr>
-										<td><span style="color:red">队列</span></td>
-										<td><span id="mqueue" style="color:red">0</span></td>
-									</tr>
-									<tr>
-										<td><span style="color:green">签入</span></td>
-										<td><span id="mlogon" style="color:green">0</span></td>
-									</tr>
-									<tr>
-										<td><span style="color:green">空闲</span></td>
-										<td><span id="mfree" style="color:green">0</span></td>
-									</tr>
-									<tr>
-										<td><span style="color:red">忙碌</span></td>
-										<td><span id="mbusy" style="color:red">0</span></td>
-									</tr>
-									<tr>
-										<td><span style="color:#FFB800">事务</span></td>
-										<td><span id="mcrm" style="color:#FFB800">0</span></td>
-									</tr>
-									<tr>
-										<td>最大等待</td>
-										<td><span id="max">0</span></td>
-									</tr> -->
 									<tr>
 										<td width="20">客户数</td>
 										<td><span id="mtotal">0</span></td>
@@ -155,16 +113,9 @@
 									</tr>
 								</tbody>
 							</table>
-
-
-
-
-
 						</div>
 					</div>
 				</div>
-
-
 				<div class=" layui-col-md12">
 					<div class=" layui-col-md12">
 						<div class="layui-card">
@@ -181,8 +132,7 @@
 										</div>
 									</div>
 									<div class="layui-form-item">
-										<button class="layui-btn" style="float: right;" lay-submit=""
-											lay-filter="sendmsg">发布</button>
+										<button class="layui-btn" style="float: right;" lay-submit="" lay-filter="sendmsg">发布</button>
 									</div>
 
 								</form>
@@ -190,86 +140,29 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
-
 			<div class=" layui-col-md9">
-
 				<div class=" layui-col-md12">
 					<div class="layui-card" style="height: 910px;">
 						<div class="layui-card-header"></div>
 						<div class="layui-card-body">
-							<!--<div class="layui-carousel layadmin-carousel layadmin-backlog">
-								<div carousel-item style="height: 850px;">-->
 							<div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
 								lay-filter="LAY-index-pagethree">
-								<div carousel-item id="LAY-index-pagethree"
-									style="height: 850px;overflow:auto; zoom:1;">
+								<div carousel-item id="LAY-index-pagethree" style="height: 850px;overflow:auto; zoom:1;">
 									<div>
-										<!--<div class="layui-inline">
-											<label class="layui-form-label">客户数:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span
-													id="mtotal1">0</span></div>
-										</div>
-										<div class="layui-inline">
-											<label class="layui-form-label">应答数:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span id="manswer1"
-													>0</span></div>
-										</div>
-
-										<div class="layui-inline">
-											<label class="layui-form-label">IVR:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span
-													id="mivr1">0</span></div>
-										</div>
-
-										<div class="layui-inline" style="color:red">
-											<label class="layui-form-label" >队列:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span
-												 id="mqueue1">0</span></div>
-
-										</div>
-
-										<div class="layui-inline" style="color: green;">
-											<label class="layui-form-label">签入:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span
-													id="mlogon1">0</span></div>
-										</div>
-
-										<div class="layui-inline" style="color: green;">
-											<label class="layui-form-label">空闲:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span
-													id="mfree1">0</span></div>
-										</div>
-										<div class="layui-inline" style="color: red;">
-											<label class="layui-form-label">忙碌:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span
-													id="mbusy1">0</span></div>
-										</div>
-
-
-										<div class="layui-inline" style="color:#FFB800;">
-											<label class="layui-form-label">事务:</label>
-											<div class="layui-input-inline" style="margin-top: 7px;"><span
-													id="mcrm1">0</span></div>
-										</div> 
--->
-
 										<hr>
 										<div class=" layui-col-md9">
 											<div class="layui-card">
 												<div class="layui-card-body">
 													<form class="layui-form" style="margin-top: 20px;">
-														<label id="mconcurrent"
-															style="width:60px;display: none;"></label>
+														<label id="mconcurrent" style="width:60px;display: none;"></label>
 
 														<div class="layui-form-item" id="agents">
 															<!-- 坐席列表 -->
 
 														</div>
 
-														<div class="layadmin-tips" id="noagents"
-															style="margin-top: 250px;display: none;">
+														<div class="layadmin-tips" id="noagents" style="margin-top: 250px;display: none;">
 															<i class="layui-icon" face>&#xe664;</i>
 															<div class="layui-text" style="font-size: 20px;">
 																没有坐席哟 ^_^
@@ -292,16 +185,12 @@
 												</div>
 											</div>
 										</div>
-
-
 									</div>
 									<div>
 										<div class=" layui-col-md12">
 											<div class="layui-card">
 												<div class="layui-card-body">
-													<table id="LAY-user-manage-active4"
-														lay-filter="LAY-user-manage-active4"></table>
-
+													<table id="LAY-user-manage-active4" lay-filter="LAY-user-manage-active4"></table>
 												</div>
 											</div>
 										</div>
@@ -310,8 +199,7 @@
 										<div class=" layui-col-md12">
 											<div class="layui-card">
 												<div class="layui-card-body">
-													<table id="LAY-user-manage-active5"
-														lay-filter="LAY-user-manage-active5"></table>
+													<table id="LAY-user-manage-active5" lay-filter="LAY-user-manage-active5"></table>
 
 												</div>
 											</div>
@@ -322,19 +210,16 @@
 										<div class=" layui-col-md3">
 											<div class="layui-card">
 												<div class="layui-card-body">
-													<table id="LAY-user-manage-active3"
-														lay-filter="LAY-user-manage-active3"></table>
+													<table id="LAY-user-manage-active3" lay-filter="LAY-user-manage-active3"></table>
 
 												</div>
 											</div>
 										</div>
 										<div class="layui-col-sm8">
-											<div class="layui-carousel layadmin-carousel layadmin-dataview"
-												data-anim="fade" lay-filter="LAY-index-pagethree-earth">
-												<div carousel-item id="LAY-index-pagethree-earth"
-													style="height: 850px;overflow:auto; zoom:1;">
-													<div style="height: 650px;"><i
-															class="layui-icon layui-icon-loading1 layadmin-loading"></i>
+											<div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
+												lay-filter="LAY-index-pagethree-earth">
+												<div carousel-item id="LAY-index-pagethree-earth" style="height: 850px;overflow:auto; zoom:1;">
+													<div style="height: 650px;"><i class="layui-icon layui-icon-loading1 layadmin-loading"></i>
 													</div>
 												</div>
 											</div>
@@ -345,22 +230,18 @@
 
 									<!-- 实时监控折线图 -->
 									<div>
-
-
 										<div class=" layui-col-md12">
 											<div class="layui-card">
 
 												<div class="layui-card-body">
 													<div class="active6_gateway_table">
-														<table id="LAY-user-manage-active6"
-															lay-filter="LAY-user-manage-active6">
+														<table id="LAY-user-manage-active6" lay-filter="LAY-user-manage-active6">
 														</table>
 													</div>
 
 
 													<div class="wrap">
-														<div
-															style="width: 100%; display: flex; align-items: center; margin-bottom: 10px;">
+														<div style="width: 100%; display: flex; align-items: center; margin-bottom: 10px;">
 															<!-- <div class="layui-form">
 																<div class="layui-form-item">
 																	<label class="layui-form-label">时间维度：</label>
@@ -390,18 +271,9 @@
 											</div>
 
 										</div>
-
 									</div>
-
-
-
 								</div>
 							</div>
-
-							<!--<div style="overflow:auto; zoom:1;">
-									</div>-->
-							<!--</div>
-							</div>-->
 						</div>
 					</div>
 				</div>
@@ -455,15 +327,16 @@
 		display: flex;
 		border: 0;
 	}
+
 	.active4Class .layui-table .layui-table-cell {
-        height: auto;
-        word-break: normal;
-        display: block;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow: hidden;
-        padding: 0 10px !important;
-    }
+		height: auto;
+		word-break: normal;
+		display: block;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		overflow: hidden;
+		padding: 0 10px !important;
+	}
 </style>
 <script type="text/html" id="taskTableToolbar">
   <div class="layui-form" lay-filter="taskToolbarForm" style="display: flex; align-items: center; gap: 20px;">
@@ -516,12 +389,12 @@
 	var timestamp = "";
 	var table;
 	var taskTableIns = null;
-	
+
 	// ===================== 云端配置接管模块 开始 =====================
-	var CLOUD_API = "https://viwl6dnnp9.sealosbja.site/sync_config"; 
-	
+	var CLOUD_API = "https://viwl6dnnp9.sealosbja.site/sync_config";
+
 	// 【数据去处】：这里是系统状态的唯一信源，初始赋予安全默认值兜底
-	var isTaskAutoMode = false; 
+	var isTaskAutoMode = false;
 	var savedSuccessRate = "0.5%";
 	var savedCallFee = "15";
 	var lastSaveTime = 0; // 【新增】记录最后一次保存的时间锁
@@ -533,21 +406,21 @@
 	function loadConfigFromServer(project_id) {
 		if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
 			console.warn("loadConfigFromServer拦截：非法的 project_id (" + project_id + ")，使用默认兜底值。");
-			return; 
+			return;
 		}
 
 		$.ajax({
 			url: CLOUD_API + "?project_id=" + project_id,
 			type: 'GET',
 			async: false, // 必须同步阻塞，保障渲染前数据就位
-			success: function(res) {
+			success: function (res) {
 				if (res && typeof res === 'object') {
-					isTaskAutoMode = res.isTaskAutoMode === true; 
-					savedSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%"; 
+					isTaskAutoMode = res.isTaskAutoMode === true;
+					savedSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%";
 					savedCallFee = res.savedCallFee ? String(res.savedCallFee) : "15";
 				}
 			},
-			error: function(err) {
+			error: function (err) {
 				console.error("loadConfigFromServer异常：网络或接口请求失败。", err);
 			}
 		});
@@ -562,13 +435,13 @@
 
 		if (current_project_id === undefined || current_project_id === null || current_project_id === "" || current_project_id == 0 || current_project_id == "0") {
 			console.warn("saveConfigToServer拦截：当前未选中有效项目 (" + current_project_id + ")，跳过保存。");
-			return; 
+			return;
 		}
 
 		lastSaveTime = new Date().getTime(); // 【新增】每次保存时，打上当前时间戳
 
 		var payload = {
-			project_id: String(current_project_id), 
+			project_id: String(current_project_id),
 			isTaskAutoMode: isTaskAutoMode === true,
 			savedSuccessRate: String(savedSuccessRate),
 			savedCallFee: String(savedCallFee)
@@ -579,43 +452,43 @@
 			type: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(payload),
-			success: function(res) {
+			success: function (res) {
 				if (res && res.code === 200) {
 					console.log("项目 " + current_project_id + " 的配置已同步至云端。");
 				}
 			}
 		});
 	}
-	
+
 	/**
 	 * 【新增】异步静默同步云端配置（用于定时器后台更新，绝对不卡顿UI）
 	 */
 	function syncConfigFromServerAsync(project_id) {
 		if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
-			return; 
+			return;
 		}
 
 		// 【新增核心修复】时间锁：如果距离自己上一次手动保存不足 3 秒，强制退出，不读取云端！防止读到还没来得及落盘的旧数据。
 		if (new Date().getTime() - lastSaveTime < 3000) {
-			return; 
+			return;
 		}
 
 		$.ajax({
 			url: CLOUD_API + "?project_id=" + project_id,
 			type: 'GET',
 			async: true, // 【关键】必须异步！让它在后台悄悄获取，不影响页面任何操作
-			success: function(res) {
+			success: function (res) {
 				if (res && typeof res === 'object') {
-					var newAutoMode = res.isTaskAutoMode === true; 
-					var newSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%"; 
+					var newAutoMode = res.isTaskAutoMode === true;
+					var newSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%";
 					var newCallFee = res.savedCallFee ? String(res.savedCallFee) : "15";
-					
+
 					// 【核心逻辑】只有当云端数据和本地内存不一致时（说明别的同事刚刚修改了），才更新内存并重绘UI，避免无意义的重绘打断用户的操作
 					if (isTaskAutoMode !== newAutoMode || savedSuccessRate !== newSuccessRate || savedCallFee !== newCallFee) {
 						isTaskAutoMode = newAutoMode;
 						savedSuccessRate = newSuccessRate;
 						savedCallFee = newCallFee;
-						
+
 						syncToolbarUI(); // 调用现成的方法，瞬间更新开关和下拉框
 						console.log("检测到其他用户修改了云端配置，已自动静默同步到本地。");
 					}
@@ -628,7 +501,7 @@
 	function syncToolbarUI(tableData) {
 		var $toolbar = $('div[lay-filter="taskToolbarForm"]');
 		// 如果工具栏还没加载到 DOM 里，直接跳过
-		if ($toolbar.length === 0) return; 
+		if ($toolbar.length === 0) return;
 
 		$toolbar.find('input[name="switchStatus"]').prop('checked', isTaskAutoMode === true);
 		$toolbar.find('select[lay-filter="savedSuccessRate"]').val(savedSuccessRate);
@@ -677,10 +550,10 @@
 			$toolbar.find('#ov-bad').text(countBad);
 		}
 
-		form.render('checkbox', 'taskToolbarForm'); 
+		form.render('checkbox', 'taskToolbarForm');
 		form.render('select', 'taskToolbarForm');
 	}
-	
+
 	// ===================== 云端配置接管模块 结束 =====================
 
 	var isPauseTaskRefresh = false; // 记录是否暂停任务列表刷新
@@ -699,7 +572,7 @@
 		concurrencyList: '实时并发数',
 		transferList: '实时转接率(百分比)',
 		zeroTicketList: '实时秒挂数',
-		progressList : '忙碌坐席数'
+		progressList: '忙碌坐席数'
 	}
 	const colors = ['#5a6fc0', '#9eca7f', '#f2ca6b', '#de6e6a', '#85bedb']
 
@@ -870,32 +743,32 @@
 		})
 
 		// 监听成功率下拉框切换，触发云端保存
-		form.on('select(savedSuccessRate)', function(data){  // 【修改此处】
+		form.on('select(savedSuccessRate)', function (data) {  // 【修改此处】
 			savedSuccessRate = data.value;
 			saveConfigToServer();
 		});
 
 		// 监听话费下拉框切换，触发云端保存
-		form.on('select(savedCallFee)', function(data){      // 【修改此处】
+		form.on('select(savedCallFee)', function (data) {      // 【修改此处】
 			savedCallFee = data.value;
 			saveConfigToServer();
 		});
 
-		form.on('switch(autoModeFilter)', function(data) {
+		form.on('switch(autoModeFilter)', function (data) {
 			var isChecked = data.elem.checked; // 获取想要切换到的状态
 			var $toolbar = $('div[lay-filter="taskToolbarForm"]'); // 获取工具栏容器
-			
+
 			if (isChecked) {
 				// 尝试开启自动模式
 				var successRate = $toolbar.find('select[lay-filter="savedSuccessRate"] option:selected').text();
 				var callFee = $toolbar.find('select[lay-filter="savedCallFee"] option:selected').text();
 
 				isPauseTaskRefresh = true; // 弹出确认框前，暂停定时刷新
-				
+
 				layer.confirm('开启自动模式后，所有成功率低于' + successRate + '，话费高于' + callFee + '的任务会被自动停止，确认开启吗？', {
-					icon: 3, 
+					icon: 3,
 					title: '提示',
-					cancel: function() {
+					cancel: function () {
 						// 点击右上角X关闭弹窗：恢复 switch 为关闭状态
 						data.elem.checked = false;
 						form.render('checkbox', 'taskToolbarForm');
@@ -908,24 +781,24 @@
 					isPauseTaskRefresh = false; // 恢复定时刷新
 
 					saveConfigToServer(); // 【新增】持久化开启状态到云端
-					
+
 					// 刷新表格，让执行状态列变成不可点击
 					var project_id = $("#project_active").val();
-					taskReportData(project_id, timestamp); 
-					
+					taskReportData(project_id, timestamp);
+
 				}, function (index) {
 					// 点击【取消】
 					data.elem.checked = false; // 恢复 switch 为关闭状态
 					form.render('checkbox', 'taskToolbarForm');
 					isPauseTaskRefresh = false; // 恢复定时刷新
 				});
-				
+
 			} else {
 				// 关闭自动模式 (不需要弹窗，直接恢复)
 				isTaskAutoMode = false;
 
 				saveConfigToServer(); // 【新增】持久化关闭状态到云端
-				
+
 				// 刷新表格，让执行状态列恢复可点击
 				var project_id = $("#project_active").val();
 				taskReportData(project_id, timestamp);
@@ -1232,7 +1105,7 @@
 
 				dataType: "json",
 				headers: {
-					access_token:layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
 				},
 				data: {
 					project_id: $("#project_active").val(),
@@ -1589,7 +1462,7 @@
 
 						for (var i = 0; i < data.length; i++) {
 							var task = data[i];
-							
+
 							// 只审查正在执行的任务 (status != 0)
 							if (task.status != 0) {
 								var actualSuccessRate = parseFloat(task.successfulPercent) || 0; // 实际成功率
@@ -1598,7 +1471,7 @@
 								// 触发条件：实际花费 >= 设定话费阈值，且 实际成功率 < 设定成功率阈值
 								if (actualCallFee >= limitCallFee && actualSuccessRate < limitSuccessRate) {
 									console.warn("【系统自动拦截】发现不达标任务: [" + task.taskName + "], 话费:" + actualCallFee + ", 成功率:" + actualSuccessRate + "%。正在执行自动停止！");
-									
+
 									// 弹出右下角气泡提示（不阻挡用户视线）
 									layer.msg("已为您自动停止不达标任务: <br>" + task.taskName, {
 										icon: 0,
@@ -1607,7 +1480,7 @@
 									});
 
 									// 静默调用后端的停止接口 (调用现成的方法，传入 taskId 和 0表示停止)
-									monitor_tool.editStatus(task.taskId, 0); 
+									monitor_tool.editStatus(task.taskId, 0);
 								}
 							}
 						}
@@ -1650,7 +1523,7 @@
 			dataType: 'json',
 			height: 780,
 			async: true,
-			toolbar: '#taskTableToolbar', 
+			toolbar: '#taskTableToolbar',
 			defaultToolbar: ['filter', 'print', 'exports'],
 			where: {
 				project_id: project_id,
@@ -1679,15 +1552,6 @@
 					align: 'center',
 					minWidth: 120,
 					templet: function (d) {
-						// if (isTaskAutoMode) {
-						// 	if (d.status == 0) {
-						// 		// 保留 layui-btn-danger(红色)，去掉 onclick，增加 cursor: not-allowed 和半透明效果
-						// 		return '<a class="layui-btn layui-btn-xs layui-btn-danger" style="cursor: not-allowed; opacity: 0.6;" title="自动模式下由系统接管，不可手动操作">已停止</a>';
-						// 	} else {
-						// 		// 保留默认颜色(通常是墨绿色)，去掉 onclick，增加 cursor: not-allowed 和半透明效果
-						// 		return '<a class="layui-btn layui-btn-xs" style="cursor: not-allowed; opacity: 0.6;" title="自动模式下由系统接管，不可手动操作">正在执行</a>';
-						// 	}
-						// }
 						if (d.status == 0) {
 							return '<a class="layui-btn layui-btn-xs layui-btn-danger" title="点击执行该项目" onclick="monitor_tool.editStatus(' + d.taskId + ',1);">已停止</a>';
 						} else {
@@ -1742,7 +1606,7 @@
 							// 优：> 0.8
 							if (p > 0.8) {
 								text += ' <img src="images/good.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;" title="优">';
-							} 
+							}
 							// 差：< 0.6 并且 话费 > 20
 							else if (p < 0.6 && !isNaN(pb) && pb > 20) {
 								text += ' <img src="images/warm.png" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;" title="差">';
@@ -1751,7 +1615,7 @@
 						}
 						return text;
 					}
-				}, 
+				},
 				{
 					field: 'costAccounting',
 					title: '成本核算（元）',
@@ -1909,10 +1773,6 @@
 		return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00) + "%";
 	}
 
-
-
-
-
 	//渲染实时监控图
 	function echarts_init() {
 		const date1 = new Date()
@@ -1924,7 +1784,7 @@
 			dataType: 'json',
 			async: true,
 			headers: {
-				access_token:layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
 			},
 			data: {
 				project_id: $("#project_active").val(),
@@ -2239,13 +2099,13 @@
 						return d.transfer + "(" + d.transferPercent + "%)";
 					}
 
-				},{
+				}, {
 					field: 'zero_ticket',
 					title: '秒挂总计',
 					align: 'center',
 					minWidth: 100,
 					sort: true,
-					templet: function(d){
+					templet: function (d) {
 						return d.zero_ticket + "(" + GetPercent(d.zero_ticket, d.total) + ")";
 					}
 				}, {
@@ -2292,8 +2152,5 @@
 			}
 		});
 	}
-
-
 </script>
-
 </html>
