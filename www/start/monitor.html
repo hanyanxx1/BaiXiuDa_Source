@@ -366,11 +366,11 @@
       <input type="checkbox" name="switchStatus" lay-skin="switch" lay-text="自动模式|手动模式" lay-filter="autoModeFilter">
     </div>
 
-    <div style="display: flex; align-items: center; gap: 15px; margin-left: 20px; font-size: 15px; font-weight: 500;">
-      <span style="color: #333;">正在执行: <span id="ov-executing" style="font-weight: bold;">0</span></span>
-      <span style="color: #16baaa;">赞: <span id="ov-good" style="font-weight: bold;">0</span></span>
-      <span style="color: #ffb800;">观察: <span id="ov-observe" style="font-weight: bold;">0</span></span>
-      <span style="color: #ff5722;">差: <span id="ov-bad" style="font-weight: bold;">0</span></span>
+		<div style="display: flex; align-items: center; gap: 15px; margin-left: 20px; font-size: 15px; font-weight: 500;">
+      <span style="color: #333;">正在执行: <span id="ov-executing" style="font-weight: bold;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></span>
+      <span style="color: #16baaa;">赞: <span id="ov-good" style="font-weight: bold;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></span>
+      <span style="color: #ffb800;">观察: <span id="ov-observe" style="font-weight: bold;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></span>
+      <span style="color: #ff5722;">差: <span id="ov-bad" style="font-weight: bold;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></span>
     </div>
 
   </div>
@@ -518,7 +518,7 @@
 		// ===================== 【新增】自动模式下禁用下拉框 结束 =====================
 
 		// 【新增】计算并更新任务状态概览
-		if (tableData && tableData.length > 0) {
+		if (tableData) {
 			var countExecuting = 0;
 			var countGood = 0;
 			var countObserve = 0;
@@ -671,24 +671,26 @@
 			$("#agents").empty();
 			var project_id = $("#project_active").val();
 			if (obj.index == 3) {
-				// layui.use(['admin', 'echarts'], function () {
-				// 	echarts1 = layui.echarts;
-				// 	admin = layui.admin;
-				// 	echarts_earth();
-				// })
 				echarts_earth();
+			} else if (obj.index == 1) { // 【新增】切回到任务列表时
+				// 【核心修复】首次切入时，如果底层因为初始化隐藏而显示“无数据”，瞬间替换为高级 Loading 动画
+				var $tableMain = $('.layui-table-view[lay-id="LAY-user-manage-active4"] .layui-table-main');
+				if ($tableMain.find('.layui-none').length > 0) {
+					$tableMain.html('<div style="text-align:center; padding-top: 150px;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 40px; color: #009688;"></i><div style="margin-top: 20px; font-size: 16px; color: #999;">正在拉取实时数据...</div></div>');
+				}
+
+				if (taskTableIns) {
+					table.resize('LAY-user-manage-active4'); // 解决隐藏div下表格宽高度计算为0导致显示“无数据”的Layui底层Bug
+				}
+				taskReportData(project_id, timestamp); // 立即请求一次最新数据，告别干等5秒的尴尬
 			} else if (obj.index == 2) {
 				projectReportData(project_id);
 			} else if (obj.index == 4) {
 				form.render('select');
 				echarts_init();
-
-
-
 			}
 			monitor_tool.monitor(project_id);
 			element.render();
-
 		});
 		form.on('select(project_active)', function (data) { //监听项目下拉框
 			clearInterval(interval);
@@ -1486,6 +1488,14 @@
 						}
 					}
 					// ===================== 【新增】核心自动挂断算法 结束 =====================
+
+					// 【核心修复】如果当前表格被隐藏（用户切到了其他选项卡），只更新顶部数据概览，绝对拦截 reload！
+					// 防止 Layui 在 display:none 下执行 reload 导致高度坍塌成“无数据”
+					var $tableView = $('.layui-table-view[lay-id="LAY-user-manage-active4"]');
+					if ($tableView.length > 0 && !$tableView.is(':visible')) {
+						syncToolbarUI(data); // 依旧保持顶部概览的实时联动
+						return; // 强制终止，冻结表格 DOM
+					}
 
 					var scrollSelector = ".layui-table-view[lay-id='LAY-user-manage-active4'] .layui-table-main";
 					var currScrollTop = $(scrollSelector).scrollTop();
