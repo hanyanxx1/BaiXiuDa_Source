@@ -123,6 +123,12 @@
 										<td><span style="color: #ff5722;">差</span></td>
 										<td><span id="left-ov-bad" style="font-weight: bold; color: #ff5722;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></td>
 									</tr>
+									<tr>
+										<td>累计消费(元)</td>
+										<td><span id="left-spend" style="font-weight: bold; color: #333;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></td>
+										<td>成功单核算(元)</td>
+										<td><span id="left-success-accounting" style="font-weight: bold; color: #333;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></span></td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -681,11 +687,13 @@
 
 					// 【新增】全局启动任务列表和概览的数据拉取，不受选项卡限制
 					taskReportData(req_project_id, timestamp);
+					updateLeftPanelGatewayStat(req_project_id); // 【新增】同步拉取网关消费数据
 					if (!taskInterval) {
 						taskInterval = setInterval(function () {
 							var current_p_id = $("#project_active").val();
 							if (current_p_id && current_p_id != 0) {
 								taskReportData(current_p_id, timestamp);
+								updateLeftPanelGatewayStat(current_p_id); // 【新增】同步拉取网关消费数据
 							}
 						}, 5000);
 					}
@@ -744,6 +752,7 @@
 					getProjectTaskReport(project_id, timestamp);
 
 					taskReportData(project_id, timestamp); // 【新增】切换项目时立即拉取任务列表更新概览
+					updateLeftPanelGatewayStat(project_id); // 【新增】切换时立即拉取消费数据
 				}
 
 				echarts_init();
@@ -865,6 +874,7 @@
 			getProjectTaskReport(p_id, timestamp);
 
 			taskReportData(p_id, timestamp); // 【新增】手动刷新时立即拉取任务列表更新概览
+			updateLeftPanelGatewayStat(p_id); // 【新增】手动刷新时拉取消费数据
 
 			layer.closeAll('loading');
 		}
@@ -981,6 +991,36 @@
 			limit: 1000
 		});
 	}
+	
+	// 【新增】静默获取网关统计数据（累计消费、成功核算），仅用于左侧面板实时展示
+	function updateLeftPanelGatewayStat(project_id) {
+		$.ajax({
+			url: url + "admin/getGatewayStat",
+			type: 'post',
+			dataType: 'json',
+			headers: {
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+			},
+			data: {
+				project_id: project_id
+			},
+			success: function (res) {
+				var totalSpend = 0;
+				var totalAccounting = 0;
+				// 遍历所有线路/网关，把消费和核算累加（防止多条线路时数据遗漏）
+				if (res.data && res.data.length > 0) {
+					for (var i = 0; i < res.data.length; i++) {
+						totalSpend += parseFloat(res.data[i].spend) || 0;
+						totalAccounting += parseFloat(res.data[i].successfulAccounting) || 0;
+					}
+				}
+				// 赋值给左侧面板，并保留两位小数
+				$('#left-spend').text(totalSpend.toFixed(2));
+				$('#left-success-accounting').text(totalAccounting.toFixed(2));
+			}
+		});
+	}
+	
 	var reg = new RegExp("^[A-Za-z]+$");
 
 	function showTips(extno) {
@@ -1284,9 +1324,6 @@
 				success: function (obj) {
 					layer.closeAll('loading');
 					if (obj.data > 0) {
-						layer.msg("操作成功", {
-							icon: 1
-						});
 						taskReportData($("#project_active").val(), timestamp);
 					} else {
 						layer.msg("操作失败,请重试", {
