@@ -978,13 +978,15 @@
 				}, {
 					title: '工号(姓名)',
 					align: 'center',
+					minWidth: 160, // 【修改】给名字分配绝大部分空间，防止文字被折叠出现省略号
 					templet: function (d) {
 						return d.工号 + " (" + d.姓名 + ")";
 					}
 				}, {
 					field: '成功数',
 					title: '成功数',
-					align: 'center'
+					align: 'center',
+					width: 80 // 【修改】成功数只需要放数字，直接固定调窄
 				}]
 			],
 			limits: [10, 1000],
