@@ -55,11 +55,6 @@
 					class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-star"
 						style="font-size: 22px;color:#009688;"></i></button>
 
-				<!-- <button class="layui-btn layui-btn-primary  demo1">
-					<cite id="agent_name" style="font-size: 22px;color:#009688;">--</cite>
-					<i class="layui-icon layui-icon-down layui-font-12"></i>
-				</button> -->
-
 				<button class="layui-btn layui-btn-primary demo1">
 					<cite id="agent_status" style="font-size: 15px;color:#009688;">--</cite>
 					<i class="layui-icon layui-icon-down layui-font-12"></i>
@@ -71,156 +66,150 @@
 		</blockquote>
 		<div style="display: none;">
 			<audio id="remoteStream"></audio>
-
 		</div>
 
 		<div class="layui-bg-gray" style="margin-top: 20px;">
 			<div class="layui-row layui-col-space15">
-				<div class="layui-col-md12" id="info_div">
-					<div class="layui-card">
-						<div class="layui-card-header">
-							<a href="javascript:;"><span style="margin-left: 20px;" id="tel_phone" onclick="copyTelVal();"></span></a>
-							<!-- <a href="javascript:;" id="show_call_img" onclick="call();"
-								style="margin-left: 20px;display: none;"><img src="../start/images/call.png" /></a> -->
-								<input type="button" id="LAY-user-front-look-submit"  lay-submit lay-filter="LAY-user-front-look-submit"
-								 value="查看实号" class="layui-btn layui-btn-xs" style="display: none;">
+				
+				<div class="layui-col-md9">
+					<div class="layui-row layui-col-space15">
 
-						</div>
-						<div class="layui-card-body">
-							<div class="layui-tab" id="customer_tab" lay-filter="demo"
-								style="height: 150px;display: none;">
-								<ul class="layui-tab-title" id="tab_ul">
-								</ul>
-								</h2>
-								<div class="layui-tab-content" id="tab_div" style="font-size: 20px;color: black;">
+						<div class="layui-col-md12" id="info_div">
+							<div class="layui-card">
+								<div class="layui-card-header">
+									<a href="javascript:;"><span style="margin-left: 20px;" id="tel_phone" onclick="copyTelVal();"></span></a>
+										<input type="button" id="LAY-user-front-look-submit"  lay-submit lay-filter="LAY-user-front-look-submit"
+										 value="查看实号" class="layui-btn layui-btn-xs" style="display: none;">
+
 								</div>
-							</div>
-							<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-								<ul class="layui-tab-title">
-									<li class="layui-this">客户信息</li>
-								</ul>
-								<div class="layui-tab-content">
-									<div class="layui-tab-item layui-show">
-										<form class="layui-form" id="qc_action_customer" action=""
-											lay-filter="qc_action_customer">
-											<div class="layadmin-tips" style="margin-top: 130px;">
-												<i class="layui-icon" face>&#xe664;</i>
-												<div class="layui-text" style="font-size: 20px;">
-													没有客户信息哟 ^_^
-												</div>
-											</div>
-										</form>
-										<div class="layui-form-item" style="margin-top: 20px;">
-											<div class="layui-btn-group">
-												<input type="button" id="LAY-user-front-customer-submit" lay-submit
-													lay-filter="LAY-user-front-customer-submit" value="保存信息"
-													class="layui-btn">
-											</div>
-											<div class="layui-btn-group">
-												<input type="button" id="LAY-user-front-call-submit" lay-submit
-													lay-filter="LAY-user-front-call-submit" value="立即呼叫"
-													class="layui-btn">
-											</div>
-											<div class="layui-btn-group">
-												<input type="button" id="LAY-user-front-cblack-submit" lay-submit
-													lay-filter="LAY-user-front-cblack-submit" value="加入黑名单"
-													class="layui-btn layui-btn-danger">
-											</div>
-
-
-											<div class="layui-btn-group" style="float: right;">
-												<input type="button" id="LAY-user-front-digits-submit"
-													style="display: none;" lay-submit
-													lay-filter="LAY-user-front-digits-submit" value="获取密码"
-													class="layui-btn">
-											</div>
-											<div class="layui-btn-group" style="float: right;">
-												<input type="button" id="LAY-user-front-10086" style="display: none;"
-													lay-submit lay-filter="LAY-user-front-10086" value="服务密码"
-													class="layui-btn">
-											</div>
-											<label class="layui-form-label"></label>
-										</div>
-										<!-- <hr class="layui-border-green"> -->
-
-
-										<div class="layui-form-item">
-
+								<div class="layui-card-body">
+									<div class="layui-tab" id="customer_tab" lay-filter="demo"
+										style="height: 150px;display: none;">
+										<ul class="layui-tab-title" id="tab_ul">
+										</ul>
+										</h2>
+										<div class="layui-tab-content" id="tab_div" style="font-size: 20px;color: black;">
 										</div>
 									</div>
-								</div>
-							</div>
-							<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-								<ul class="layui-tab-title">
-									<li class="layui-this">短信</li>
-								</ul>
-								<div class="layui-tab-content">
-									<div class="layui-tab-item layui-show">
-										<div class="layui-form-item">
-											<label class="layui-form-label"></label>
-											<div class="layui-input-block">
-												<textarea placeholder="请输入内容" id="send_msg" name="send_msg"
-													class="layui-textarea"></textarea>
-											</div>
-											<div class="layui-inline" style="padding: 10px;margin-left: -10px;">
-												<label class="layui-form-label"></label>
-												<div class="layui-input-inline">
-													<input type="button" id="LAY-user-front-send-submit" lay-submit
-														lay-filter="LAY-user-front-send-submit" value="立即发送"
-														class="layui-btn">
+									<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+										<ul class="layui-tab-title">
+											<li class="layui-this">客户信息</li>
+										</ul>
+										<div class="layui-tab-content">
+											<div class="layui-tab-item layui-show">
+												<form class="layui-form" id="qc_action_customer" action=""
+													lay-filter="qc_action_customer">
+													<div class="layadmin-tips" style="margin-top: 130px;">
+														<i class="layui-icon" face>&#xe664;</i>
+														<div class="layui-text" style="font-size: 20px;">
+															没有客户信息哟 ^_^
+														</div>
+													</div>
+												</form>
+												<div class="layui-form-item" style="margin-top: 20px;">
+													<div class="layui-btn-group">
+														<input type="button" id="LAY-user-front-customer-submit" lay-submit
+															lay-filter="LAY-user-front-customer-submit" value="保存信息"
+															class="layui-btn">
+													</div>
+													<div class="layui-btn-group">
+														<input type="button" id="LAY-user-front-call-submit" lay-submit
+															lay-filter="LAY-user-front-call-submit" value="立即呼叫"
+															class="layui-btn">
+													</div>
+													<div class="layui-btn-group">
+														<input type="button" id="LAY-user-front-cblack-submit" lay-submit
+															lay-filter="LAY-user-front-cblack-submit" value="加入黑名单"
+															class="layui-btn layui-btn-danger">
+													</div>
+
+
+													<div class="layui-btn-group" style="float: right;">
+														<input type="button" id="LAY-user-front-digits-submit"
+															style="display: none;" lay-submit
+															lay-filter="LAY-user-front-digits-submit" value="获取密码"
+															class="layui-btn">
+													</div>
+													<div class="layui-btn-group" style="float: right;">
+														<input type="button" id="LAY-user-front-10086" style="display: none;"
+															lay-submit lay-filter="LAY-user-front-10086" value="服务密码"
+															class="layui-btn">
+													</div>
+													<label class="layui-form-label"></label>
+												</div>
+
+												<div class="layui-form-item">
+
 												</div>
 											</div>
 										</div>
-
 									</div>
+									<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+										<ul class="layui-tab-title">
+											<li class="layui-this">短信</li>
+										</ul>
+										<div class="layui-tab-content">
+											<div class="layui-tab-item layui-show">
+												<div class="layui-form-item">
+													<label class="layui-form-label"></label>
+													<div class="layui-input-block">
+														<textarea placeholder="请输入内容" id="send_msg" name="send_msg"
+															class="layui-textarea"></textarea>
+													</div>
+													<div class="layui-inline" style="padding: 10px;margin-left: -10px;">
+														<label class="layui-form-label"></label>
+														<div class="layui-input-inline">
+															<input type="button" id="LAY-user-front-send-submit" lay-submit
+																lay-filter="LAY-user-front-send-submit" value="立即发送"
+																class="layui-btn">
+														</div>
+													</div>
+												</div>
+
+											</div>
+										</div>
+									</div>
+
 								</div>
 							</div>
-
 						</div>
-					</div>
-				</div>
 
-				<div class="layui-col-md4" id="ai_div" style="display: none;">
+						<div class="layui-col-md4" id="ai_div" style="display: none;">
+							<div class="layui-card">
+								<div class="layui-card-header">
+									AI助手
+									<input style="display: none;"  type="button" id="LAY-user-front-takeover-submit" lay-submit
+																lay-filter="LAY-user-front-takeover-submit" value="人工介入"
+																class="layui-btn layui-btn-xs">
+								</div>
+								<div class="layui-card-body">
+									<div class="layim-chat-main" style="height: 70vh;" id="outDiv">
+										
+										<ul id="LAY_view">
+										</ul>
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+					</div> 
+				</div> 
+				<div class="layui-col-md3">
 					<div class="layui-card">
 						<div class="layui-card-header">
-							AI助手
-							<input style="display: none;"  type="button" id="LAY-user-front-takeover-submit" lay-submit
-														lay-filter="LAY-user-front-takeover-submit" value="人工介入"
-														class="layui-btn layui-btn-xs">
+							今日排行
+							<a href="javascript:;" onclick="if(window.table){layui.table.reload('LAY-user-ranking')}" style="float: right; color: #009688;" title="刷新">
+								<i class="layui-icon layui-icon-refresh"></i>
+							</a>
 						</div>
-						<div class="layui-card-body">
-							<div class="layim-chat-main" style="height: 70vh;" id="outDiv">
-								
-								<ul id="LAY_view">
-									<!-- <li>
-										<div class="layim-chat-user">
-											<img src="../start/images/RobotOutline.png">
-										</div>
-										<div class="layim-chat-text" style="margin-top: 0px;">
-											喂，您好, （停顿2s）您好，我这边是专业办理银行信用贷款和抵押贷款的。月息在5，6厘左右，（语气高昂兴奋）请问您最近有没有资金周转的需求啊？
-										</div>
-									</li>
-									<li class="layim-chat-mine">
-										<div class="layim-chat-user">
-											<img src="../start/images/user.png">
-											<cite><i>1480897882000</i>纸飞机</cite>
-										</div>
-										<div class="layim-chat-text ">
-											喂，您好, （停顿2s）您好，我这边是专业办理银行信用贷款和抵押贷款的。月息在5，6厘左右，（语气高昂兴奋）请问您最近有没有资金周转的需求啊？
-										</div>
-
-									</li> -->
-								</ul>
-							</div>
-
-
+						<div class="layui-card-body" style="padding: 10px 0;">
+							<table id="LAY-user-ranking" lay-filter="LAY-user-ranking"></table>
 						</div>
 					</div>
 				</div>
-
-			</div>
+				</div>
 		</div>
-
 
 	</div>
 
@@ -395,6 +384,7 @@
 						day = "0" + day;
 					}
 					var starttime = year + "-" + month + "-" + day+" 00:00:00";
+					var rankDate = year + "-" + month + "-" + day; // 【新增】用于排行榜查询
 
 		var permission = layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["permission"];
 		$("#phoneBtn").addClass("layui-btn layui-btn-disabled");
@@ -402,19 +392,10 @@
 		if (window.location.protocol == "https:") {
 			address_url = "https://addre.pscc.js.cn:8899/";
 			wsUrl = "wss://" + window.location.host + "/agent/monitor?" +layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
-			//wsUrl = "wss://a.psyai.cn/agent/monitor?" +layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
 		} else {
 			address_url = "http://addre.pscc.js.cn:8898/";
 			wsUrl = "ws://" + window.location.host + "/agent/monitor?" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
-			
-			//wsUrl = "wss://a.psyai.cn/agent/monitor?" + layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"];
 		}
-
-
-
-
-		//连接websocket
-		//createWebSocket(wsUrl);
 
 		//绑定签入签出
 		dropdown.render({
@@ -1106,6 +1087,99 @@
 			var message = document.getElementById('text').value;
 			websocket.send(message);
 		}
+
+		// =================== 【新增】右侧排行榜渲染逻辑 开始 ===================
+		function loadAgentRanking() {
+			table.render({
+				method: "post",
+				elem: '#LAY-user-ranking',
+				id: 'LAY-user-ranking',
+				url: url + 'admin/agentReport',
+				headers: {
+					access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+				},
+				where: {
+					project_id: 1, // 空值表示直接查询所有项目里当前员工们的全量排行
+					date: rankDate
+				},
+				parseData: function (res) {
+					function sortId(a, b) {
+						return b.successCount - a.successCount;
+					}
+					// 严格判断并排序，防止后端异常返回导致报错
+					var result = (res.data && Array.isArray(res.data)) ? res.data.sort(sortId) : [];
+
+					var re = [];
+					
+					// 【核心修改】：限制最多只展示前十名，保护排名靠后员工的心态
+					var displayLimit = result.length > 10 ? 10 : result.length;
+					
+					// 循环组装前端需要的数据格式
+					for (var i = 0; i < displayLimit; i++) {
+						var re1 = {};
+						re1['工号'] = result[i].ext;
+						re1['成功数'] = result[i].successCount;
+						re1['姓名'] = result[i].name;
+						re.push(re1);
+					}
+					return {
+						"code": res.code || 0,
+						"msg": res.msg,
+						"count": re.length,
+						"data": re
+					};
+				},
+				cols: [
+					[{
+						title: '排名',
+						align: 'center',
+						type: 'numbers',
+						width: 60
+					}, {
+						title: '姓名',
+						align: 'center',
+						minWidth: 140, // 保留足够的宽度展示完整的名字
+						templet: function (d) {
+							var html = d.姓名;
+							// Layui自动注入的 LAY_INDEX 表示当前行号，1即代表第一名
+							if (d.LAY_INDEX === 1) {
+								html += ' <img src="images/first.png" style="width:20px; height:20px; vertical-align:middle; margin-left:6px;" title="今日销冠">';
+							} else if (d.LAY_INDEX === 2) {
+								html += ' <img src="images/second.png" style="width:20px; height:20px; vertical-align:middle; margin-left:6px;" title="榜眼">';
+							} else if (d.LAY_INDEX === 3) {
+								html += ' <img src="images/third.png" style="width:20px; height:20px; vertical-align:middle; margin-left:6px;" title="探花">';
+							}
+							return html;
+						}
+					}, {
+						field: '成功数',
+						title: '成功数',
+						align: 'center',
+						width: 80
+					}]
+				],
+				height: 600, // 给定高度产生内滚，不撑破页面
+				page: false, // 监控类表格无需分页
+				limit: 1000
+			});
+		}
+
+		// 进页面初次加载排行榜
+		loadAgentRanking(); 
+		
+		// 设定每隔 15 秒在后台静默刷新一次排名数据
+		setInterval(function() {
+			if(window.table) {
+				table.reload('LAY-user-ranking', {
+					where: { 
+						project_id: project_id, // 【核心修改2】：定时器里也实时读取当前最新的 project_id
+						date: rankDate 
+					}
+				});
+			}
+		}, 10000);
+		// =================== 【新增】右侧排行榜渲染逻辑 结束 ===================
+
 		//注册软电话
 		if (document.location.protocol == "https:") {
 			
