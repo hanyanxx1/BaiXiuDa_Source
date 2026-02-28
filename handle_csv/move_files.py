@@ -1,3 +1,7 @@
+# 该脚本用于将指定目录下的所有 .csv 文件根据核心标识符进行分类并移动到新创建的文件夹中。
+# 每个文件夹的名称格式为：核心标识符-文件数量（例如：core1-3）。
+# 如果核心标识符相同，会将所有文件移动到一个文件夹中。
+
 import os
 import shutil
 from collections import defaultdict

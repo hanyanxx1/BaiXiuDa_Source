@@ -1,3 +1,6 @@
+# 该脚本用于通过 WPS 或 Excel 刷新指定目录下的所有 CSV 文件。
+# 它会自动打开每个文件，保存并关闭，确保文件内容是最新的。
+
 import os
 import glob
 import win32com.client as win32
