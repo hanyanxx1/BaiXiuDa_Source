@@ -1,3 +1,4 @@
+-- 36：
 -- 需求如下：
 -- 1. 按照传入的whereCondition 过滤数据
 -- 2. 对calleee164 被叫号码进行如下处理
@@ -230,9 +231,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- 调用示例
-CALL ExportDistinctGroupedCallData('e_cdr_20260110', '/var/lib/mysql-files/e_cdr_20260110', 
-    'calleee164 NOT LIKE "%QIANHAO%" 
+SET @where_condition = 'calleee164 NOT LIKE "%QIANHAO%" 
     AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
     AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
     AND calleee164 NOT LIKE "%/%" 
@@ -242,31 +241,7 @@ CALL ExportDistinctGroupedCallData('e_cdr_20260110', '/var/lib/mysql-files/e_cdr
     AND calleee164 NOT LIKE "%\\\\%" 
     AND calleee164 NOT LIKE "%*%" 
     AND calleee164 NOT LIKE "%-" 
-    AND holdtime <= 0'
-);
-CALL ExportDistinctGroupedCallData('e_cdr_20260111', '/var/lib/mysql-files/e_cdr_20260111', 
-    'calleee164 NOT LIKE "%QIANHAO%" 
-    AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
-    AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
-    AND calleee164 NOT LIKE "%/%" 
-    AND calleee164 NOT LIKE "%?%" 
-    AND calleee164 NOT LIKE "%,%" 
-    AND calleee164 NOT LIKE "%#%" 
-    AND calleee164 NOT LIKE "%\\\\%" 
-    AND calleee164 NOT LIKE "%*%" 
-    AND calleee164 NOT LIKE "%-" 
-    AND holdtime <= 0'
-);
-CALL ExportDistinctGroupedCallData('e_cdr_20260112', '/var/lib/mysql-files/e_cdr_20260112', 
-    'calleee164 NOT LIKE "%QIANHAO%" 
-    AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
-    AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
-    AND calleee164 NOT LIKE "%/%" 
-    AND calleee164 NOT LIKE "%?%" 
-    AND calleee164 NOT LIKE "%,%" 
-    AND calleee164 NOT LIKE "%#%" 
-    AND calleee164 NOT LIKE "%\\\\%" 
-    AND calleee164 NOT LIKE "%*%" 
-    AND calleee164 NOT LIKE "%-" 
-    AND holdtime <= 0'
-);
+    AND holdtime <= 0';
+CALL ExportDistinctGroupedCallData('e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260301', '/var/lib/mysql-files/e_cdr_20260301', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260302', '/var/lib/mysql-files/e_cdr_20260302', @where_condition);
