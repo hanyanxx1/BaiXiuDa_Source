@@ -14,8 +14,8 @@ def process_cdr_files(folder_param):
         rf"F:\00秒话单\007-DDDD-36.139.251.203-0秒\{folder_param}"
     ]
 
-    # 修改需求1：将输出基准路径设定为 path_1
-    out_base_dir = path_1
+    # 修改需求：将输出基准路径设定为 path_1 下的“汇总”文件夹
+    out_base_dir = os.path.join(path_1, "汇总")
     os.makedirs(out_base_dir, exist_ok=True)
 
     # 2. 遍历路径，按“主叫”归类文件
@@ -86,7 +86,7 @@ def process_cdr_files(folder_param):
             print(f"-> 主叫 {caller} 数据为空，跳过输出。")
             continue
 
-        # 修改需求2：创建类似 “主叫-文件个数” 的专属文件夹
+        # 在“汇总”目录下创建类似 “主叫-文件个数” 的专属文件夹
         caller_out_dir = os.path.join(out_base_dir, f"{caller}-{num_chunks}")
         os.makedirs(caller_out_dir, exist_ok=True)
 
@@ -103,7 +103,7 @@ def process_cdr_files(folder_param):
 
             # 导出 CSV，加入 utf-8-sig 防止在中文 Windows 下用 Excel 打开乱码
             chunk_df.to_csv(out_filepath, index=False, encoding='utf-8-sig')
-            print(f"   [保存] -> {caller}-{num_chunks}\\{out_filename} (包含 {len(chunk_df)} 条)")
+            print(f"   [保存] -> 汇总\\{caller}-{num_chunks}\\{out_filename} (包含 {len(chunk_df)} 条)")
 
 if __name__ == "__main__":
     # 1. 交互式输入参数（即子文件夹名称）
@@ -114,6 +114,7 @@ if __name__ == "__main__":
     
     if param:
         process_cdr_files(param)
-        print(f"\n处理完成！请前往 F:\\00秒话单\\005-AAAA-112.25.240.74-0秒\\{param} 目录下查看分类结果。")
+        # 更新了底部的完成提示路径
+        print(f"\n处理完成！请前往 F:\\00秒话单\\005-AAAA-112.25.240.74-0秒\\{param}\\汇总 目录下查看分类结果。")
     else:
         print("参数不能为空！")
