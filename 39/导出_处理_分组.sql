@@ -210,100 +210,102 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL ExportCallData('e_cdr_20260227', '/var/lib/mysql-files/e_cdr_20260227/all/', 'holdtime <= 0');
--- 20260228
-CALL ExportCallData('e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228/all/', 'holdtime <= 0');
+-- 39：
+CALL ExportDistinctGroupedCallData ( 'e_cdr_20260227', '/var/lib/mysql-files/e_cdr_20260227/', 'holdtime <= 0' );
+-- 2026年2月28日
+CALL ExportDistinctGroupedCallData ( 'e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228/', 'holdtime <= 0' );
 
--- 20260301
-CALL ExportCallData('e_cdr_20260301', '/var/lib/mysql-files/e_cdr_20260301/all/', 'holdtime <= 0');
+-- 2026年3月1日
+CALL ExportDistinctGroupedCallData ( 'e_cdr_20260301', '/var/lib/mysql-files/e_cdr_20260301/', 'holdtime <= 0' );
 
--- 20260302
-CALL ExportCallData('e_cdr_20260302', '/var/lib/mysql-files/e_cdr_20260302/all/', 'holdtime <= 0');
+-- 2026年3月2日
+CALL ExportDistinctGroupedCallData ( 'e_cdr_20260302', '/var/lib/mysql-files/e_cdr_20260302/', 'holdtime <= 0' );
 
--- -- 20260303
--- CALL ExportCallData('e_cdr_20260303', '/var/lib/mysql-files/e_cdr_20260303/all/', 'holdtime <= 0');
+-- -- 2026年3月3日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260303', '/var/lib/mysql-files/e_cdr_20260303/', 'holdtime <= 0' );
 -- 
--- -- 20260304
--- CALL ExportCallData('e_cdr_20260304', '/var/lib/mysql-files/e_cdr_20260304/all/', 'holdtime <= 0');
+-- -- 2026年3月4日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260304', '/var/lib/mysql-files/e_cdr_20260304/', 'holdtime <= 0' );
 -- 
--- -- 20260305
--- CALL ExportCallData('e_cdr_20260305', '/var/lib/mysql-files/e_cdr_20260305/all/', 'holdtime <= 0');
+-- -- 2026年3月5日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260305', '/var/lib/mysql-files/e_cdr_20260305/', 'holdtime <= 0' );
 -- 
--- -- 20260306
--- CALL ExportCallData('e_cdr_20260306', '/var/lib/mysql-files/e_cdr_20260306/all/', 'holdtime <= 0');
+-- -- 2026年3月6日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260306', '/var/lib/mysql-files/e_cdr_20260306/', 'holdtime <= 0' );
 -- 
--- -- 20260307
--- CALL ExportCallData('e_cdr_20260307', '/var/lib/mysql-files/e_cdr_20260307/all/', 'holdtime <= 0');
+-- -- 2026年3月7日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260307', '/var/lib/mysql-files/e_cdr_20260307/', 'holdtime <= 0' );
 -- 
--- -- 20260308
--- CALL ExportCallData('e_cdr_20260308', '/var/lib/mysql-files/e_cdr_20260308/all/', 'holdtime <= 0');
+-- -- 2026年3月8日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260308', '/var/lib/mysql-files/e_cdr_20260308/', 'holdtime <= 0' );
 -- 
--- -- 20260309
--- CALL ExportCallData('e_cdr_20260309', '/var/lib/mysql-files/e_cdr_20260309/all/', 'holdtime <= 0');
+-- -- 2026年3月9日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260309', '/var/lib/mysql-files/e_cdr_20260309/', 'holdtime <= 0' );
 -- 
--- -- 20260310
--- CALL ExportCallData('e_cdr_20260310', '/var/lib/mysql-files/e_cdr_20260310/all/', 'holdtime <= 0');
+-- -- 2026年3月10日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260310', '/var/lib/mysql-files/e_cdr_20260310/', 'holdtime <= 0' );
 -- 
--- -- 20260311
--- CALL ExportCallData('e_cdr_20260311', '/var/lib/mysql-files/e_cdr_20260311/all/', 'holdtime <= 0');
+-- -- 2026年3月11日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260311', '/var/lib/mysql-files/e_cdr_20260311/', 'holdtime <= 0' );
 -- 
--- -- 20260312
--- CALL ExportCallData('e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312/all/', 'holdtime <= 0');
+-- -- 2026年3月12日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312/', 'holdtime <= 0' );
 -- 
--- -- 20260313
--- CALL ExportCallData('e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313/all/', 'holdtime <= 0');
+-- -- 2026年3月13日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313/', 'holdtime <= 0' );
 -- 
--- -- 20260314
--- CALL ExportCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314/all/', 'holdtime <= 0');
+-- -- 2026年3月14日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314/', 'holdtime <= 0' );
 -- 
--- -- 20260315
--- CALL ExportCallData('e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315/all/', 'holdtime <= 0');
+-- -- 2026年3月15日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315/', 'holdtime <= 0' );
 -- 
--- -- 20260316
--- CALL ExportCallData('e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316/all/', 'holdtime <= 0');
+-- -- 2026年3月16日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316/', 'holdtime <= 0' );
 -- 
--- -- 20260317
--- CALL ExportCallData('e_cdr_20260317', '/var/lib/mysql-files/e_cdr_20260317/all/', 'holdtime <= 0');
+-- -- 2026年3月17日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260317', '/var/lib/mysql-files/e_cdr_20260317/', 'holdtime <= 0' );
 -- 
--- -- 20260318
--- CALL ExportCallData('e_cdr_20260318', '/var/lib/mysql-files/e_cdr_20260318/all/', 'holdtime <= 0');
+-- -- 2026年3月18日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260318', '/var/lib/mysql-files/e_cdr_20260318/', 'holdtime <= 0' );
 -- 
--- -- 20260319
--- CALL ExportCallData('e_cdr_20260319', '/var/lib/mysql-files/e_cdr_20260319/all/', 'holdtime <= 0');
+-- -- 2026年3月19日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260319', '/var/lib/mysql-files/e_cdr_20260319/', 'holdtime <= 0' );
 -- 
--- -- 20260320
--- CALL ExportCallData('e_cdr_20260320', '/var/lib/mysql-files/e_cdr_20260320/all/', 'holdtime <= 0');
+-- -- 2026年3月20日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260320', '/var/lib/mysql-files/e_cdr_20260320/', 'holdtime <= 0' );
 -- 
--- -- 20260321
--- CALL ExportCallData('e_cdr_20260321', '/var/lib/mysql-files/e_cdr_20260321/all/', 'holdtime <= 0');
+-- -- 2026年3月21日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260321', '/var/lib/mysql-files/e_cdr_20260321/', 'holdtime <= 0' );
 -- 
--- -- 20260322
--- CALL ExportCallData('e_cdr_20260322', '/var/lib/mysql-files/e_cdr_20260322/all/', 'holdtime <= 0');
+-- -- 2026年3月22日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260322', '/var/lib/mysql-files/e_cdr_20260322/', 'holdtime <= 0' );
 -- 
--- -- 20260323
--- CALL ExportCallData('e_cdr_20260323', '/var/lib/mysql-files/e_cdr_20260323/all/', 'holdtime <= 0');
+-- -- 2026年3月23日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260323', '/var/lib/mysql-files/e_cdr_20260323/', 'holdtime <= 0' );
 -- 
--- -- 20260324
--- CALL ExportCallData('e_cdr_20260324', '/var/lib/mysql-files/e_cdr_20260324/all/', 'holdtime <= 0');
+-- -- 2026年3月24日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260324', '/var/lib/mysql-files/e_cdr_20260324/', 'holdtime <= 0' );
 -- 
--- -- 20260325
--- CALL ExportCallData('e_cdr_20260325', '/var/lib/mysql-files/e_cdr_20260325/all/', 'holdtime <= 0');
+-- -- 2026年3月25日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260325', '/var/lib/mysql-files/e_cdr_20260325/', 'holdtime <= 0' );
 -- 
--- -- 20260326
--- CALL ExportCallData('e_cdr_20260326', '/var/lib/mysql-files/e_cdr_20260326/all/', 'holdtime <= 0');
+-- -- 2026年3月26日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260326', '/var/lib/mysql-files/e_cdr_20260326/', 'holdtime <= 0' );
 -- 
--- -- 20260327
--- CALL ExportCallData('e_cdr_20260327', '/var/lib/mysql-files/e_cdr_20260327/all/', 'holdtime <= 0');
+-- -- 2026年3月27日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260327', '/var/lib/mysql-files/e_cdr_20260327/', 'holdtime <= 0' );
 -- 
--- -- 20260328
--- CALL ExportCallData('e_cdr_20260328', '/var/lib/mysql-files/e_cdr_20260328/all/', 'holdtime <= 0');
+-- -- 2026年3月28日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260328', '/var/lib/mysql-files/e_cdr_20260328/', 'holdtime <= 0' );
 -- 
--- -- 20260329
--- CALL ExportCallData('e_cdr_20260329', '/var/lib/mysql-files/e_cdr_20260329/all/', 'holdtime <= 0');
+-- -- 2026年3月29日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260329', '/var/lib/mysql-files/e_cdr_20260329/', 'holdtime <= 0' );
 -- 
--- -- 20260330
--- CALL ExportCallData('e_cdr_20260330', '/var/lib/mysql-files/e_cdr_20260330/all/', 'holdtime <= 0');
+-- -- 2026年3月30日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260330', '/var/lib/mysql-files/e_cdr_20260330/', 'holdtime <= 0' );
 -- 
--- -- 20260331
--- CALL ExportCallData('e_cdr_20260331', '/var/lib/mysql-files/e_cdr_20260331/all/', 'holdtime <= 0');
+-- -- 2026年3月31日
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260331', '/var/lib/mysql-files/e_cdr_20260331/', 'holdtime <= 0' );
+
 -- 

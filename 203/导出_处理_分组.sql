@@ -211,6 +211,7 @@ END //
 
 DELIMITER;
 
+-- 203
 CALL ExportDistinctGroupedCallData ( 'e_cdr_20260227', '/var/lib/mysql-files/e_cdr_20260227/', 'holdtime <= 0' );
 -- 2026年2月28日
 CALL ExportDistinctGroupedCallData ( 'e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228/', 'holdtime <= 0' );

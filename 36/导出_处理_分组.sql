@@ -242,6 +242,6 @@ SET @where_condition = 'calleee164 NOT LIKE "%QIANHAO%"
     AND calleee164 NOT LIKE "%*%" 
     AND calleee164 NOT LIKE "%-" 
     AND holdtime <= 0';
-CALL ExportDistinctGroupedCallData('e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228', @where_condition);
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228', @where_condition);
 CALL ExportDistinctGroupedCallData('e_cdr_20260301', '/var/lib/mysql-files/e_cdr_20260301', @where_condition);
 CALL ExportDistinctGroupedCallData('e_cdr_20260302', '/var/lib/mysql-files/e_cdr_20260302', @where_condition);

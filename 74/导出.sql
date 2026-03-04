@@ -100,9 +100,9 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL ExportCallData('e_cdr_20260227', '/var/lib/mysql-files/e_cdr_20260227/all/', 'holdtime <= 0');
+-- CALL ExportCallData('e_cdr_20260227', '/var/lib/mysql-files/e_cdr_20260227/all/', 'holdtime <= 0');
 -- 20260228
-CALL ExportCallData('e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228/all/', 'holdtime <= 0');
+-- CALL ExportCallData('e_cdr_20260228', '/var/lib/mysql-files/e_cdr_20260228/all/', 'holdtime <= 0');
 
 -- 20260301
 CALL ExportCallData('e_cdr_20260301', '/var/lib/mysql-files/e_cdr_20260301/all/', 'holdtime <= 0');
