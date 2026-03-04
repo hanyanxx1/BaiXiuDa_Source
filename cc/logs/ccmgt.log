@@ -1,0 +1,1102 @@
+2026-02-28 11:45:25.184 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:28.219 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:31.292 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:34.368 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:37.435 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:40.517 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:43.586 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:46.654 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:49.800 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:52.793 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:55.877 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:45:58.933 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:02.037 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:05.095 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:08.142 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:11.233 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:14.285 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:17.369 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:20.450 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:23.515 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:26.608 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:29.669 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:32.746 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:35.820 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:38.873 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:41.961 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:45.015 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:48.099 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:51.159 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:54.238 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:46:57.316 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:00.385 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:03.445 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:06.529 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:09.597 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:12.672 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:15.812 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:18.812 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:21.902 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:24.949 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:28.027 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:31.095 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:34.153 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:37.238 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:40.317 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:43.383 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:46.435 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:49.525 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:52.606 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:55.686 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:47:58.740 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:48:01.824 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:48:04.896 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:48:08.044 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:48:11.053 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:48:14.100 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:48:17.204 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-28 11:48:20.250 - [WARN ] - esl
+org.freeswitch.esl.client.inbound.InboundConnectionException: Could not connect to /61.158.166.40:8021
+	at org.freeswitch.esl.client.inbound.Client.connect(Client.java:134)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.monitor(FreeSwitchManage.java:86)
+	at cn.psycall.ccmgt.util.FreeSwitchManage.run(FreeSwitchManage.java:42)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedNoRouteToHostException: No route to host: /61.158.166.40:8021
+Caused by: java.net.NoRouteToHostException: No route to host
+	at java.base/sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:777)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:707)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:655)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:581)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:829)

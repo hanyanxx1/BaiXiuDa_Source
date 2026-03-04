@@ -1,0 +1,386 @@
+2026-02-23 00:01:01.623 - [INFO ] - pscc destroy
+2026-02-23 00:01:01.732 - [INFO ] - hikari-pool - Shutdown initiated...
+2026-02-23 00:01:01.743 - [INFO ] - hikari-pool - Shutdown completed.
+2026-02-23 00:03:20.725 - [INFO ] - Starting PsccApplication v20.21 using Java 11.0.29 on 142-0 with PID 4907 (/usr/local/cc/pscc-20.21.jar started by root in /usr/local/cc)
+2026-02-23 00:03:20.766 - [INFO ] - No active profile set, falling back to default profiles: default
+2026-02-23 00:03:30.653 - [INFO ] - Initializing ProtocolHandler ["https-jsse-nio-52666"]
+2026-02-23 00:03:30.658 - [INFO ] - Starting service [Tomcat]
+2026-02-23 00:03:30.659 - [INFO ] - Starting Servlet engine: [Apache Tomcat/9.0.41]
+2026-02-23 00:03:30.934 - [INFO ] - Initializing Spring embedded WebApplicationContext
+2026-02-23 00:03:40.830 - [INFO ] - Starting ProtocolHandler ["https-jsse-nio-52666"]
+2026-02-23 00:03:41.454 - [INFO ] - Started PsccApplication in 26.047 seconds (JVM running for 29.944)
+2026-02-23 00:03:41.487 - [INFO ] - pscc init
+2026-02-23 00:03:42.514 - [INFO ] - RabbitMQ connected!
+2026-02-23 00:03:42.739 - [INFO ] - hikari-pool - Starting...
+2026-02-23 00:03:44.462 - [INFO ] - hikari-pool - Start completed.
+2026-02-23 00:04:23.257 - [INFO ] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-23 04:07:02.842 - [INFO ] - pscc destroy
+2026-02-23 04:07:02.927 - [INFO ] - hikari-pool - Shutdown initiated...
+2026-02-23 04:07:02.952 - [INFO ] - hikari-pool - Shutdown completed.
+2026-02-23 04:09:01.440 - [INFO ] - Starting PsccApplication v20.21 using Java 11.0.29 on 142-0 with PID 4786 (/usr/local/cc/pscc-20.21.jar started by root in /usr/local/cc)
+2026-02-23 04:09:01.471 - [INFO ] - No active profile set, falling back to default profiles: default
+2026-02-23 04:09:10.297 - [INFO ] - Initializing ProtocolHandler ["https-jsse-nio-52666"]
+2026-02-23 04:09:10.299 - [INFO ] - Starting service [Tomcat]
+2026-02-23 04:09:10.300 - [INFO ] - Starting Servlet engine: [Apache Tomcat/9.0.41]
+2026-02-23 04:09:10.574 - [INFO ] - Initializing Spring embedded WebApplicationContext
+2026-02-23 04:09:19.300 - [INFO ] - Starting ProtocolHandler ["https-jsse-nio-52666"]
+2026-02-23 04:09:19.857 - [INFO ] - Started PsccApplication in 23.103 seconds (JVM running for 27.333)
+2026-02-23 04:09:19.872 - [INFO ] - pscc init
+2026-02-23 04:09:20.614 - [INFO ] - RabbitMQ connected!
+2026-02-23 04:09:20.748 - [INFO ] - hikari-pool - Starting...
+2026-02-23 04:09:22.408 - [INFO ] - hikari-pool - Start completed.
+2026-02-23 04:09:23.181 - [INFO ] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-23 08:37:54.682 - [WARN ] - websocket
+java.lang.IllegalStateException: The WebSocket session [3b] has been closed and no method (apart from close()) may be called on a closed session
+	at org.apache.tomcat.websocket.WsSession.checkState(WsSession.java:871)
+	at org.apache.tomcat.websocket.WsSession.getBasicRemote(WsSession.java:434)
+	at cn.psycall.ws.WsServer.sendText(WsServer.java:152)
+	at cn.psycall.ws.WsServer.sendMessage(WsServer.java:87)
+	at cn.psycall.util.Rabbit$1.lambda$handleDelivery$0(Rabbit.java:37)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-23 09:39:34.663 - [WARN ] - post nextCall
+org.springframework.web.client.ResourceAccessException: I/O error on POST request for "http://127.0.0.1:8020/common/nextCall": Read timed out; nested exception is java.net.SocketTimeoutException: Read timed out
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:791)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:717)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:608)
+	at cn.psycall.util.Mgt.nextCall(Mgt.java:191)
+	at cn.psycall.controller.Agent.nextCall(Agent.java:365)
+	at jdk.internal.reflect.GeneratedMethodAccessor572.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:903)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:809)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1072)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:652)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:733)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at cn.psycall.filter.SecureFilter.doFilter(SecureFilter.java:63)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at cn.psycall.filter.XssFilter.doFilter(XssFilter.java:32)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:542)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:143)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:374)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:888)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1597)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(SocketInputStream.java:115)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:168)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:140)
+	at org.apache.http.impl.io.SessionInputBufferImpl.streamRead(SessionInputBufferImpl.java:137)
+	at org.apache.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:153)
+	at org.apache.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:280)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:138)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:56)
+	at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:259)
+	at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:163)
+	at org.apache.http.impl.conn.CPoolProxy.receiveResponseHeader(CPoolProxy.java:157)
+	at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:273)
+	at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:125)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:272)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:87)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:782)
+	... 59 common frames omitted
+2026-02-23 10:09:35.151 - [WARN ] - post nextCall
+org.springframework.web.client.ResourceAccessException: I/O error on POST request for "http://127.0.0.1:8020/common/nextCall": Read timed out; nested exception is java.net.SocketTimeoutException: Read timed out
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:791)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:717)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:608)
+	at cn.psycall.util.Mgt.nextCall(Mgt.java:191)
+	at cn.psycall.controller.Agent.nextCall(Agent.java:365)
+	at jdk.internal.reflect.GeneratedMethodAccessor572.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:903)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:809)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1072)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:652)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:733)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at cn.psycall.filter.SecureFilter.doFilter(SecureFilter.java:63)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at cn.psycall.filter.XssFilter.doFilter(XssFilter.java:32)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:542)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:143)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:374)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:888)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1597)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(SocketInputStream.java:115)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:168)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:140)
+	at org.apache.http.impl.io.SessionInputBufferImpl.streamRead(SessionInputBufferImpl.java:137)
+	at org.apache.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:153)
+	at org.apache.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:280)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:138)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:56)
+	at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:259)
+	at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:163)
+	at org.apache.http.impl.conn.CPoolProxy.receiveResponseHeader(CPoolProxy.java:157)
+	at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:273)
+	at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:125)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:272)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:87)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:782)
+	... 59 common frames omitted
+2026-02-23 10:09:36.511 - [WARN ] - post nextCall
+org.springframework.web.client.ResourceAccessException: I/O error on POST request for "http://127.0.0.1:8020/common/nextCall": Read timed out; nested exception is java.net.SocketTimeoutException: Read timed out
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:791)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:717)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:608)
+	at cn.psycall.util.Mgt.nextCall(Mgt.java:191)
+	at cn.psycall.controller.Agent.nextCall(Agent.java:365)
+	at jdk.internal.reflect.GeneratedMethodAccessor572.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:903)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:809)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1072)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:652)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:733)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at cn.psycall.filter.SecureFilter.doFilter(SecureFilter.java:63)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at cn.psycall.filter.XssFilter.doFilter(XssFilter.java:32)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:542)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:143)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:374)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:888)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1597)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(SocketInputStream.java:115)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:168)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:140)
+	at org.apache.http.impl.io.SessionInputBufferImpl.streamRead(SessionInputBufferImpl.java:137)
+	at org.apache.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:153)
+	at org.apache.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:280)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:138)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:56)
+	at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:259)
+	at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:163)
+	at org.apache.http.impl.conn.CPoolProxy.receiveResponseHeader(CPoolProxy.java:157)
+	at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:273)
+	at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:125)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:272)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:87)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:782)
+	... 59 common frames omitted
+2026-02-23 10:51:07.660 - [WARN ] - websocket
+java.lang.NullPointerException: null
+	at cn.psycall.ws.WsServer.sendMessage(WsServer.java:84)
+	at cn.psycall.util.Rabbit$1.lambda$handleDelivery$0(Rabbit.java:37)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2026-02-23 10:59:22.092 - [WARN ] - websocket
+java.lang.NullPointerException: null
+2026-02-23 10:59:22.931 - [WARN ] - websocket
+java.lang.NullPointerException: null
+2026-02-23 14:25:57.667 - [WARN ] - websocket
+java.lang.NullPointerException: null
+2026-02-23 14:25:59.895 - [WARN ] - websocket
+java.lang.NullPointerException: null
+2026-02-23 20:23:55.673 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:56.197 - [INFO ] - 编码格式：GB18030
+2026-02-23 20:23:56.630 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:56.853 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:57.067 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:57.263 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:57.448 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:57.838 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:58.052 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:58.270 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:58.494 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:58.707 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:58.890 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:59.065 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:59.252 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:23:59.591 - [INFO ] - 编码格式：GB18030
+2026-02-23 20:23:59.884 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:00.229 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:00.460 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:00.679 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:00.896 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:12.814 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:13.029 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:13.215 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:13.409 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:13.636 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:14.762 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:14.897 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:15.119 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:15.371 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:15.588 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:15.854 - [INFO ] - 编码格式：GB18030
+2026-02-23 20:24:16.093 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:16.317 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:16.536 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:16.933 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:17.153 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:17.380 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:17.846 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:24:18.107 - [INFO ] - 编码格式：GB18030
+2026-02-23 20:33:07.373 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:07.810 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:08.069 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:08.295 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:08.526 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:08.840 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:09.061 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:09.285 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:09.533 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:09.769 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:10.015 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:20.513 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:20.749 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:20.984 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:21.211 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:21.665 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:22.027 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:22.227 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:22.403 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:22.736 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:22.928 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:23.156 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:23.392 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:23.634 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:23.857 - [INFO ] - 编码格式：UTF-8
+2026-02-23 20:33:24.040 - [INFO ] - 编码格式：UTF-8
