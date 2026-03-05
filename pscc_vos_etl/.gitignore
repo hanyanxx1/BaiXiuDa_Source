@@ -1,0 +1,16 @@
+# 忽略 Python 缓存
+__pycache__/
+*.py[cod]
+
+# 忽略环境配置（以后咱们把数据库密码写在 .env 里，绝对不传 Git）
+.env
+
+# 忽略本地导出的临时数据文件
+*.csv
+*.xlsx
+data/
+temp/
+
+# 忽略 IDE 配置
+.vscode/
+.idea/
