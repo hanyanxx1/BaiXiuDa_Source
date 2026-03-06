@@ -6,6 +6,14 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import ProgrammingError
 
 # ==========================================
+# [修改开始：引入 urllib.parse 用于转义密码中的特殊字符]
+# ==========================================
+import urllib.parse
+# ==========================================
+# [修改结束]
+# ==========================================
+
+# ==========================================
 # 1. 数据库配置 (FinalShell 隧道直连版)
 # ==========================================
 CC_DB_CONFIG = {
@@ -44,14 +52,24 @@ def process_single_date(target_date):
     print(f"\n[{target_date}] 🚀 开始执行该日话单对账...")
 
     try:
-        cc_engine_url = f"mysql+pymysql://{CC_DB_CONFIG['user']}:{CC_DB_CONFIG['password']}@{CC_DB_CONFIG['host']}:{CC_DB_CONFIG['port']}/{CC_DB_CONFIG['database']}?charset={CC_DB_CONFIG['charset']}"
+# ==========================================
+# [修改开始：对包含特殊字符(@)的密码进行 URL 转义，防止 SQLAlchemy 解析错乱]
+# ==========================================
+        cc_pwd = urllib.parse.quote_plus(CC_DB_CONFIG['password'])
+        vos_pwd = urllib.parse.quote_plus(VOS_DB_CONFIG['password'])
+        report_pwd = urllib.parse.quote_plus(REPORT_DB_CONFIG['password'])
+
+        cc_engine_url = f"mysql+pymysql://{CC_DB_CONFIG['user']}:{cc_pwd}@{CC_DB_CONFIG['host']}:{CC_DB_CONFIG['port']}/{CC_DB_CONFIG['database']}?charset={CC_DB_CONFIG['charset']}"
         cc_engine = create_engine(cc_engine_url)
 
-        vos_engine_url = f"mysql+pymysql://{VOS_DB_CONFIG['user']}:{VOS_DB_CONFIG['password']}@{VOS_DB_CONFIG['host']}:{VOS_DB_CONFIG['port']}/{VOS_DB_CONFIG['database']}?charset={VOS_DB_CONFIG['charset']}"
+        vos_engine_url = f"mysql+pymysql://{VOS_DB_CONFIG['user']}:{vos_pwd}@{VOS_DB_CONFIG['host']}:{VOS_DB_CONFIG['port']}/{VOS_DB_CONFIG['database']}?charset={VOS_DB_CONFIG['charset']}"
         vos_engine = create_engine(vos_engine_url)
         
-        report_engine_url = f"mysql+pymysql://{REPORT_DB_CONFIG['user']}:{REPORT_DB_CONFIG['password']}@{REPORT_DB_CONFIG['host']}:{REPORT_DB_CONFIG['port']}/{REPORT_DB_CONFIG['database']}?charset={REPORT_DB_CONFIG['charset']}"
+        report_engine_url = f"mysql+pymysql://{REPORT_DB_CONFIG['user']}:{report_pwd}@{REPORT_DB_CONFIG['host']}:{REPORT_DB_CONFIG['port']}/{REPORT_DB_CONFIG['database']}?charset={REPORT_DB_CONFIG['charset']}"
         report_engine = create_engine(report_engine_url)
+# ==========================================
+# [修改结束]
+# ==========================================
 
         admin_sql = "SELECT id FROM admin"
         admin_df = pd.read_sql(admin_sql, cc_engine)
@@ -102,9 +120,6 @@ def process_single_date(target_date):
                  print(f"     ⚠️ VOS库中未找到该租户对应的底层话单，跳过。")
                  continue
 
-# ==========================================
-# [修改开始：将容差从 3s 放宽到 60s，给足客户响铃接听的时间差]
-# ==========================================
             print(f"     🔄 [对账点3] 正在进行 Pandas 60秒 容差融合...")
 
             # 4. Pandas 容差匹配
@@ -118,11 +133,8 @@ def process_single_date(target_date):
 
             merged_df = pd.merge_asof(
                 df_cc, df_vos, on='match_time', by='target_number',
-                tolerance=pd.Timedelta('60s'), direction='nearest'  # <--- 核心修改：60秒容差
+                tolerance=pd.Timedelta('60s'), direction='nearest'
             )
-# ==========================================
-# [修改结束]
-# ==========================================
 
             # 5. 保留列
             columns_to_keep = [
