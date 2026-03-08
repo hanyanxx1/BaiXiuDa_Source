@@ -4,14 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import ProgrammingError
-
-# ==========================================
-# [修改开始：引入 urllib.parse 用于转义密码中的特殊字符]
-# ==========================================
 import urllib.parse
-# ==========================================
-# [修改结束]
-# ==========================================
 
 # ==========================================
 # 1. 数据库配置 (FinalShell 隧道直连版)
@@ -52,9 +45,6 @@ def process_single_date(target_date):
     print(f"\n[{target_date}] 🚀 开始执行该日话单对账...")
 
     try:
-# ==========================================
-# [修改开始：对包含特殊字符(@)的密码进行 URL 转义，防止 SQLAlchemy 解析错乱]
-# ==========================================
         cc_pwd = urllib.parse.quote_plus(CC_DB_CONFIG['password'])
         vos_pwd = urllib.parse.quote_plus(VOS_DB_CONFIG['password'])
         report_pwd = urllib.parse.quote_plus(REPORT_DB_CONFIG['password'])
@@ -67,9 +57,6 @@ def process_single_date(target_date):
         
         report_engine_url = f"mysql+pymysql://{REPORT_DB_CONFIG['user']}:{report_pwd}@{REPORT_DB_CONFIG['host']}:{REPORT_DB_CONFIG['port']}/{REPORT_DB_CONFIG['database']}?charset={REPORT_DB_CONFIG['charset']}"
         report_engine = create_engine(report_engine_url)
-# ==========================================
-# [修改结束]
-# ==========================================
 
         admin_sql = "SELECT id FROM admin"
         admin_df = pd.read_sql(admin_sql, cc_engine)
@@ -115,31 +102,57 @@ def process_single_date(target_date):
                      print(f"     ⚠️ VOS库不存在表 {table_suffix}，跳过。")
                      break
                 raise e
-            
-            if df_vos.empty:
-                 print(f"     ⚠️ VOS库中未找到该租户对应的底层话单，跳过。")
-                 continue
 
-            print(f"     🔄 [对账点3] 正在进行 Pandas 60秒 容差融合...")
+# ==========================================
+# [修改开始：根据真实业务截图，放宽时间差至60秒，收紧时长差至10秒，并强制主被叫双重验证]
+# ==========================================
+            print(f"     🔄 [对账点3] 正在执行黄金四法则融合 (主被叫一致, 时间差<=60s, 时长差<=10s)...")
 
-            # 4. Pandas 容差匹配
+            # 保留原有的 target_number 映射，供最终保留列使用
             df_cc['target_number'] = df_cc['cc_telephone']
-            df_vos['target_number'] = df_vos['vos_callee']
+
+            # 1. 提取基础比对列 (条件1和条件2：主叫和被叫必须严格相等)
+            df_cc['match_caller'] = df_cc['cc_gateway_name'].astype(str)
+            df_cc['match_callee'] = df_cc['cc_telephone'].astype(str)
+            
+            df_vos['match_caller'] = df_vos['vos_caller'].astype(str)
+            df_vos['match_callee'] = df_vos['vos_callee'].astype(str)
+
+            # 2. 时间列准备
             df_cc['match_time'] = pd.to_datetime(df_cc['cc_start_time'])
             df_vos['match_time'] = pd.to_datetime(df_vos['vos_start_time'])
 
+            # 必须在合并前按时间排序
             df_cc = df_cc.sort_values('match_time')
             df_vos = df_vos.sort_values('match_time')
 
+            # 3. 容差匹配 (满足条件1、2、3：主叫=主叫，被叫=被叫，开始时间差 <= 60秒)
             merged_df = pd.merge_asof(
-                df_cc, df_vos, on='match_time', by='target_number',
-                tolerance=pd.Timedelta('60s'), direction='nearest'
+                df_cc, df_vos, 
+                on='match_time', 
+                by=['match_caller', 'match_callee'], 
+                tolerance=pd.Timedelta('60s'),  # <--- 核心修改：为了囊括截图中的19秒误差，放宽至60秒
+                direction='nearest'
             )
+
+            # 4. 强制校验条件4 (通话时长误差 <= 10秒)
+            # 计算时长误差绝对值
+            merged_df['duration_diff'] = (merged_df['cc_billsec'] - merged_df['vos_hold_time']).abs()
+            
+            # 揪出那些虽然时间对上了，但时长误差超过 10 秒的数据
+            invalid_duration_mask = merged_df['duration_diff'] > 10
+            
+            # 把这些“不满足时长要求”的记录，其 VOS 匹配结果全部抹除（当做没匹配上处理）
+            vos_columns_to_clear = ['vos_caller', 'vos_start_time', 'vos_hold_time', 'vos_callee_gateway']
+            merged_df.loc[invalid_duration_mask, vos_columns_to_clear] = None
+# ==========================================
+# [修改结束]
+# ==========================================
 
             # 5. 保留列
             columns_to_keep = [
                 'cc_admin_id', 'target_number', 
-                'cc_start_time', 'cc_duration', 'cc_consume', 'cc_status', 'cc_gateway_name',
+                'cc_start_time', 'cc_billsec', 'cc_consume', 'cc_status', 'cc_gateway_name',
                 'vos_caller', 'vos_start_time', 'vos_hold_time', 'vos_callee_gateway'
             ]
             merged_df.rename(columns={'vos_caller': 'vos_caller_number'}, inplace=True)
@@ -189,3 +202,36 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""
+=============================================================================
+【PSCC & VOS3000 跨库话单清洗同步脚本 - 测试与调用用例】
+
+本脚本基于命令行参数运行，支持单日跑批、历史数据区间重跑以及默认自动跑批。
+请在终端 (Terminal/PowerShell) 中进入 scripts 目录执行以下命令：
+
+[用例 1] 默认自动跑批 (常用于定时任务 crontab)
+描述：不带任何参数执行，系统会自动计算并处理“昨天 (T-1)”的全量对账数据。
+命令：
+    python main_sync.py
+
+[用例 2] 指定单日精准跑批 (常用于排查某一天的问题或补跑数据)
+描述：使用 --date 参数，强制系统处理指定日期的对账。
+格式：YYYY-MM-DD
+命令：
+    python main_sync.py --date 2026-03-05
+
+[用例 3] 历史区间批量重跑 (常用于规则变更后的大范围数据洗牌)
+描述：同时使用 --start 和 --end 参数，系统会自动生成该区间内所有的日期列表并按序依次执行。
+格式：YYYY-MM-DD
+命令：
+    python main_sync.py --start 2026-03-01 --end 2026-03-05
+    (注: 该命令会依次串行执行 3月1日、3月2日...直到 3月5日 的对账任务)
+
+[用例 4] 查看帮助文档
+描述：在命令行中打印当前脚本支持的所有参数说明。
+命令：
+    python main_sync.py --help
+    (或 python main_sync.py -h)
+=============================================================================
+"""
