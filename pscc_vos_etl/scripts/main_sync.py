@@ -11,7 +11,7 @@ import urllib.parse
 # ==========================================
 CC_DB_CONFIG = {
     'host': '127.0.0.1',
-    'port': 33066,
+    'port': 3306,         # 👉 核心修改：改为 3306
     'user': 'root',
     'password': 'userisahsj',
     'database': 'cc',
@@ -20,7 +20,7 @@ CC_DB_CONFIG = {
 
 REPORT_DB_CONFIG = {
     'host': '127.0.0.1',
-    'port': 33066,
+    'port': 3306,         # 👉 核心修改：改为 3306
     'user': 'root',
     'password': 'userisahsj',
     'database': 'pscc_report',
