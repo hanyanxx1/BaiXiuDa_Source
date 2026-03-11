@@ -13,6 +13,17 @@
         >
           <div class="layui-form-item">
             <div class="layui-inline">
+              <div class="layui-input-inline" style="width: 150px">
+                <select id="admin_id_select" name="admin_id" lay-filter="admin_id_select">
+                  <option value="0" selected>全部机构</option>
+                  <option value="1">青年宫</option>
+                  <option value="6">合并账户</option>
+                  <option value="7">金港偃师</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="layui-inline">
               <div class="layui-input-inline" style="width: 100px">
                 <select id="timezidingyi" lay-filter="timezidingyi">
                   <option value="昨天" selected>昨天</option>
@@ -112,6 +123,7 @@
           }
         });
 
+        // 默认初始化表格 (请求全局 total 接口)
         table.render({
           elem: "#LAY-report-total",
           url: "https://61.158.166.42:3000/api/report/total",
@@ -153,7 +165,6 @@
           },
         });
 
-        // ========== 核心三：智能提取百分比排序算法 ==========
         table.on("sort(LAY-report-total)", function (obj) {
           var tableData = table.cache["LAY-report-total"];
           var normalData = [];
@@ -166,15 +177,12 @@
 
           if (obj.type) {
             normalData.sort(function (a, b) {
-              // 提取排序数值的智能函数
               var getNum = function (val) {
                 var str = String(val);
-                // 1. 如果格式是 406(0.69%)，提取括号里的百分比来进行科学排序
                 if (str.indexOf("(") !== -1 && str.indexOf("%") !== -1) {
                   var match = str.match(/\((.*?)\%\)/);
                   return match ? parseFloat(match[1]) : 0;
                 }
-                // 2. 否则直接提取普通数字（兼容 "平均: 14.63" 和纯数字）
                 return parseFloat(str.replace(/[^0-9.-]/g, "")) || 0;
               };
 
@@ -195,6 +203,7 @@
           });
         });
 
+        // ========== 核心逻辑：查询事件，动态切换接口与传参 ==========
         form.on("submit(search-report)", function (data) {
           var dateRange = $("#newDateStamp").val();
           if (!dateRange) {
@@ -207,13 +216,27 @@
             dates = dateRange.split(" - ");
           }
 
+          // 1. 获取选中的机构 ID
+          var selectedAdminId = $("#admin_id_select").val();
+
+          // 2. 动态判断使用哪个接口
+          var targetUrl =
+            selectedAdminId === "0"
+              ? "https://61.158.166.42:3000/api/report/total" // 选全部时，走全局大盘
+              : "https://61.158.166.42:3000/api/report/tenant"; // 选具体机构时，走租户专属盘
+
+          // 3. 组装参数
+          var reqWhere = {
+            startDate: layui.$.trim(dates[0]),
+            endDate: layui.$.trim(dates[1]),
+            adminId: selectedAdminId === "0" ? null : selectedAdminId, // Layui 会忽略传 null 的字段
+          };
+
+          // 4. 重载表格发请求
           table.reload("LAY-report-total", {
-            url: "https://61.158.166.42:3000/api/report/total",
-            data: null,
-            where: {
-              startDate: layui.$.trim(dates[0]),
-              endDate: layui.$.trim(dates[1]),
-            },
+            url: targetUrl,
+            data: null, // 清除本地排序缓存数据
+            where: reqWhere,
           });
         });
       });

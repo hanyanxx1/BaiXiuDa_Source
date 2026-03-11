@@ -409,16 +409,17 @@
 	var taskTableIns = null;
 
 	// ===================== 云端配置接管模块 开始 =====================
-	var CLOUD_API = "https://viwl6dnnp9.sealosbja.site/sync_config";
+	// 废弃原云端地址: var CLOUD_API = "https://viwl6dnnp9.sealosbja.site/sync_config";
+	var LOCAL_API = "https://61.158.166.42:3000/api/report/taskReport/syncConfig";
 
 	// 【数据去处】：这里是系统状态的唯一信源，初始赋予安全默认值兜底
 	var isTaskAutoMode = false;
 	var savedSuccessRate = "0.5%";
 	var savedCallFee = "15";
-	var lastSaveTime = 0; // 【新增】记录最后一次保存的时间锁
+	var lastSaveTime = 0; // 记录最后一次保存的时间锁
 
 	/**
-	 * 从云端加载配置
+	 * 从本地服务器加载配置
 	 * @param {String|Number} project_id - 【数据来处】：由外部显式传入
 	 */
 	function loadConfigFromServer(project_id) {
@@ -428,14 +429,18 @@
 		}
 
 		$.ajax({
-			url: CLOUD_API + "?project_id=" + project_id,
-			type: 'GET',
+			url: LOCAL_API,
+			type: 'POST', // 适配 NestJS @Post 接口
+			contentType: 'application/json',
+			data: JSON.stringify({ action: "load", project_id: String(project_id) }),
 			async: false, // 必须同步阻塞，保障渲染前数据就位
 			success: function (res) {
-				if (res && typeof res === 'object') {
-					isTaskAutoMode = res.isTaskAutoMode === true;
-					savedSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%";
-					savedCallFee = res.savedCallFee ? String(res.savedCallFee) : "15";
+				// 严格适配 NestJS 的返回体 {code: 200, message: '...', data: {...}}
+				if (res && res.code === 200 && res.data) {
+					// 兼容 MySQL tinyint(1) 返回的 1/0 或 true/false
+					isTaskAutoMode = (res.data.isTaskAutoMode == 1 || res.data.isTaskAutoMode === true);
+					savedSuccessRate = res.data.savedSuccessRate ? String(res.data.savedSuccessRate) : "0.5%";
+					savedCallFee = res.data.savedCallFee ? String(res.data.savedCallFee) : "15";
 				}
 			},
 			error: function (err) {
@@ -445,7 +450,7 @@
 	}
 
 	/**
-	 * 保存配置到云端
+	 * 保存配置到本地服务器
 	 * 【数据来处】：主动抓取当前页面下拉框的真实选中值
 	 */
 	function saveConfigToServer() {
@@ -456,52 +461,55 @@
 			return;
 		}
 
-		lastSaveTime = new Date().getTime(); // 【新增】每次保存时，打上当前时间戳
+		lastSaveTime = new Date().getTime(); // 每次保存时，打上当前时间戳
 
 		var payload = {
+			action: "save",
 			project_id: String(current_project_id),
-			isTaskAutoMode: isTaskAutoMode === true,
+			isTaskAutoMode: isTaskAutoMode === true ? 1 : 0, // 转化为 1/0 存入 MySQL
 			savedSuccessRate: String(savedSuccessRate),
 			savedCallFee: String(savedCallFee)
 		};
 
 		$.ajax({
-			url: CLOUD_API,
+			url: LOCAL_API,
 			type: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(payload),
 			success: function (res) {
 				if (res && res.code === 200) {
-					console.log("项目 " + current_project_id + " 的配置已同步至云端。");
+					console.log("项目 " + current_project_id + " 的配置已同步至本地服务器。");
 				}
 			}
 		});
 	}
 
 	/**
-	 * 【新增】异步静默同步云端配置（用于定时器后台更新，绝对不卡顿UI）
+	 * 异步静默同步本地服务器配置（用于定时器后台更新，绝对不卡顿UI）
 	 */
 	function syncConfigFromServerAsync(project_id) {
 		if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
 			return;
 		}
 
-		// 【新增核心修复】时间锁：如果距离自己上一次手动保存不足 3 秒，强制退出，不读取云端！防止读到还没来得及落盘的旧数据。
+		// 时间锁：如果距离自己上一次手动保存不足 3 秒，强制退出，不读取！防止读到还没来得及落盘的旧数据。
 		if (new Date().getTime() - lastSaveTime < 3000) {
 			return;
 		}
 
 		$.ajax({
-			url: CLOUD_API + "?project_id=" + project_id,
-			type: 'GET',
-			async: true, // 【关键】必须异步！让它在后台悄悄获取，不影响页面任何操作
+			url: LOCAL_API,
+			type: 'POST', // 适配 NestJS @Post 接口
+			contentType: 'application/json',
+			data: JSON.stringify({ action: "load", project_id: String(project_id) }),
+			async: true, // 必须异步！
 			success: function (res) {
-				if (res && typeof res === 'object') {
-					var newAutoMode = res.isTaskAutoMode === true;
-					var newSuccessRate = res.savedSuccessRate ? String(res.savedSuccessRate) : "0.5%";
-					var newCallFee = res.savedCallFee ? String(res.savedCallFee) : "15";
+				if (res && res.code === 200 && res.data) {
+					var newAutoMode = (res.data.isTaskAutoMode == 1 || res.data.isTaskAutoMode === true);
+					var newSuccessRate = res.data.savedSuccessRate ? String(res.data.savedSuccessRate) : "0.5%";
+					var newCallFee = res.data.savedCallFee ? String(res.data.savedCallFee) : "15";
 
-					// 【核心逻辑】只有当云端数据和本地内存不一致时（说明别的同事刚刚修改了），才更新内存并重绘UI，避免无意义的重绘打断用户的操作
+					// 只有当服务器数据和本地内存不一致时，才更新内存并重绘UI
 					if (isTaskAutoMode !== newAutoMode || savedSuccessRate !== newSuccessRate || savedCallFee !== newCallFee) {
 						isTaskAutoMode = newAutoMode;
 						savedSuccessRate = newSuccessRate;
