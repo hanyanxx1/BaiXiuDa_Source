@@ -108,37 +108,37 @@ DELIMITER ;
 -- CALL ExportCallData('e_cdr_20260301', '/var/lib/mysql-files/e_cdr_20260301/all/', 'holdtime <= 0');
 
 -- 20260302
-CALL ExportCallData('e_cdr_20260302', '/var/lib/mysql-files/e_cdr_20260302/all/', 'holdtime <= 0');
+-- CALL ExportCallData('e_cdr_20260302', '/var/lib/mysql-files/e_cdr_20260302/all/', 'holdtime <= 0');
 
--- -- 20260303
--- CALL ExportCallData('e_cdr_20260303', '/var/lib/mysql-files/e_cdr_20260303/all/', 'holdtime <= 0');
--- 
--- -- 20260304
--- CALL ExportCallData('e_cdr_20260304', '/var/lib/mysql-files/e_cdr_20260304/all/', 'holdtime <= 0');
--- 
--- -- 20260305
--- CALL ExportCallData('e_cdr_20260305', '/var/lib/mysql-files/e_cdr_20260305/all/', 'holdtime <= 0');
--- 
--- -- 20260306
--- CALL ExportCallData('e_cdr_20260306', '/var/lib/mysql-files/e_cdr_20260306/all/', 'holdtime <= 0');
--- 
--- -- 20260307
--- CALL ExportCallData('e_cdr_20260307', '/var/lib/mysql-files/e_cdr_20260307/all/', 'holdtime <= 0');
--- 
--- -- 20260308
--- CALL ExportCallData('e_cdr_20260308', '/var/lib/mysql-files/e_cdr_20260308/all/', 'holdtime <= 0');
--- 
--- -- 20260309
--- CALL ExportCallData('e_cdr_20260309', '/var/lib/mysql-files/e_cdr_20260309/all/', 'holdtime <= 0');
--- 
--- -- 20260310
--- CALL ExportCallData('e_cdr_20260310', '/var/lib/mysql-files/e_cdr_20260310/all/', 'holdtime <= 0');
--- 
--- -- 20260311
--- CALL ExportCallData('e_cdr_20260311', '/var/lib/mysql-files/e_cdr_20260311/all/', 'holdtime <= 0');
--- 
--- -- 20260312
--- CALL ExportCallData('e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312/all/', 'holdtime <= 0');
+-- 20260303
+CALL ExportCallData('e_cdr_20260303', '/var/lib/mysql-files/e_cdr_20260303/all/', 'holdtime <= 0');
+
+-- 20260304
+CALL ExportCallData('e_cdr_20260304', '/var/lib/mysql-files/e_cdr_20260304/all/', 'holdtime <= 0');
+
+-- 20260305
+CALL ExportCallData('e_cdr_20260305', '/var/lib/mysql-files/e_cdr_20260305/all/', 'holdtime <= 0');
+
+-- 20260306
+CALL ExportCallData('e_cdr_20260306', '/var/lib/mysql-files/e_cdr_20260306/all/', 'holdtime <= 0');
+
+-- 20260307
+CALL ExportCallData('e_cdr_20260307', '/var/lib/mysql-files/e_cdr_20260307/all/', 'holdtime <= 0');
+
+-- 20260308
+CALL ExportCallData('e_cdr_20260308', '/var/lib/mysql-files/e_cdr_20260308/all/', 'holdtime <= 0');
+
+-- 20260309
+CALL ExportCallData('e_cdr_20260309', '/var/lib/mysql-files/e_cdr_20260309/all/', 'holdtime <= 0');
+
+-- 20260310
+CALL ExportCallData('e_cdr_20260310', '/var/lib/mysql-files/e_cdr_20260310/all/', 'holdtime <= 0');
+
+-- 20260311
+CALL ExportCallData('e_cdr_20260311', '/var/lib/mysql-files/e_cdr_20260311/all/', 'holdtime <= 0');
+
+-- 20260312
+CALL ExportCallData('e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312/all/', 'holdtime <= 0');
 -- 
 -- -- 20260313
 -- CALL ExportCallData('e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313/all/', 'holdtime <= 0');
