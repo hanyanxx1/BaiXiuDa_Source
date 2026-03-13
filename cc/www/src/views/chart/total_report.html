@@ -126,7 +126,7 @@
         // 默认初始化表格 (请求全局 total 接口)
         table.render({
           elem: "#LAY-report-total",
-          url: "https://61.158.166.42:3000/api/report/total",
+          url: "/api/report/total",
           method: "get",
           where: {
             startDate: defaultDates.start,
@@ -222,8 +222,8 @@
           // 2. 动态判断使用哪个接口
           var targetUrl =
             selectedAdminId === "0"
-              ? "https://61.158.166.42:3000/api/report/total" // 选全部时，走全局大盘
-              : "https://61.158.166.42:3000/api/report/tenant"; // 选具体机构时，走租户专属盘
+              ? "/api/report/total" // 选全部时，走全局大盘
+              : "/api/report/tenant"; // 选具体机构时，走租户专属盘
 
           // 3. 组装参数
           var reqWhere = {

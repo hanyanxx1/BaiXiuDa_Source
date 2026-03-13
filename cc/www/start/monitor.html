@@ -410,7 +410,7 @@
 
 	// ===================== 云端配置接管模块 开始 =====================
 	// 废弃原云端地址: var CLOUD_API = "https://viwl6dnnp9.sealosbja.site/sync_config";
-	var LOCAL_API = "https://61.158.166.42:3000/api/report/taskReport/syncConfig";
+	var LOCAL_API = "/api/report/taskReport/syncConfig";
 
 	// 【数据去处】：这里是系统状态的唯一信源，初始赋予安全默认值兜底
 	var isTaskAutoMode = false;
@@ -488,39 +488,41 @@
 	 * 异步静默同步本地服务器配置（用于定时器后台更新，绝对不卡顿UI）
 	 */
 	function syncConfigFromServerAsync(project_id) {
-		if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
-			return;
-		}
-
-		// 时间锁：如果距离自己上一次手动保存不足 3 秒，强制退出，不读取！防止读到还没来得及落盘的旧数据。
-		if (new Date().getTime() - lastSaveTime < 3000) {
-			return;
-		}
-
-		$.ajax({
-			url: LOCAL_API,
-			type: 'POST', // 适配 NestJS @Post 接口
-			contentType: 'application/json',
-			data: JSON.stringify({ action: "load", project_id: String(project_id) }),
-			async: true, // 必须异步！
-			success: function (res) {
-				if (res && res.code === 200 && res.data) {
-					var newAutoMode = (res.data.isTaskAutoMode == 1 || res.data.isTaskAutoMode === true);
-					var newSuccessRate = res.data.savedSuccessRate ? String(res.data.savedSuccessRate) : "0.5%";
-					var newCallFee = res.data.savedCallFee ? String(res.data.savedCallFee) : "15";
-
-					// 只有当服务器数据和本地内存不一致时，才更新内存并重绘UI
-					if (isTaskAutoMode !== newAutoMode || savedSuccessRate !== newSuccessRate || savedCallFee !== newCallFee) {
-						isTaskAutoMode = newAutoMode;
-						savedSuccessRate = newSuccessRate;
-						savedCallFee = newCallFee;
-
-						syncToolbarUI(); // 调用现成的方法，瞬间更新开关和下拉框
-						console.log("检测到其他用户修改了云端配置，已自动静默同步到本地。");
-					}
-				}
+			if (project_id === undefined || project_id === null || project_id === "" || project_id == 0 || project_id == "0") {
+					return;
 			}
-		});
+
+			// 【核心加固】：将时间锁延长至 8 秒
+			// 理由：确保手动点击“手动模式”后，有足够的时间让数据库完成落盘，
+			// 防止 5 秒一次的定时轮询刚好在落盘完成前把旧的“自动模式=1”又读回来。
+			if (new Date().getTime() - lastSaveTime < 8000) { 
+					return;
+			}
+
+			$.ajax({
+					url: LOCAL_API,
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({ action: "load", project_id: String(project_id) }),
+					async: true,
+					success: function (res) {
+							if (res && res.code === 200 && res.data) {
+									var newAutoMode = (res.data.isTaskAutoMode == 1 || res.data.isTaskAutoMode === true);
+									var newSuccessRate = res.data.savedSuccessRate ? String(res.data.savedSuccessRate) : "0.5%";
+									var newCallFee = res.data.savedCallFee ? String(res.data.savedCallFee) : "15";
+
+									// 只有当服务器数据和本地内存不一致时，才更新内存并重绘UI
+									if (isTaskAutoMode !== newAutoMode || savedSuccessRate !== newSuccessRate || savedCallFee !== newCallFee) {
+											isTaskAutoMode = newAutoMode;
+											savedSuccessRate = newSuccessRate;
+											savedCallFee = newCallFee;
+
+											syncToolbarUI(); 
+											console.log("检测到其他用户修改了云端配置，已自动静默同步到本地。");
+									}
+							}
+					}
+			});
 	}
 
 	// 【修改】封装工具栏 UI 同步方法，解耦左侧面板的更新逻辑，彻底解决初始化显示0的Bug
@@ -703,7 +705,7 @@
 								taskReportData(current_p_id, timestamp);
 								updateLeftPanelGatewayStat(current_p_id); // 【新增】同步拉取网关消费数据
 							}
-						}, 5000);
+						}, 60000);
 					}
 				}
 			}
