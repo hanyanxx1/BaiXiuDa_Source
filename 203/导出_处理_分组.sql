@@ -252,8 +252,8 @@ CALL ExportDistinctGroupedCallData ( 'e_cdr_20260311', '/var/lib/mysql-files/e_c
 -- 2026年3月12日
 CALL ExportDistinctGroupedCallData ( 'e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312/', 'holdtime <= 0' );
 -- 
--- -- 2026年3月13日
--- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313/', 'holdtime <= 0' );
+-- 2026年3月13日
+CALL ExportDistinctGroupedCallData ( 'e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313/', 'holdtime <= 0' );
 -- 
 -- -- 2026年3月14日
 -- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314/', 'holdtime <= 0' );

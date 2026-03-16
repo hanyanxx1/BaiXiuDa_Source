@@ -254,7 +254,7 @@ CALL ExportDistinctGroupedCallData('e_cdr_20260309', '/var/lib/mysql-files/e_cdr
 CALL ExportDistinctGroupedCallData('e_cdr_20260310', '/var/lib/mysql-files/e_cdr_20260310', @where_condition);
 CALL ExportDistinctGroupedCallData('e_cdr_20260311', '/var/lib/mysql-files/e_cdr_20260311', @where_condition);
 CALL ExportDistinctGroupedCallData('e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313', @where_condition);
 -- CALL ExportDistinctGroupedCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314', @where_condition);
 -- CALL ExportDistinctGroupedCallData('e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315', @where_condition);
 -- CALL ExportDistinctGroupedCallData('e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316', @where_condition);
