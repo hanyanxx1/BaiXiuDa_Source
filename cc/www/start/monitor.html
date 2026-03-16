@@ -407,6 +407,8 @@
 	var timestamp = "";
 	var table;
 	var taskTableIns = null;
+	var invisibleTaskInterval = 0; // 专属5秒静默轮询的定时器
+	var stoppingTasks = {}; // 内存锁：防抖、防多开浏览器产生的“惊群效应”并发
 
 	// ===================== 云端配置接管模块 开始 =====================
 	// 废弃原云端地址: var CLOUD_API = "https://viwl6dnnp9.sealosbja.site/sync_config";
@@ -706,6 +708,17 @@
 								updateLeftPanelGatewayStat(current_p_id); // 【新增】同步拉取网关消费数据
 							}
 						}, 60000);
+					}
+
+					// 【新增】启动 5 秒隐形静默轮询守护进程
+					if (!invisibleTaskInterval) {
+						invisibleTaskInterval = setInterval(function () {
+							var current_p_id = $("#project_active").val();
+							// 只有当开启自动模式，且没有被暂停时，才去轮询 type=0
+							if (current_p_id && current_p_id != 0 && isTaskAutoMode && !isPauseTaskRefresh) {
+								invisibleTaskCheck(current_p_id, timestamp);
+							}
+						}, 5000);
 					}
 				}
 			}
@@ -1509,7 +1522,7 @@
 			return;
 		}
 
-		// 【新增】每5秒刷新时，异步静默检测云端最新配置
+		// 【新增】每60秒刷新时，异步静默检测云端最新配置
 		syncConfigFromServerAsync(project_id);
 
 		if (taskTableIns) {
@@ -1532,39 +1545,6 @@
 					}
 
 					var data = getFormattedTaskReportData(res);
-
-					// ===================== 【新增】核心自动挂断算法 开始 =====================
-					if (isTaskAutoMode) {
-						// 将下拉框设定的阈值转为浮点数，方便比对 (例如 "0.5%" -> 0.5, "15" -> 15.0)
-						var limitSuccessRate = parseFloat(savedSuccessRate);
-						var limitCallFee = parseFloat(savedCallFee);
-
-						for (var i = 0; i < data.length; i++) {
-							var task = data[i];
-
-							// 只审查正在执行的任务 (status != 0)
-							if (task.status != 0) {
-								var actualSuccessRate = parseFloat(task.successfulPercent) || 0; // 实际成功率
-								var actualCallFee = parseFloat(task.phone_bill) || 0;            // 实际产生的话费
-
-								// 触发条件：实际花费 >= 设定话费阈值，且 实际成功率 < 设定成功率阈值
-								if (actualCallFee >= limitCallFee && actualSuccessRate < limitSuccessRate) {
-									console.warn("【系统自动拦截】发现不达标任务: [" + task.taskName + "], 话费:" + actualCallFee + ", 成功率:" + actualSuccessRate + "%。正在执行自动停止！");
-
-									// 弹出右下角气泡提示（不阻挡用户视线）
-									layer.msg("已为您自动停止不达标任务: <br>" + task.taskName, {
-										icon: 0,
-										offset: 'rb', // 右下角弹出
-										time: 4000
-									});
-
-									// 静默调用后端的停止接口 (调用现成的方法，传入 taskId 和 0表示停止)
-									monitor_tool.editStatus(task.taskId, 0);
-								}
-							}
-						}
-					}
-					// ===================== 【新增】核心自动挂断算法 结束 =====================
 
 					// 【核心修复】如果当前表格被隐藏（用户切到了其他图表），绝对拦截 reload！
 					// 只调用 syncToolbarUI 刷新左侧面板，防止 Layui 在隐藏状态下执行 reload 导致高度坍塌成“无数据”
@@ -1747,6 +1727,67 @@
 				});
 			}, limits: [10, 1000],
 			limit: 1000
+		});
+	}
+
+	// 【新增】纯后台静默轮询方法，专治 type=0，无 UI 闪烁
+	function invisibleTaskCheck(project_id, timestamp) {
+		$.ajax({
+			url: url + "admin/getTaskReport",
+			type: 'post',
+			dataType: 'json',
+			// 这里绝对不要加 layer.load()，做到彻底无痕
+			headers: {
+				access_token: layui.data('layuiAdmin')[window.sessionStorage.getItem("name")]["access_token"]
+			},
+			data: {
+				project_id: project_id,
+				date: timestamp,
+				type: 0 // 【最关键】：请求0，避开 customer_info 大表扫描
+			},
+			success: function (res) {
+				// 防御性拦截：如果返回空，或者自动模式被关了，或者正在切状态，直接终止
+				if (!res || !res.data || !isTaskAutoMode || isPauseTaskRefresh) return;
+
+				var data = res.data;
+				var limitSuccessRate = parseFloat(savedSuccessRate);
+				var limitCallFee = parseFloat(savedCallFee);
+
+				for (var i = 0; i < data.length; i++) {
+					var task = data[i];
+
+					// 【核心防并发】：只处理运行中的任务 (status != 0) 并且 “内存锁” 里没有它
+					if (task.status != 0 && !stoppingTasks[task.taskId]) {
+						var actualSuccessRate = parseFloat(task.successfulPercent) || 0; 
+						var actualCallFee = parseFloat(task.phone_bill) || 0;            
+
+						// 触发条件：实际花费 >= 设定话费阈值，且 实际成功率 < 设定成功率阈值
+						if (actualCallFee >= limitCallFee && actualSuccessRate < limitSuccessRate) {
+							console.warn("【静默轮询拦截】发现劣质任务: [" + (task.taskName || task.taskId) + "], 话费:" + actualCallFee + ", 成功率:" + actualSuccessRate + "%。");
+
+							// 1. 立即上锁，防止多开浏览器或下个5秒重复提交！
+							stoppingTasks[task.taskId] = true;
+
+							// 2. 弹出不阻挡视线的提示
+							layer.msg("检测到指标过低，已自动停止任务: <br>" + (task.taskName || task.taskId), {
+								icon: 0,
+								offset: 'rb', 
+								time: 4000
+							});
+
+							// 3. 调现成的方法关闭任务 (该方法内自带关闭成功后去调用 type=1 刷新页面的逻辑)
+							monitor_tool.editStatus(task.taskId, 0);
+
+							// 4. 安全兜底：15秒后自动释放内存锁，防止接口意外报错导致永远无法再次操作该任务
+							(function(tid) {
+								setTimeout(function() {
+									delete stoppingTasks[tid];
+								}, 15000);
+							})(task.taskId);
+						}
+					}
+				}
+			}
 		});
 	}
 
