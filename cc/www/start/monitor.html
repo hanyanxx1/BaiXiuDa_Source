@@ -710,6 +710,11 @@
 						}, 60000);
 					}
 
+					// 【新增补漏】：进页面立刻执行一次静默检查，做到 0 秒启动
+					if (isTaskAutoMode && !isPauseTaskRefresh) {
+							invisibleTaskCheck(req_project_id, timestamp);
+					}
+
 					// 【新增】启动 5 秒隐形静默轮询守护进程
 					if (!invisibleTaskInterval) {
 						invisibleTaskInterval = setInterval(function () {
@@ -776,6 +781,11 @@
 
 					taskReportData(project_id, timestamp); // 【新增】切换项目时立即拉取任务列表更新概览
 					updateLeftPanelGatewayStat(project_id); // 【新增】切换时立即拉取消费数据
+
+					// 在下方补上：
+					if (isTaskAutoMode && !isPauseTaskRefresh) {
+							invisibleTaskCheck(project_id, timestamp);
+					}
 				}
 
 				echarts_init();
@@ -898,6 +908,11 @@
 
 			taskReportData(p_id, timestamp); // 【新增】手动刷新时立即拉取任务列表更新概览
 			updateLeftPanelGatewayStat(p_id); // 【新增】手动刷新时拉取消费数据
+
+			// 在下方补上：
+			if (isTaskAutoMode && !isPauseTaskRefresh) {
+					invisibleTaskCheck(p_id, timestamp);
+			}
 
 			layer.closeAll('loading');
 		}
