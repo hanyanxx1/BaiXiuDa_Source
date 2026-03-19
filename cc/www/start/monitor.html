@@ -138,23 +138,28 @@
 					<div class=" layui-col-md12">
 						<div class="layui-card">
 							<hr />
-							<!-- <div class="layui-card-header">
-								发送公告
-							</div> -->
-							<div class="layui-card-body">
-								<form class="layui-form layui-form-pane" action="">
-									<div class="layui-form-item layui-form-text">
-										<div class="layui-input-block">
-											<textarea placeholder="发布公告" style="height: 265px;" id="semdMsg_msg"
-												class="layui-textarea"></textarea>
-										</div>
-									</div>
-									<div class="layui-form-item">
-										<button class="layui-btn" style="float: right;" lay-submit="" lay-filter="sendmsg">发布</button>
-									</div>
-
-								</form>
-							</div>
+							<div class="layui-card-body" style="padding-bottom: 5px;">
+								<fieldset class="layui-elem-field" style="border-color: #e6e6e6; border-radius: 4px; padding: 10px 15px;">
+										<legend style="font-size: 14px; color: #666; font-weight: bold;">自动调整参数</legend>
+										<form class="layui-form" action="" lay-filter="autoAdjustForm">
+												<div style="display: flex; align-items: center; width: 100%; margin-bottom: 15px;">
+														<span style="font-size: 13px; color: #333; white-space: nowrap;">最大等待大于</span>
+														<input type="number" id="auto_wait_max" name="auto_wait_max" min="10" max="60" value="20" autocomplete="off" class="layui-input" style="flex: 1; height: 32px; text-align: center; padding: 0; margin: 0 10px; border-radius: 2px;">
+														<span style="font-size: 13px; color: #333; white-space: nowrap;">加</span>
+														<input type="number" id="auto_add_param" name="auto_add_param" min="30" max="100" value="50" autocomplete="off" class="layui-input" style="flex: 1; height: 32px; text-align: center; padding: 0; margin-left: 10px; border-radius: 2px;">
+												</div>
+												<div style="display: flex; align-items: center; width: 100%; margin-bottom: 10px;">
+														<span style="font-size: 13px; color: #333; white-space: nowrap;">最大等待小于</span>
+														<input type="number" id="auto_wait_min" name="auto_wait_min" min="5" max="60" value="50" autocomplete="off" class="layui-input" style="flex: 1; height: 32px; text-align: center; padding: 0; margin: 0 10px; border-radius: 2px;">
+														<span style="font-size: 13px; color: #333; white-space: nowrap;">减</span>
+														<input type="number" id="auto_sub_param" name="auto_sub_param" min="30" max="100" value="50" autocomplete="off" class="layui-input" style="flex: 1; height: 32px; text-align: center; padding: 0; margin-left: 10px; border-radius: 2px;">
+												</div>
+												<div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 5px;">
+														<input type="checkbox" name="autoAdjustModeSwitch" lay-skin="switch" lay-text="自动模式|手动模式" lay-filter="autoAdjustModeFilter">
+												</div>
+										</form>
+								</fieldset>
+						</div>
 						</div>
 					</div>
 				</div>
@@ -707,7 +712,7 @@
 								taskReportData(current_p_id, timestamp);
 								updateLeftPanelGatewayStat(current_p_id); // 【新增】同步拉取网关消费数据
 							}
-						}, 60000);
+						}, 30000);
 					}
 
 					// 【新增补漏】：进页面立刻执行一次静默检查，做到 0 秒启动
@@ -877,6 +882,22 @@
 			}
 		});
 	})
+
+	// ================= 新增：严格限制自动调整参数的输入范围 =================
+	$('#auto_wait_max, #auto_add_param, #auto_wait_min, #auto_sub_param').on('blur change', function() {
+		var min = parseInt($(this).attr('min'), 10);
+		var max = parseInt($(this).attr('max'), 10);
+		var val = parseInt($(this).val(), 10);
+
+		if (isNaN(val) || val < min) {
+			$(this).val(min);
+			layer.msg("已自动修正为最小值: " + min, {time: 1500, offset: 't'});
+		} else if (val > max) {
+			$(this).val(max);
+			layer.msg("已自动修正为最大值: " + max, {time: 1500, offset: 't'});
+		}
+	});
+	// ====================================================================
 
 	function urlToObj(str) { //截取url
 		var obj = {};
