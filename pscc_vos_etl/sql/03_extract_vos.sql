@@ -3,6 +3,7 @@ SELECT
   calleee164 AS 'vos_callee',
   FROM_UNIXTIME( starttime / 1000 ) AS 'vos_start_time',
   holdtime AS 'vos_hold_time',
+  agentfee AS vos_agentfee,
   calleegatewayid AS 'vos_callee_gateway'
 FROM 
   e_cdr_{table_suffix} 
