@@ -17,7 +17,7 @@ use vos3000;
 -- 创建导出存储过程
 -- 1. 首先删除已存在的存储过程
 DROP PROCEDURE IF EXISTS ExportDistinctGroupedCallData;
-DROP PROCEDURE IF EXISTS ExportBatchData;
+DROP PROCEDURE IF EXISTS ExportBatchData_Grouped;
 DROP PROCEDURE IF EXISTS ProcessLargeGroups;
 
 -- 创建处理大分组的子过程
@@ -52,7 +52,7 @@ BEGIN
         EXECUTE stmt_large_group;
         DEALLOCATE PREPARE stmt_large_group;
         
-        CALL ExportBatchData(
+        CALL ExportBatchData_Grouped(
             'temp_large_group_data',
             export_path,
             '',
@@ -137,7 +137,7 @@ BEGIN
         SELECT COUNT(*) INTO @small_groups_total FROM temp_small_groups_data;
         SET total_exported = total_exported + @small_groups_total;
         
-        CALL ExportBatchData(
+        CALL ExportBatchData_Grouped(
             'temp_small_groups_data',
             export_path,
             '',
@@ -159,7 +159,7 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE ExportBatchData(
+CREATE PROCEDURE ExportBatchData_Grouped(
     IN table_name VARCHAR(50), 
     IN export_path VARCHAR(255), 
     IN where_condition VARCHAR(1000),
@@ -208,7 +208,8 @@ BEGIN
         SET i = i + 1;
     END WHILE batch_loop;
 END //
-DELIMITER ;
+
+DELIMITER;
 
 -- -- 39：
 -- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260227', '/var/lib/mysql-files/e_cdr_20260227/', 'holdtime <= 0' );

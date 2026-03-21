@@ -11,7 +11,7 @@ use vos3000;
 -- 创建导出存储过程
 -- 1. 首先删除已存在的存储过程
 DROP PROCEDURE IF EXISTS ExportCallData;
-DROP PROCEDURE IF EXISTS ExportBatchData;
+DROP PROCEDURE IF EXISTS ExportBatchData_Raw;
 
 -- 2. 创建新的存储过程，接受表名和导出路径作为参数
 DELIMITER //
@@ -35,8 +35,8 @@ BEGIN
     DEALLOCATE PREPARE stmt_count;
     SET total_records = @total_records;
     
-    -- 调用导出函数
-    CALL ExportBatchData(
+    -- 调用导出函数 (指向新名称)
+    CALL ExportBatchData_Raw(
         table_name, 
         export_path, 
         where_condition, 
@@ -50,7 +50,7 @@ DELIMITER ;
 
 -- 创建批量导出数据的子过程
 DELIMITER //
-CREATE PROCEDURE ExportBatchData(
+CREATE PROCEDURE ExportBatchData_Raw(
     IN table_name VARCHAR(50), 
     IN export_path VARCHAR(255), 
     IN where_condition VARCHAR(1000),
