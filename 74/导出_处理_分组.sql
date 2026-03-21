@@ -19,7 +19,7 @@ IF
 	EXISTS ExportDistinctGroupedCallData;
 DROP PROCEDURE
 IF
-	EXISTS ExportBatchData;
+	EXISTS ExportBatchData_Grouped; -- 修改此处名称以防冲突
 DROP PROCEDURE
 IF
 	EXISTS ProcessLargeGroups;-- 创建处理大分组的子过程
@@ -69,7 +69,7 @@ CREATE PROCEDURE ProcessLargeGroups (
 			@create_large_group;
 		EXECUTE stmt_large_group;
 		DEALLOCATE PREPARE stmt_large_group;
-		CALL ExportBatchData ( 'temp_large_group_data', export_path, '', curr_callere164 );
+		CALL ExportBatchData_Grouped ( 'temp_large_group_data', export_path, '', curr_callere164 ); -- 同步修改此处调用
 		DROP TEMPORARY TABLE
 		IF
 			EXISTS temp_large_group_data;
@@ -179,7 +179,7 @@ CREATE PROCEDURE ExportDistinctGroupedCallData (
 			temp_small_groups_data;
 		
 		SET total_exported = total_exported + @small_groups_total;
-		CALL ExportBatchData ( 'temp_small_groups_data', export_path, '', 'AAAA' );
+		CALL ExportBatchData_Grouped ( 'temp_small_groups_data', export_path, '', 'AAAA' ); -- 同步修改此处调用
 		DROP TEMPORARY TABLE
 		IF
 			EXISTS temp_small_groups_data;
@@ -208,7 +208,7 @@ END //
 DELIMITER;
 
 DELIMITER //
-CREATE PROCEDURE ExportBatchData ( IN table_name VARCHAR ( 50 ), IN export_path VARCHAR ( 255 ), IN where_condition VARCHAR ( 1000 ), IN file_prefix VARCHAR ( 255 ) ) BEGIN
+CREATE PROCEDURE ExportBatchData_Grouped ( IN table_name VARCHAR ( 50 ), IN export_path VARCHAR ( 255 ), IN where_condition VARCHAR ( 1000 ), IN file_prefix VARCHAR ( 255 ) ) BEGIN
 	DECLARE
 		i INT DEFAULT 0;
 	DECLARE
