@@ -1,2 +1,0 @@
-/admin/agent/addBlack
-/admin/customer_cdr/editCdrInfo
