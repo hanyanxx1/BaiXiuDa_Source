@@ -1,4 +1,3 @@
--- 203
 -- 需求如下：
 -- 1. 按照传入的whereCondition 过滤数据
 -- 2. 分批导出e_cdr_XXXXXXXX 表中所有数据，导出到csv文件中，默认每个文件最大数量104万条
@@ -11,7 +10,7 @@ use vos3000;
 -- 创建导出存储过程
 -- 1. 首先删除已存在的存储过程
 DROP PROCEDURE IF EXISTS ExportCallData;
-DROP PROCEDURE IF EXISTS ExportBatchData_Raw;
+DROP PROCEDURE IF EXISTS ExportBatchData;
 
 -- 2. 创建新的存储过程，接受表名和导出路径作为参数
 DELIMITER //
@@ -35,8 +34,8 @@ BEGIN
     DEALLOCATE PREPARE stmt_count;
     SET total_records = @total_records;
     
-    -- 调用导出函数 (指向新名称)
-    CALL ExportBatchData_Raw(
+    -- 调用导出函数
+    CALL ExportBatchData(
         table_name, 
         export_path, 
         where_condition, 
@@ -50,7 +49,7 @@ DELIMITER ;
 
 -- 创建批量导出数据的子过程
 DELIMITER //
-CREATE PROCEDURE ExportBatchData_Raw(
+CREATE PROCEDURE ExportBatchData(
     IN table_name VARCHAR(50), 
     IN export_path VARCHAR(255), 
     IN where_condition VARCHAR(1000),
@@ -100,17 +99,18 @@ BEGIN
 END //
 DELIMITER ;
 
--- 20260314
-CALL ExportCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314/all/', 'holdtime <= 0');
--- 20260315
-CALL ExportCallData('e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315/all/', 'holdtime <= 0');
--- 20260316
-CALL ExportCallData('e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316/all/', 'holdtime <= 0');
--- 20260317
-CALL ExportCallData('e_cdr_20260317', '/var/lib/mysql-files/e_cdr_20260317/all/', 'holdtime <= 0');
--- 20260318
-CALL ExportCallData('e_cdr_20260318', '/var/lib/mysql-files/e_cdr_20260318/all/', 'holdtime <= 0');
--- 20260319
-CALL ExportCallData('e_cdr_20260319', '/var/lib/mysql-files/e_cdr_20260319/all/', 'holdtime <= 0');
--- 20260320
-CALL ExportCallData('e_cdr_20260320', '/var/lib/mysql-files/e_cdr_20260320/all/', 'holdtime <= 0');
+-- 203
+CALL ExportCallData('e_cdr_20251213', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251214', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251215', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251216', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251217', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251218', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251219', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251220', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251221', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251222', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251223', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251224', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251225', '/var/lib/mysql-files/', 'holdtime >= 100');
+CALL ExportCallData('e_cdr_20251226', '/var/lib/mysql-files/', 'holdtime >= 100');

@@ -242,16 +242,10 @@ SET @where_condition = 'calleee164 NOT LIKE "%QIANHAO%"
     AND calleee164 NOT LIKE "%*%" 
     AND calleee164 NOT LIKE "%-" 
     AND holdtime <= 0';
-CALL ExportDistinctGroupedCallData('e_cdr_20260301', '/var/lib/mysql-files/e_cdr_20260301', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260302', '/var/lib/mysql-files/e_cdr_20260302', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260303', '/var/lib/mysql-files/e_cdr_20260303', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260304', '/var/lib/mysql-files/e_cdr_20260304', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260305', '/var/lib/mysql-files/e_cdr_20260305', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260306', '/var/lib/mysql-files/e_cdr_20260306', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260307', '/var/lib/mysql-files/e_cdr_20260307', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260308', '/var/lib/mysql-files/e_cdr_20260308', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260309', '/var/lib/mysql-files/e_cdr_20260309', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260310', '/var/lib/mysql-files/e_cdr_20260310', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260311', '/var/lib/mysql-files/e_cdr_20260311', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260317', '/var/lib/mysql-files/e_cdr_20260317', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260318', '/var/lib/mysql-files/e_cdr_20260318', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260319', '/var/lib/mysql-files/e_cdr_20260319', @where_condition);
+CALL ExportDistinctGroupedCallData('e_cdr_20260320', '/var/lib/mysql-files/e_cdr_20260320', @where_condition);
