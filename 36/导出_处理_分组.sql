@@ -21,7 +21,7 @@ use vos3000;
 -- 创建导出存储过程
 -- 1. 首先删除已存在的存储过程
 DROP PROCEDURE IF EXISTS ExportDistinctGroupedCallData;
-DROP PROCEDURE IF EXISTS ExportBatchData;
+DROP PROCEDURE IF EXISTS ExportBatchData_Grouped;
 DROP PROCEDURE IF EXISTS ProcessLargeGroups;
 
 -- 创建处理大分组的子过程
@@ -56,7 +56,7 @@ BEGIN
         EXECUTE stmt_large_group;
         DEALLOCATE PREPARE stmt_large_group;
         
-        CALL ExportBatchData(
+        CALL ExportBatchData_Grouped(
             'temp_large_group_data',
             export_path,
             '',
@@ -153,7 +153,7 @@ BEGIN
         SELECT COUNT(*) INTO @small_groups_total FROM temp_small_groups_data;
         SET total_exported = total_exported + @small_groups_total;
         
-        CALL ExportBatchData(
+        CALL ExportBatchData_Grouped(
             'temp_small_groups_data',
             export_path,
             '',
@@ -175,7 +175,7 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE ExportBatchData(
+CREATE PROCEDURE ExportBatchData_Grouped(
     IN table_name VARCHAR(50), 
     IN export_path VARCHAR(255), 
     IN where_condition VARCHAR(1000),
@@ -220,7 +220,7 @@ BEGIN
             'FIELDS TERMINATED BY '','' ',
             'ENCLOSED BY '''' ',
             'ESCAPED BY ''\\\\'' ',
-            'LINES TERMINATED BY ''\r\n''' -- 此处已改为 Windows 换行符
+            'LINES TERMINATED BY ''\r\n''' -- 此处已改为 Windows 换换符
         );
         PREPARE stmt FROM @sql;
         EXECUTE stmt;
@@ -255,21 +255,3 @@ CALL ExportDistinctGroupedCallData('e_cdr_20260310', '/var/lib/mysql-files/e_cdr
 CALL ExportDistinctGroupedCallData('e_cdr_20260311', '/var/lib/mysql-files/e_cdr_20260311', @where_condition);
 CALL ExportDistinctGroupedCallData('e_cdr_20260312', '/var/lib/mysql-files/e_cdr_20260312', @where_condition);
 CALL ExportDistinctGroupedCallData('e_cdr_20260313', '/var/lib/mysql-files/e_cdr_20260313', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260317', '/var/lib/mysql-files/e_cdr_20260317', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260318', '/var/lib/mysql-files/e_cdr_20260318', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260319', '/var/lib/mysql-files/e_cdr_20260319', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260320', '/var/lib/mysql-files/e_cdr_20260320', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260321', '/var/lib/mysql-files/e_cdr_20260321', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260322', '/var/lib/mysql-files/e_cdr_20260322', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260323', '/var/lib/mysql-files/e_cdr_20260323', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260324', '/var/lib/mysql-files/e_cdr_20260324', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260325', '/var/lib/mysql-files/e_cdr_20260325', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260326', '/var/lib/mysql-files/e_cdr_20260326', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260327', '/var/lib/mysql-files/e_cdr_20260327', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260328', '/var/lib/mysql-files/e_cdr_20260328', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260329', '/var/lib/mysql-files/e_cdr_20260329', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260330', '/var/lib/mysql-files/e_cdr_20260330', @where_condition);
--- CALL ExportDistinctGroupedCallData('e_cdr_20260331', '/var/lib/mysql-files/e_cdr_20260331', @where_condition);
