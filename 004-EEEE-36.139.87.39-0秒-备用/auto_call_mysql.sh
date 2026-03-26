@@ -13,6 +13,9 @@ do_export() {
     local TABLE_NAME="e_cdr_${TARGET_DATE}"
     local ROOT_PATH="${BASE_EXPORT_PATH}${TABLE_NAME}/"
     local ALL_PATH="${ROOT_PATH}all/"
+    
+    # [新增] 定义统计日志文件路径
+    local SUMMARY_LOG="${ROOT_PATH}export_summary.log"
 
     echo "=================================================="
     echo "正在启动任务: ${TARGET_DATE} (执行时间: $(date '+%Y-%m-%d %H:%M:%S'))"
@@ -22,13 +25,30 @@ do_export() {
     mkdir -p "$ALL_PATH"
     chown -R mysql:mysql "$ROOT_PATH"
 
+    # [新增] 初始化日志文件记录开始时间
+    echo "任务统计开始于: $(date '+%Y-%m-%d %H:%M:%S')" > "$SUMMARY_LOG"
+
     # A. 原始数据全导出
     echo " -> 步骤 A: 导出原始话单到 all/ 目录..."
     mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportCallData('${TABLE_NAME}', '${ALL_PATH}', 'holdtime <= 0');"
+    
+    # [新增] 统计 A 步骤导出的总行数 (合并读取 all/ 下所有 csv)
+    TOTAL_RAW=$(find "$ALL_PATH" -maxdepth 1 -name "*.csv" -exec cat {} + 2>/dev/null | wc -l)
+    echo "Step A (ExportCallData 原始导出) 总行数: $TOTAL_RAW" >> "$SUMMARY_LOG"
 
     # B. 去重、分组、乱序导出
     echo " -> 步骤 B: 执行去重分组导出到根目录..."
     mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportDistinctGroupedCallData('${TABLE_NAME}', '${ROOT_PATH}', 'holdtime <= 0');"
+    
+    # [新增] 统计 B 步骤处理后的总行数 (只查 ROOT_PATH 第一层，防误算 all/ 目录)
+    TOTAL_DISTINCT=$(find "$ROOT_PATH" -maxdepth 1 -name "*.csv" -exec cat {} + 2>/dev/null | wc -l)
+    echo "Step B (ExportDistinctGroupedCallData 处理后) 总行数: $TOTAL_DISTINCT" >> "$SUMMARY_LOG"
+    
+    # [新增] 计算过滤掉的差值 (纯 Shell 底层运算)
+    if [ -n "$TOTAL_RAW" ] && [ -n "$TOTAL_DISTINCT" ]; then
+        FILTERED_OUT=$((TOTAL_RAW - TOTAL_DISTINCT))
+        echo "共过滤/去重掉行数: $FILTERED_OUT" >> "$SUMMARY_LOG"
+    fi
 
     # C. 归档整理 (实现标识-总数 结构)
     echo " -> 步骤 C: 正在执行结果归档整理..."
