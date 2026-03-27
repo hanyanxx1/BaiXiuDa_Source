@@ -2,9 +2,10 @@
 # 脚本名称: count_csv_phones.py
 # 核心功能: 
 #   1. 递归扫描指定路径下所有 CSV 文件的第二列（客户号码）。
-#   2. 自动兼容多种编码 (utf-8-sig, gb18030, gbk, utf-8)。
-#   3. 统计原始总行数、去重后的唯一号码数、重复项总数。
-#   4. 任务结束后，询问用户是否需要重命名扫描的根目录文件夹。
+#   2. 自动跳过路径中名为 "all" 的文件夹及其内容。
+#   3. 自动兼容多种编码 (utf-8-sig, gb18030, gbk, utf-8)。
+#   4. 统计原始总行数、去重后的唯一号码数、重复项总数。
+#   5. 任务结束后，询问用户是否需要重命名扫描的根目录文件夹。
 # ==============================================================================
 
 import os
@@ -21,11 +22,15 @@ def count_csv_phones():
     all_numbers_list = []
     total_files_found = 0
     
-    print(f"\n开始递归扫描路径: {input_path}")
+    print(f"\n开始递归扫描路径 (已过滤 'all' 文件夹): {input_path}")
     print("-" * 60)
     
     # 2. 递归遍历并提取数据
     for root, dirs, files in os.walk(input_path):
+        # --- 核心修改：忽略所有名为 'all' 的文件夹 ---
+        if 'all' in dirs:
+            dirs.remove('all')  # 阻止 os.walk 进入名为 'all' 的子目录
+            
         for file in files:
             if file.lower().endswith('.csv'):
                 total_files_found += 1
@@ -50,7 +55,7 @@ def count_csv_phones():
                     print(f"跳过文件 {file}: 无法识别编码或列格式不正确")
 
     if not all_numbers_list:
-        print(f"\n未在路径下提取到任何有效数据。共检查了 {total_files_found} 个 CSV 文件。")
+        print(f"\n未在路径下提取到任何有效数据。共检查了 {total_files_found} 个有效 CSV 文件。")
         return
 
     # 3. 数据汇总与去重统计
@@ -78,7 +83,9 @@ def count_csv_phones():
     if rename_opt == 'y':
         suffix = input("请输入想添加的命名后缀 (例如: _已去重统计): ").strip()
         try:
-            new_path = input_path.rstrip('\\/') + suffix
+            # 移除路径末尾的斜杠，防止重命名失败
+            clean_path = input_path.rstrip('\\/')
+            new_path = clean_path + suffix
             os.rename(input_path, new_path)
             print(f"重命名成功！\n原路径: {input_path}\n新路径: {new_path}")
         except Exception as e:
