@@ -78,18 +78,5 @@ def count_csv_phones():
         print(f"数据重复率: {((total_raw - total_unique) / total_raw * 100):.2f}%")
     print("="*60)
 
-    # 4. 询问是否修改文件夹名称
-    rename_opt = input("\n统计结束。是否需要重命名该扫描文件夹？(y/n): ").strip().lower()
-    if rename_opt == 'y':
-        suffix = input("请输入想添加的命名后缀 (例如: _已去重统计): ").strip()
-        try:
-            # 移除路径末尾的斜杠，防止重命名失败
-            clean_path = input_path.rstrip('\\/')
-            new_path = clean_path + suffix
-            os.rename(input_path, new_path)
-            print(f"重命名成功！\n原路径: {input_path}\n新路径: {new_path}")
-        except Exception as e:
-            print(f"重命名失败: {e}")
-
 if __name__ == "__main__":
     count_csv_phones()
