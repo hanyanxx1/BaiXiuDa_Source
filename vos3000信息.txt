@@ -15,8 +15,19 @@
 123.6.4.3:5623  BXD123456  wendingzhongyuan
 标识18c6bdf0-b52d-406a-b6a6-225be3b403c6
 
-固定ip：221.14.88.149
+固定ip 221.14.88.149
 
+登录地址 211.103.25.247:3886
+登录账号 韩沛
+登录密码 hanzong888!
+登录标识 e38ba9fe-07bd-4826-ab79-2ef2f229c4eb
+
+ssh地址 211.103.25.247
+ssh端口 22
+ssh账号 root
+ssh密码 kd@&SY592##!
+mysql账号 root
+mysql密码 My@Passwd219x
 
 账户 韩沛
 密码 WkJmjLIl!5I>
