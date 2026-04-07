@@ -4,9 +4,10 @@
 DB_USER="root"
 DB_PASS="BAIXIUDA@@han138388"
 DB_NAME="vos3000"
-# 对应 SQL 要求的基础导出路径
+# 对应服务器的基础导出路径 (0秒业务)
 BASE_EXPORT_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-0秒/"
-BASE_100S_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-100秒/"
+# 120秒通话归档基础路径 (直接导出到此目录下)
+BASE_120S_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-120秒/"
 
 # --- 2. 核心导出与归档函数 ---
 do_export() {
@@ -20,20 +21,26 @@ do_export() {
     # 定义 0秒 统计日志文件路径
     local SUMMARY_LOG="${ROOT_PATH}export_summary.log"
 
+    # 【核心修改点】：对齐最新 SQL 的复杂过滤条件，使用 bash 变量封装
+    # 注意：为了让 MySQL 正确识别反斜杠，在 Bash 字符串中需要写成 \\\\\\\\
+    local WHERE_COND_0S="calleee164 NOT LIKE '%/%' AND calleee164 NOT LIKE '%?%' AND calleee164 NOT LIKE '%,%' AND calleee164 NOT LIKE '%#%' AND calleee164 NOT LIKE '%\\\\\\\\%' AND calleee164 NOT LIKE '%*%' AND calleee164 NOT LIKE '%-%' AND holdtime <= 0"
+
     echo "=================================================="
     echo "正在启动任务: ${TARGET_DATE} (执行时间: $(date '+%Y-%m-%d %H:%M:%S'))"
     echo "=================================================="
     
     # 确保路径存在并修正权限
     mkdir -p "$ALL_PATH"
+    mkdir -p "$BASE_120S_PATH"
     chown -R mysql:mysql "$BASE_EXPORT_PATH"
-    chown -R mysql:mysql "$BASE_100S_PATH"
+    chown -R mysql:mysql "$BASE_120S_PATH"
 
     # 初始化日志文件记录开始时间
     echo "任务统计开始于: $(date '+%Y-%m-%d %H:%M:%S')" > "$SUMMARY_LOG"
 
     # A. 原始数据全导出 (0秒)
     echo " -> 步骤 A: 导出 0秒 原始话单到 all/ 目录..."
+    # 原始话单一般保留全貌，因此这里依旧只传入 holdtime <= 0
     mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportCallData('${TABLE_NAME}', '${ALL_PATH}', 'holdtime <= 0');"
 
     # 统计 A 步骤导出的总行数
@@ -41,8 +48,9 @@ do_export() {
     echo "Step A (0秒原始导出) 总行数: $TOTAL_RAW" >> "$SUMMARY_LOG"
 
     # B. 去重、分组、乱序导出 (0秒)
-    echo " -> 步骤 B: 执行去重分组导出到根目录..."
-    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportDistinctGroupedCallData('${TABLE_NAME}', '${ROOT_PATH}', 'holdtime <= 0');"
+    echo " -> 步骤 B: 执行去重分组导出到根目录 (应用非法字符过滤)..."
+    # 【核心修改点】：将原先的 'holdtime <= 0' 替换为带有特殊符号过滤的复杂变量 "${WHERE_COND_0S}"
+    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportDistinctGroupedCallData('${TABLE_NAME}', '${ROOT_PATH}', \"${WHERE_COND_0S}\");"
     
     # 统计 B 步骤处理后的总行数
     TOTAL_DISTINCT=$(find "$ROOT_PATH" -maxdepth 1 -name "*.csv" -exec cat {} + 2>/dev/null | wc -l)
@@ -75,30 +83,28 @@ do_export() {
         mv *-"${CORE_NAME}"-*.csv "${FOLDER_NAME}/" 2>/dev/null
     done
 
-    # D. [新增逻辑] 100秒通话时长归档 - 扁平化导出到根目录
-    echo " -> 步骤 D: 导出 100秒 原始话单到 100秒 专用目录 (根目录直接存放)..."
-    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportCallData('${TABLE_NAME}', '${BASE_100S_PATH}', 'holdtime >= 100');"
+    # D. 120秒通话时长归档 - 扁平化导出到根目录
+    echo " -> 步骤 D: 导出 120秒 原始话单到 120秒 专用目录 (根目录直接存放)..."
+    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportCallData('${TABLE_NAME}', '${BASE_120S_PATH}', 'holdtime >= 120');"
     
-    # 统计 100秒 导出的总行数并记录到 0秒 的日志中
-    TOTAL_100S=$(find "$BASE_100S_PATH" -maxdepth 1 -name "${TABLE_NAME}_part*.csv" -exec cat {} + 2>/dev/null | wc -l)
-    echo "Step D (100秒归档导出 - ${TABLE_NAME}) 总行数: $TOTAL_100S" >> "$SUMMARY_LOG"
+    # 统计 120秒 导出的总行数并记录到 120秒 的日志中
+    TOTAL_120S=$(find "$BASE_120S_PATH" -maxdepth 1 -name "${TABLE_NAME}_part*.csv" -exec cat {} + 2>/dev/null | wc -l)
+    echo "Step D (120秒归档导出 - ${TABLE_NAME}) 总行数: $TOTAL_120S" >> "$SUMMARY_LOG"
 
     # 修正权限并返回
     chown -R mysql:mysql "${BASE_EXPORT_PATH}"
-    chown -R mysql:mysql "${BASE_100S_PATH}"
+    chown -R mysql:mysql "${BASE_120S_PATH}"
     echo "√ 日期 ${TARGET_DATE} 处理全部完成！"
     echo ""
 }
 
-# --- 3. 参数处理与逻辑判断 (完整保留交互提示逻辑) ---
+# --- 3. 参数处理与逻辑判断 ---
 if [ "$#" -eq 0 ]; then
     YESTERDAY=$(date -d "yesterday" +%Y%m%d)
     echo "检测到无参数，自动执行昨日任务: ${YESTERDAY}"
     do_export "$YESTERDAY"
-
 elif [ "$#" -eq 1 ]; then
     do_export "$1"
-
 elif [ "$#" -eq 2 ]; then
     START_DATE=$1
     END_DATE=$2

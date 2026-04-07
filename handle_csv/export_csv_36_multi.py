@@ -1,12 +1,11 @@
 # ==============================================================================
-# 脚本名称: export_csv_36_multi_final.py
-# 核心逻辑 (36 业务专用):
-#   1. 支持输入多个 all 文件夹路径进行跨日期汇总处理。
-#   2. 自动识别路径中的日期并创建如 "e_cdr_20260303-20260305" 的目录。
-#   3. 兼容无表头文件：若无表头，自动按第1列(主叫)、第2列(被叫)提取。
-#   4. 保留 36 原始逻辑：PASS/HMD 截取、holdtime 过滤及特殊字符清洗。
-#   5. 分批优化：最后一个分包若小于 20,000 条，则合并至前一个文件。
-#   6. 自动刷新：导出完成后调用 WPS/Excel 接口执行静默保存刷新。
+# 脚本名称: export_csv_36_multi.py
+# 核心逻辑 (完全对齐最新 36 SQL):
+#   1. 跨日期多路径汇总及无表头文件兼容。
+#   2. 对齐最新 SQL whereCondition：仅过滤 / ? , # \ * - 符号，取消 QIANHAO 等过滤。
+#   3. 提取逻辑对齐 SQL: 截取后 11 位，并要求严格匹配 11 位纯数字。
+#   4. 确定性全局排序去重 (保留最小主叫)。
+#   5. 尾部合并 (小包 < 20,000 条合并至前一文件) 及 WPS 自动刷新。
 # ==============================================================================
 
 import os
@@ -72,7 +71,7 @@ def export_batches(df_to_export, file_prefix, output_folder, curr_date):
     
     export_df = pd.DataFrame({
         '客户姓名': '',
-        '客户号码': df_to_export['processed_calleee164'].astype(np.int64).astype(str),
+        '客户号码': df_to_export['processed_calleee164'],
         '地址': '',
         '购买套数': '',
         '签收电话': '',
@@ -90,7 +89,6 @@ def export_batches(df_to_export, file_prefix, output_folder, curr_date):
     if initial_batches == 0:
         batch_ranges.append((0, total_len))
     elif remainder < min_last_batch and remainder > 0:
-        # 最后一包太小，合并到倒数第一包
         for i in range(initial_batches - 1):
             batch_ranges.append((i * batch_size, (i + 1) * batch_size))
         batch_ranges.append(((initial_batches - 1) * batch_size, total_len))
@@ -114,7 +112,7 @@ def export_batches(df_to_export, file_prefix, output_folder, curr_date):
 
 def process_multi_paths_36():
     input_paths = []
-    print("=== 36 脚本汇总处理工具 (最终完整版) ===")
+    print("=== 36 脚本汇总处理工具 (对齐最新 SQL 过滤逻辑版) ===")
     print("请输入 all 文件夹的完整路径 (输入 'q' 结束输入):")
     
     while True:
@@ -166,52 +164,60 @@ def process_multi_paths_36():
                                 current_usecols.append(actual_name)
                                 rename_map[actual_name] = std_col
                                 break
-                    df = pd.read_csv(filename, encoding=file_enc, usecols=current_usecols, on_bad_lines='skip')
+                    df = pd.read_csv(filename, encoding=file_enc, usecols=current_usecols, dtype=str, on_bad_lines='skip')
                     chunk = df.rename(columns=rename_map)
                 else:
                     # 无表头降级逻辑：第0列主叫，第1列被叫
-                    df = pd.read_csv(filename, encoding=file_enc, header=None, on_bad_lines='skip')
+                    df = pd.read_csv(filename, encoding=file_enc, header=None, dtype=str, on_bad_lines='skip')
                     chunk = df.iloc[:, [0, 1]].copy()
                     chunk.columns = ['callere164', 'calleee164']
-                    chunk['holdtime'] = 0 
+                    chunk['holdtime'] = '0' 
 
                 # 36 脚本核心 holdtime 推导与清洗
                 if 'holdtime' not in chunk.columns and 'starttime' in chunk.columns and 'stoptime' in chunk.columns:
                     chunk['holdtime'] = np.where(chunk['starttime'] == chunk['stoptime'], 0, 1)
-                if 'holdtime' not in chunk.columns: chunk['holdtime'] = 0
+                if 'holdtime' not in chunk.columns: chunk['holdtime'] = '0'
 
+                # 【核心修改点】：对齐最新 SQL 的 whereCondition，仅过滤异常符号
                 mask = (
                     (chunk['holdtime'].astype(float) <= 0) & 
-                    (~chunk['calleee164'].astype(str).str.contains("QIANHAO|WuRaoHaoMa|DONGTAIDIFANG|/|\\?|,|#|\\\\|\\*|-", na=False, regex=True))
+                    (~chunk['calleee164'].astype(str).str.contains(r"/|\?|,|#|\\|\*|-", na=False, regex=True))
                 )
                 df_f = chunk[mask].copy()
                 if df_f.empty: continue
 
-                # 36 脚本核心 PASS/HMD 截取逻辑
-                callee_str = df_f['calleee164'].astype(str)
-                df_f['processed_calleee164'] = np.where(
-                    callee_str.str.startswith('PASS') | callee_str.str.startswith('HMD'), 
-                    callee_str.str[8:], callee_str.str[4:]
-                )
+                # 完全对齐 导出_处理_分组.sql 的 36 提取逻辑
+                # 1. 对应 RIGHT(TRIM(calleee164), 11)
+                df_f['processed_calleee164'] = df_f['calleee164'].astype(str).str.strip().str[-11:]
                 
-                df_f['processed_calleee164'] = pd.to_numeric(df_f['processed_calleee164'], errors='coerce')
-                df_f = df_f.dropna(subset=['processed_calleee164'])
-                str_lens = df_f['processed_calleee164'].astype(np.int64).astype(str).str.len()
-                df_f = df_f[(str_lens >= 10) & (str_lens <= 11)]
+                # 2. 对应 HAVING calleee164 REGEXP '^[0-9]{11}$'
+                valid_mask = df_f['processed_calleee164'].str.match(r'^\d{11}$', na=False)
+                df_f = df_f[valid_mask]
                 
                 valid_data_chunks.append(df_f[['callere164', 'processed_calleee164']])
                 print(f"  √ 已处理: {os.path.basename(filename)}")
             except Exception as e: print(f"  × 失败 {os.path.basename(filename)}: {e}")
 
-    if not valid_data_chunks: return
+    if not valid_data_chunks: 
+        print("\n[!] 阶段 1 结束：未发现有效数据，无法继续。")
+        return
 
     # 阶段 2: 全局排序去重
-    print("\n--- 阶段 2: 开始执行全局排序去重 (对齐 SQL MIN 逻辑) ---")
+    print("\n" + "-" * 60)
+    print("--- 阶段 2: 开始执行全局排序去重 (对齐 SQL MIN 逻辑) ---")
+    print("-" * 60)
     all_df = pd.concat(valid_data_chunks, ignore_index=True)
     before_len = len(all_df)
+    
+    # 按照被叫号码、主叫号码升序，确保同一号码保留对应最小的 callere164
     all_df.sort_values(by=['processed_calleee164', 'callere164'], ascending=[True, True], inplace=True)
     all_df.drop_duplicates(subset=['processed_calleee164'], keep='first', inplace=True)
-    print(f" [+] 去重前: {before_len} | 去重后: {len(all_df)} | 剔除: {before_len - len(all_df)}")
+    after_len = len(all_df)
+    
+    print(f" [+] 去重前总记录: {before_len}")
+    print(f" [+] 去重后唯一记录: {after_len}")
+    print(f" [+] 剔除重复/无效项: {before_len - after_len}")
+    print("-" * 60)
 
     # 阶段 3: 分组导出
     print("\n--- 阶段 3: 执行分组导出 ---")
@@ -223,6 +229,7 @@ def process_multi_paths_36():
         
     small_group_data = all_df[all_df['callere164'].isin(group_counts[group_counts < 50000].index)]
     if not small_group_data.empty:
+        # SQL 中的文件前缀指定为 BBBB
         export_batches(small_group_data, 'BBBB', output_folder, curr_date)
 
     # 阶段 4: 刷新格式
