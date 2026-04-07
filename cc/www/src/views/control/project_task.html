@@ -614,7 +614,10 @@
         var project_id = $("#project_ids").val();
         // 全局提取自带的合法 Token，完全脱离手动复制
         var token = layui.data("layuiAdmin")[window.sessionStorage.getItem("name")]["access_token"];
-        var fileArr = Array.from(files).reverse(); // 反转数组，保持导入呈现时间倒序顺眼
+        // 核心修复：强制按文件名进行“自然顺序”正序排序（支持 A2 排在 A10 前面的高级排序）
+        var fileArr = Array.from(files).sort(function (a, b) {
+          return a.name.localeCompare(b.name, undefined, { numeric: true });
+        });
         var successCount = 0;
         var failCount = 0;
 
