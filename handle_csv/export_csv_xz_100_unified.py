@@ -1,9 +1,9 @@
 # ==============================================================================
-# 脚本名称: export_csv_100_unified.py
+# 脚本名称: export_csv_xz_120_unified.py
 # 核心功能: 
 #   1. 支持多路径汇总与自动日期命名
 #   2. 严格 11 位数字清洗与确定性全局去重
-#   3. 统一导出命名：序号-新100接通高(话费较高)-月份.日期.csv
+#   3. 统一导出命名：序号-新120接通高(话费较高)-月份.日期.csv
 #   4. 尾部合并逻辑：若最后一包 < 20,000 条，则合并至前一个文件
 #   5. 自动刷新 WPS/Excel 格式
 # ==============================================================================
@@ -101,10 +101,10 @@ def export_unified_batches(all_df, output_folder, curr_date):
     # 直接在输出根目录下生成文件，不再创建主叫子文件夹
     if not os.path.exists(output_folder): os.makedirs(output_folder)
 
-    file_identifier = "新100接通高(话费较高)"
+    file_identifier = "新120接通高(话费较高)"
 
     for i, (start, end) in enumerate(batch_ranges):
-        # 命名格式参考：序号-新100接通高(话费较高)-月份.日期.csv
+        # 命名格式参考：序号-新120接通高(话费较高)-月份.日期.csv
         file_name = f"{i + 1}-{file_identifier}-{curr_date}.csv"
         save_path = os.path.join(output_folder, file_name)
         export_df.iloc[start:end].to_csv(
@@ -117,7 +117,7 @@ def export_unified_batches(all_df, output_folder, curr_date):
 
 def process_multi_paths():
     input_paths = []
-    print("=== 跨日期多路径汇总处理工具 (100接通统一命名版) ===")
+    print("=== 跨日期多路径汇总处理工具 (120接通统一命名版) ===")
     print("请输入 all 文件夹的完整路径 (输入 'q' 结束输入):")
     
     while True:
@@ -134,9 +134,9 @@ def process_multi_paths():
     
     if dates:
         dates.sort()
-        folder_name = f"e_cdr_{dates[0]}-{dates[-1]}_100接通高"
+        folder_name = f"e_cdr_{dates[0]}-{dates[-1]}_120接通高"
     else:
-        folder_name = f"汇总_100接通高_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        folder_name = f"汇总_120接通高_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
     # 路径解析
     parent_dir = os.path.dirname(os.path.dirname(os.path.normpath(input_paths[0])))
