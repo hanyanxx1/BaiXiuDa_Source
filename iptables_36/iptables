@@ -1,0 +1,100 @@
+*nat
+:PREROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+COMMIT
+
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT DROP [0:0]
+
+# 本地回环
+-A INPUT -i lo -j ACCEPT
+
+# 允许已建立的连接
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+#漏扫
+
+
+#SSH请求
+-A INPUT -p tcp --dport 65511 -m limit --limit 3/minute --limit-burst 3 -j ACCEPT
+-A INPUT -p tcp --dport 65511 -j DROP
+
+#监控
+
+
+#办公室IP
+-A INPUT -s 221.14.88.149 -j ACCEPT
+-A OUTPUT -d 221.14.88.149 -j ACCEPT
+
+#备用机
+#-A INPUT -s 221.14.88.149 -j ACCEPT
+#-A OUTPUT -d 221.14.88.149 -j ACCEPT
+
+#内网IP
+-A INPUT -s 192.168.0.0/16 -j ACCEPT
+-A OUTPUT -d 192.168.0.0/16 -j ACCEPT
+
+
+# 入-白名单IP
+-A INPUT -s 103.85.86.119 -j ACCEPT
+-A INPUT -s 103.219.30.130 -j ACCEPT
+-A INPUT -s 27.148.147.12 -j ACCEPT
+-A INPUT -s 120.79.208.109 -j ACCEPT
+-A INPUT -s 202.189.8.139 -j ACCEPT
+-A INPUT -s 47.107.163.168 -j ACCEPT
+-A INPUT -s 47.95.217.241 -j ACCEPT
+-A INPUT -s 60.205.224.139 -j ACCEPT
+-A INPUT -s 61.158.237.51 -j ACCEPT
+-A INPUT -s 123.6.78.103 -j ACCEPT
+-A INPUT -s 125.47.41.251 -j ACCEPT
+-A INPUT -s 125.47.41.243 -j ACCEPT
+-A INPUT -s 125.47.41.242 -j ACCEPT
+
+
+# 允许已建立的连接（响应流量）
+-A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# 本地回环
+-A OUTPUT -o lo -j ACCEPT
+
+#出-白名单
+-A OUTPUT -d 103.85.86.119 -j ACCEPT
+-A OUTPUT -d 103.219.30.130 -j ACCEPT
+-A OUTPUT -d 27.148.147.12 -j ACCEPT
+-A OUTPUT -d 120.79.208.109 -j ACCEPT
+-A OUTPUT -d 202.189.8.139 -j ACCEPT
+-A OUTPUT -d 47.107.163.168 -j ACCEPT
+-A OUTPUT -d 47.95.217.241 -j ACCEPT
+-A OUTPUT -d 60.205.224.139 -j ACCEPT
+-A OUTPUT -d 61.158.237.51 -j ACCEPT
+-A OUTPUT -d 123.6.78.103 -j ACCEPT
+-A OUTPUT -d 125.47.41.251 -j ACCEPT
+-A OUTPUT -d 125.47.41.243 -j ACCEPT
+-A OUTPUT -d 125.47.41.242 -j ACCEPT
+
+#黑名单系统
+-A INPUT -s 39.99.152.248 -j ACCEPT
+-A OUTPUT -d 39.99.152.248 -j ACCEPT
+-A INPUT -s 39.99.229.203 -j ACCEPT
+-A OUTPUT -d 39.99.229.203 -j ACCEPT
+
+#额外放行端口
+#-A INPUT -p --tcp --dport 端口号 -j ACCEPT
+#-A INPUT -p --udp --dport 端口号 -j ACCEPT
+#-A OUTPUT -p --tcp --dport 端口号 -j ACCEPT
+#-A OUTPUT -p --udp --dport 端口号 -j ACCEPT
+
+#额外放行
+#-A OUTPUT -p icmp -j ACCEPT
+#-A OUTPUT -p udp --dport 53 -j ACCEPT
+#-A OUTPUT -p tcp --dport 80 -j ACCEPT
+#-A OUTPUT -p tcp --dport 443 -j ACCEPT
+
+#建立日志
+-A INPUT -m limit --limit 5/min -j LOG --log-prefix "BLOCKED-INTPUT: " --log-level 4
+-A OUTPUT -m limit --limit 5/min -j LOG --log-prefix "BLOCKED-OUTPUT: " --log-level 4
+
+COMMIT
