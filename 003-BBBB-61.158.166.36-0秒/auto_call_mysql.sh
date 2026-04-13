@@ -21,10 +21,6 @@ do_export() {
     # 定义 0秒 统计日志文件路径
     local SUMMARY_LOG="${ROOT_PATH}export_summary.log"
 
-    # 【核心修改点】：对齐最新 SQL 的复杂过滤条件，使用 bash 变量封装
-    # 注意：为了让 MySQL 正确识别反斜杠，在 Bash 字符串中需要写成 \\\\\\\\
-    local WHERE_COND_0S="calleee164 NOT LIKE '%/%' AND calleee164 NOT LIKE '%?%' AND calleee164 NOT LIKE '%,%' AND calleee164 NOT LIKE '%#%' AND calleee164 NOT LIKE '%\\\\\\\\%' AND calleee164 NOT LIKE '%*%' AND calleee164 NOT LIKE '%-%' AND holdtime <= 0"
-
     echo "=================================================="
     echo "正在启动任务: ${TARGET_DATE} (执行时间: $(date '+%Y-%m-%d %H:%M:%S'))"
     echo "=================================================="
@@ -49,8 +45,21 @@ do_export() {
 
     # B. 去重、分组、乱序导出 (0秒)
     echo " -> 步骤 B: 执行去重分组导出到根目录 (应用非法字符过滤)..."
-    # 【核心修改点】：将原先的 'holdtime <= 0' 替换为带有特殊符号过滤的复杂变量 "${WHERE_COND_0S}"
-    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportDistinctGroupedCallData('${TABLE_NAME}', '${ROOT_PATH}', \"${WHERE_COND_0S}\");"
+    
+    # 【核心修改】：使用 EOF 块嵌入原生 SQL，彻底解决转义灾难
+    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} <<EOF
+    SET @where_condition = '
+        calleee164 NOT LIKE "%/%" 
+        AND calleee164 NOT LIKE "%?%" 
+        AND calleee164 NOT LIKE "%,%" 
+        AND calleee164 NOT LIKE "%#%" 
+        AND calleee164 NOT LIKE "%\\\\\\\\%" 
+        AND calleee164 NOT LIKE "%*%" 
+        AND calleee164 NOT LIKE "%-%" 
+        AND holdtime <= 0';
+        
+    CALL ExportDistinctGroupedCallData('${TABLE_NAME}', '${ROOT_PATH}', @where_condition);
+EOF
     
     # 统计 B 步骤处理后的总行数
     TOTAL_DISTINCT=$(find "$ROOT_PATH" -maxdepth 1 -name "*.csv" -exec cat {} + 2>/dev/null | wc -l)

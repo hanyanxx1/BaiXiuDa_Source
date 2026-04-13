@@ -5,8 +5,8 @@
 -- 2.1 从最后一位开始，向前截取11位
 -- 3. 对2处理后的数据结果，进行 calleee164 被叫号码进行去重，要求最后整个tableName中的calleee164 被叫号码不存在重复的
 -- 4. 对去重处理后的数据，按照callere164 主叫号码分组，第一列输出callere164 主叫号码分组，第二列输出对应的数量
--- 4.1 判断callere164 主叫号码分组数量是否大于50000条，如果大于50000条，则将该分组数据，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-callere164-0-月份.日期.csv
--- 4.2 判断callere164 主叫号码分组数量是否小于50000条，如果小于50000条，则与其他小于50000条的分组数据合并后，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-DDDD-0-月份.日期.csv
+-- 4.1 判断callere164 主叫号码分组数量是否大于50000条，如果大于50000条，则将该分组数据，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-callere164-当前服务-当前数据库表名的后6位-月份.日期.csv
+-- 4.2 判断callere164 主叫号码分组数量是否小于50000条，如果小于50000条，则与其他小于50000条的分组数据合并后，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-BBBB-当前服务-当前数据库表名的后6位-月份.日期.csv
 -- 4.3 导出的csv文件，列头为客户姓名、客户号码、地址、购买套数、签收电话、备注，其中客户号码列的内容为calleee164 被叫号码，其他列内容为空
 -- 5. 对每个分组数据进行乱序处理
 -- 6. 单表数量最多可达3000万条，请优化执行效率，尽可能减少执行时间
@@ -52,11 +52,13 @@ BEGIN
         EXECUTE stmt_large_group;
         DEALLOCATE PREPARE stmt_large_group;
         
+        -- 调用时传入原始 table_name 用于截取后6位
         CALL ExportBatchData_Grouped(
             'temp_large_group_data',
             export_path,
             '',
-            curr_callere164
+            curr_callere164,
+            table_name 
         );
         
         DROP TEMPORARY TABLE IF EXISTS temp_large_group_data;
@@ -65,6 +67,7 @@ BEGIN
     CLOSE large_group_cursor;
 END //
 DELIMITER ;
+
 
 DELIMITER //
 CREATE PROCEDURE ExportDistinctGroupedCallData(IN table_name VARCHAR(50), IN export_path VARCHAR(255), IN whereCondition VARCHAR(500))
@@ -137,11 +140,13 @@ BEGIN
         SELECT COUNT(*) INTO @small_groups_total FROM temp_small_groups_data;
         SET total_exported = total_exported + @small_groups_total;
         
+        -- 调用时传入原始 table_name 用于截取后6位
         CALL ExportBatchData_Grouped(
             'temp_small_groups_data',
             export_path,
             '',
-            'BBBB'
+            'BBBB',
+            table_name
         );
         
         DROP TEMPORARY TABLE IF EXISTS temp_small_groups_data;
@@ -158,12 +163,15 @@ BEGIN
 END //
 DELIMITER ;
 
+
+-- 声明定界符，创建最底层的导出存储过程
 DELIMITER //
 CREATE PROCEDURE ExportBatchData_Grouped(
     IN table_name VARCHAR(50), 
     IN export_path VARCHAR(255), 
     IN where_condition VARCHAR(1000),
-    IN file_prefix VARCHAR(255)
+    IN file_prefix VARCHAR(255),
+    IN orig_table_name VARCHAR(50) 
 )
 BEGIN
     DECLARE i INT DEFAULT 0;
@@ -171,7 +179,12 @@ BEGIN
     DECLARE total_records INT;
     DECLARE num_batches INT;
     DECLARE curr_date VARCHAR(10);
+    
+    DECLARE current_service VARCHAR(50) DEFAULT '36'; 
+    DECLARE table_suffix VARCHAR(6);
+    
     SET curr_date = DATE_FORMAT(NOW(), '%m.%d');
+    SET table_suffix = RIGHT(orig_table_name, 6);
     
     SET @count_sql = CONCAT('SELECT COUNT(*) INTO @total_records FROM ', table_name, ' ', IF(where_condition != '', CONCAT('WHERE ', where_condition), ''));
     
@@ -183,23 +196,21 @@ BEGIN
     SET num_batches = CEILING(total_records / batch_size);
     
     batch_loop: WHILE i < num_batches DO
+        -- 核心修复点：为子查询中的每个空列增加独立别名 (AS c1, AS c3等) 解决 1060 报错
         SET @sql = CONCAT(
-            '(SELECT ''客户姓名'',''客户号码'',''地址'',''购买套数'',''签收电话'',''备注'') ',
+            'SELECT ''客户姓名'',''客户号码'',''地址'',''购买套数'',''签收电话'',''备注'' ',
             'UNION ALL ',
-            '(SELECT '''', calleee164, '''', '''', '''', '''' ',
+            'SELECT * FROM (SELECT '''' AS c1, calleee164, '''' AS c3, '''' AS c4, '''' AS c5, '''' AS c6 ',
             'FROM ', table_name, ' ',
             IF(where_condition != '', CONCAT('WHERE ', where_condition, ' '), ''),
-            'LIMIT ', batch_size, ' OFFSET ', i * batch_size, ') ',
-            ' INTO OUTFILE ''', export_path, '/', 
-            i+1, '-', 
-            file_prefix,
-            '-0-', curr_date, '.csv'' ',
+            'LIMIT ', batch_size, ' OFFSET ', i * batch_size, ') AS tmp ',
+            'INTO OUTFILE ''', export_path, '/', 
+            i+1, '-', file_prefix, '-', current_service, '-', table_suffix, '-', curr_date, '.csv'' ',
             'FIELDS TERMINATED BY '','' ',
             'ENCLOSED BY '''' ',
             'ESCAPED BY ''\\\\'' ',
-            'LINES TERMINATED BY ''\\n'''  -- 恢复为原始的换行符
+            'LINES TERMINATED BY ''\\n'''  
         );
-
 
         PREPARE stmt FROM @sql;
         EXECUTE stmt;
@@ -208,9 +219,9 @@ BEGIN
         SET i = i + 1;
     END WHILE batch_loop;
 END //
+DELIMITER ;
 
-DELIMITER;
-
+-- ==================== 原有的测试数据与调用（保留原样） ====================
 -- SET @where_condition = 'calleee164 NOT LIKE "%QIANHAO%" 
 --     AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
 --     AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
@@ -223,20 +234,36 @@ DELIMITER;
 --     AND calleee164 NOT LIKE "%-" 
 --     AND holdtime <= 0';
 
-SET @where_condition = '
-    calleee164 NOT LIKE "%/%" 
-    AND calleee164 NOT LIKE "%?%" 
-    AND calleee164 NOT LIKE "%,%" 
-    AND calleee164 NOT LIKE "%#%" 
-    AND calleee164 NOT LIKE "%\\\\%" 
-    AND calleee164 NOT LIKE "%*%" 
-    AND calleee164 NOT LIKE "%-" 
-    AND holdtime <= 0';
+-- SET @where_condition = '
+--     calleee164 NOT LIKE "%/%" 
+--     AND calleee164 NOT LIKE "%?%" 
+--     AND calleee164 NOT LIKE "%,%" 
+--     AND calleee164 NOT LIKE "%#%" 
+--     AND calleee164 NOT LIKE "%\\\\%" 
+--     AND calleee164 NOT LIKE "%*%" 
+--     AND calleee164 NOT LIKE "%-" 
+--     AND holdtime <= 0';
 
-CALL ExportDistinctGroupedCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260317', '/var/lib/mysql-files/e_cdr_20260317', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260318', '/var/lib/mysql-files/e_cdr_20260318', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260319', '/var/lib/mysql-files/e_cdr_20260319', @where_condition);
-CALL ExportDistinctGroupedCallData('e_cdr_20260320', '/var/lib/mysql-files/e_cdr_20260320', @where_condition);
+-- CALL ExportDistinctGroupedCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314', @where_condition);
+
+
+-- ==================== 最新规范调用示例 ====================
+/*
+【调用说明】
+主入口的调用方式完全保持不变。底层的命名逻辑会在内部自动完成解析和拼接。
+
+【单日数据调用示例】
+参数 1: 原始表名 (如 e_cdr_20260408，系统会自动提取后6位 '260408')
+参数 2: 导出存放的文件路径 (根据服务器权限配置决定是否可以带子目录)
+参数 3: SQL Where 过滤条件
+
+CALL ExportDistinctGroupedCallData(
+    'e_cdr_20260408', 
+    '/var/lib/mysql-files/001-AAAA-112.25.240.74-0秒/', 
+    'holdtime <= 0'
+);
+
+-- 执行后，将生成类似以下名称的 CSV 文件：
+-- 大分组：1-被叫号码-36-260408-04.08.csv
+-- 小分组：1-BBBB-36-260408-04.08.csv
+*/
