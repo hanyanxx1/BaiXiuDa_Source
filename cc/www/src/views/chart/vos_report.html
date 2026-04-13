@@ -157,6 +157,7 @@
             ],
           ],
           page: false,
+          limit: 1000, // 👈 【新增这一行】强制全局容量为1000条
           autoSort: false,
           done: function (res, curr, count) {
             var that = this.elem.next();
@@ -202,8 +203,9 @@
 
           table.reload("LAY-report-total", {
             initSort: obj,
-            url: null,
+            url: "", // 👈 建议把 null 改为 ""（空字符串），防止某些旧版 Layui 依然偷偷发请求
             data: normalData,
+            limit: normalData.length || 1000, // 👈 【新增这一行】无论排序后有多少条，全部强制展示出来！
           });
         });
 
