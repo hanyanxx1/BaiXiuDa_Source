@@ -1,0 +1,35 @@
+修改：
+vi /etc/sysconfig/iptables
+
+出入流量需要加白IP
+
+未加白IP均无法访问
+
+编辑完后需要重启iptables
+
+-----------------------------------------------------------------------
+检查有没有iptables
+systemctl status iptables
+
+安装
+systemctl stop firewalld
+systemctl disable firewalld
+yum install -y iptables-services
+systemctl enable iptables
+-----------------------------------------------------------------------
+命令
+systemctl stop iptables   停止iptables
+systemctl start iptables   启动iptables
+systemctl restart iptables  重启iptables
+systemctl disable iptables  关闭iptables（重启后也是关闭）
+systemctl enable iptables   默认开启iptables（关闭后重启后自动打开）
+iptables -L 查看当前所有策略
+iptables -L | grep ip  (查看IP有没有再里面)
+iptables-restore -t < /etc/sysconfig/iptables
+-------------------------------------------------------------------------
+清空当前iptables文件(慎重操作，建议提前备份)
+备份：cp iptables 新名字
+---------------------------------------------------------------------------
+cd /etc/sysconfig
+echo > iptables
+-----------------------------------------------------------------------
