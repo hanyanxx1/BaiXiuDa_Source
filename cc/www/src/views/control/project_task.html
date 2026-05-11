@@ -180,37 +180,41 @@
               type: "checkbox",
             },
             {
-              field: "name",
+              field: "clean_name",
               title: "任务名称",
-              edit: true,
-              align: "center",
-              minWidth: 350,
+              minWidth: 200,
             },
             {
-              field: "projectName",
-              title: "执行项目",
-              align: "center",
-              minWidth: 250,
-              templet: function (d) {
-                if (d.outboundType == 1) return d.projectName + "(预测外呼)";
-                else if (d.outboundType == 2) return d.projectName + "(比例外呼)";
-                else if (d.outboundType == 3) return d.projectName + "(自动外呼)";
-                else if (d.outboundType == 4) return d.projectName + "(点击外呼)";
-                else if (d.outboundType == 5) return d.projectName + "(预览外呼)";
-              },
+              field: "display_remark",
+              title: "任务备注",
+              width: 100,
+              edit: "text",
             },
+            // {
+            //   field: "projectName",
+            //   title: "执行项目",
+            //   align: "center",
+            //   minWidth: 250,
+            //   templet: function (d) {
+            //     if (d.outboundType == 1) return d.projectName + "(预测外呼)";
+            //     else if (d.outboundType == 2) return d.projectName + "(比例外呼)";
+            //     else if (d.outboundType == 3) return d.projectName + "(自动外呼)";
+            //     else if (d.outboundType == 4) return d.projectName + "(点击外呼)";
+            //     else if (d.outboundType == 5) return d.projectName + "(预览外呼)";
+            //   },
+            // },
             {
               field: "create_stamp",
               title: "创建时间",
               align: "center",
-              minWidth: 180,
+              width: 200,
             },
             {
               field: "noCall_count",
               title: "进度",
               sort: true,
               align: "center",
-              minWidth: 180,
+              width: 200,
               templet: function (d) {
                 return (
                   '<div class="layui-progress" lay-showpercent="true" title="未呼条数(' +
@@ -228,7 +232,7 @@
               title: "执行状态",
               align: "center",
               sort: true,
-              minWidth: 100,
+              width: 120,
               templet: function (d) {
                 if (d.status == 0) {
                   return (
@@ -253,7 +257,7 @@
               title: "操作",
               align: "center",
               fixed: "right",
-              minWidth: 300,
+              width: 260,
               templet: function (d) {
                 var result = "";
                 result =
@@ -300,6 +304,26 @@
             },
           ],
         ],
+        parseData: function (res) {
+          if (res.data && res.data.length > 0) {
+            layui.each(res.data, function (index, item) {
+              var fullName = item.name || "";
+              var splitSign = ".csv";
+              var pos = fullName.toLowerCase().indexOf(splitSign);
+
+              if (pos !== -1) {
+                // 截取 .csv 之前的内容
+                item.clean_name = fullName.substring(0, pos + splitSign.length);
+                // 截取 .csv 之后的内容作为备注
+                item.display_remark = fullName.substring(pos + splitSign.length);
+              } else {
+                item.clean_name = fullName;
+                item.display_remark = "";
+              }
+            });
+          }
+          return res;
+        },
         done: function (obj) {
           if (location.hash == "#/control/project_task") {
             layer.tips("执行和停止任务点我哦~", ".layui-table-header th:eq(5)", {
@@ -331,27 +355,33 @@
 
       //监听单元格编辑
       table.on("edit(LAY-user-manage-project-task)", function (obj) {
-        var value = obj.value,
+        var value = obj.value, // 这里是你新输入的备注内容
           data = obj.data,
           field = obj.field;
-        if (field == "name") {
-          if (value != "") {
-            admin.req({
-              type: "POST",
-              url: layui.setter.configUrl + "admin/project_task/editName",
-              data: { id: data.id, name: value },
-              dataType: "json",
-              success: function (obj) {
-                if (obj.data > 0) {
-                  layer.msg("任务名称修改成功", { icon: 1 });
-                } else {
-                  layer.msg("修改失败,请重试", { icon: 2 });
-                }
-              },
-            });
-          } else {
-            layer.msg("修改失败,名称不能为空", { icon: 2 });
-          }
+
+        // 修改判断逻辑：现在我们监听的是 display_remark 字段
+        if (field == "display_remark") {
+          // 【关键点】拼接全名：干净文件名 + 新输入的备注
+          var finalFullName = data.clean_name + value;
+
+          admin.req({
+            type: "POST",
+            url: layui.setter.configUrl + "admin/project_task/editName",
+            data: {
+              id: data.id,
+              name: finalFullName, // 将拼接后的全名传给后端的 name 字段
+            },
+            dataType: "json",
+            success: function (obj) {
+              if (obj.data > 0) {
+                layer.msg("任务备注更新成功", { icon: 1 });
+                // 建议重载一下表格，确保内部 clean_name 等字段同步更新
+                layui.table.reload("LAY-user-manage-project-task");
+              } else {
+                layer.msg("修改失败,请重试", { icon: 2 });
+              }
+            },
+          });
         }
       });
 
