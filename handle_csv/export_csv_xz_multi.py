@@ -5,6 +5,7 @@
 #   2. 严格 11 位数字清洗与确定性去重
 #   3. 分批逻辑优化：若最后一个分包 < 20,000 条，则合并至前一个文件
 #   4. 自动刷新 WPS/Excel 格式
+#   5. [更新] 日志输出完整绝对路径，方便多目录排查错误
 # ==============================================================================
 
 import os
@@ -30,9 +31,10 @@ def refresh_csv_via_software(folder_path):
 
     try:
         try:
-            app = win32.gencache.EnsureDispatch('Et.Application')
+            # 改用动态调用，彻底避开 gen_py 缓存损坏问题
+            app = win32.Dispatch('Et.Application')
         except:
-            app = win32.gencache.EnsureDispatch('Excel.Application')
+            app = win32.Dispatch('Excel.Application')
         
         app.Visible = False 
         app.DisplayAlerts = False 
@@ -165,8 +167,11 @@ def process_multi_paths():
                     temp['calleee164'] = temp['calleee164'].astype(str).str.strip().str[-11:]
                     mask = temp['calleee164'].str.match(r'^\d{11}$', na=False)
                     all_data_list.append(temp[mask])
-                    print(f"  √ 已加载: {file}")
-                except Exception as e: print(f"  × 跳过 {file}: {e}")
+                    # 【核心修改点】：这里将输出的 file 改为了 filepath
+                    print(f"  √ 已加载: {filepath}")
+                except Exception as e: 
+                    # 【核心修改点】：报错输出也改为了 filepath
+                    print(f"  × 跳过 {filepath}: {e}")
 
     if not all_data_list: 
         print("未提取到任何有效数据。")
