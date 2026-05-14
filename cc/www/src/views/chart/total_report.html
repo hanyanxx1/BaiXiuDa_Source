@@ -46,6 +46,14 @@
                 />
               </div>
             </div>
+            <div class="layui-inline">
+              <button class="layui-btn layui-btn-normal layui-btn-sm" id="btn-filter-checked">
+                只看选中
+              </button>
+              <button class="layui-btn layui-btn-primary layui-btn-sm" id="btn-filter-reset">
+                还原全部
+              </button>
+            </div>
 
             <div class="layui-btn-group" style="float: right">
               <button
@@ -71,6 +79,7 @@
         var form = layui.form;
         var laydate = layui.laydate;
         var $ = layui.$;
+        var originalFullData = [];
 
         // 初始化渲染表单容器
         form.render(null, "report-form");
@@ -146,6 +155,7 @@
           },
           cols: [
             [
+              { type: "checkbox", fixed: "left" },
               { field: "落地名称", title: "落地名称", align: "center", minWidth: 150, sort: true },
               { field: "总数", title: "总数", align: "center", sort: true },
               { field: "成功", title: "成功", align: "center", sort: true },
@@ -160,14 +170,74 @@
           limit: 1000, // 👈 【新增这一行】强制全局容量为1000条
           autoSort: false,
           done: function (res, curr, count) {
-            var that = this.elem.next();
+            var that = this;
+            var $tableMain = $(that.elem).next();
+
+            // 【核心修复】：只有当 res.data 包含多条数据，且我们还没记录过原始数据时才记录
+            // 或者判断这次请求是否有 url，因为过滤重载时 url 会被我们设为 ""
+            if (this.url !== "" && res.data && res.data.length > 0) {
+              originalFullData = JSON.parse(JSON.stringify(res.data)); // 深拷贝一份，防止引用污染
+            }
+
+            // 你原有的合计行变色逻辑...
             res.data.forEach(function (item, index) {
-              if (item["落地名称"] === "合计") {
-                var tr = that.find(".layui-table-box tbody tr[data-index='" + index + "']");
-                tr.css({ "background-color": "#f0f9eb", "font-weight": "bold" });
+              var name = item["落地名称"] || item["vosName"];
+              if (name === "合计") {
+                var tr = $tableMain.find(".layui-table-box tbody tr[data-index='" + index + "']");
+                tr.css({ "background-color": "#fff9ec", "font-weight": "bold", color: "#ff5722" });
               }
             });
           },
+        });
+
+        // --- 按钮逻辑：只看选中 ---
+        $("#btn-filter-checked").on("click", function () {
+          // 1. 获取选中的行数据
+          var checkStatus = table.checkStatus("LAY-report-total");
+          var checkedData = checkStatus.data;
+
+          if (checkedData.length === 0) {
+            layer.msg("请先勾选需要查看的行");
+            return;
+          }
+
+          // 2. 构造新数据：选中的行 + 合计行
+          var displayData = [];
+
+          // 先把选中的塞进去
+          checkedData.forEach(function (item) {
+            if (item["落地名称"] !== "合计") {
+              displayData.push(item);
+            }
+          });
+
+          // 再把合计行找出来塞进去（确保合计始终可见）
+          var totalRow = originalFullData.find(function (item) {
+            return item["落地名称"] === "合计";
+          });
+          if (totalRow) displayData.push(totalRow);
+
+          // 3. 极速重载
+          table.reload("LAY-report-total", {
+            url: "",
+            data: displayData,
+            limit: 1000,
+          });
+        });
+
+        $("#btn-filter-reset").on("click", function () {
+          if (!originalFullData || originalFullData.length === 0) {
+            layer.msg("暂无原始数据可还原");
+            return;
+          }
+
+          table.reload("LAY-report-total", {
+            url: "", // 继续保持本地数据模式
+            data: originalFullData,
+            limit: 1000,
+          });
+
+          layer.msg("已还原全部数据", { icon: 1, time: 800 });
         });
 
         table.on("sort(LAY-report-total)", function (obj) {
