@@ -12,7 +12,7 @@
           lay-filter="report-form"
         >
           <div class="layui-form-item">
-            <div class="layui-inline">
+            <div style="display: flex; align-items: center">
               <div class="layui-input-inline" style="width: 150px">
                 <select id="admin_id_select" name="admin_id" lay-filter="admin_id_select">
                   <option value="0" selected>全部机构</option>
@@ -21,9 +21,6 @@
                   <option value="7">金港偃师</option>
                 </select>
               </div>
-            </div>
-
-            <div class="layui-inline">
               <div class="layui-input-inline" style="width: 100px">
                 <select id="timezidingyi" lay-filter="timezidingyi">
                   <option value="今天" selected>今天</option>
@@ -33,9 +30,6 @@
                   <option value="自定义">自定义</option>
                 </select>
               </div>
-            </div>
-
-            <div class="layui-inline" id="ID-startend-datetime" style="margin-left: -20px">
               <div class="layui-input-inline" style="width: 220px">
                 <input
                   type="text"
@@ -45,20 +39,14 @@
                   autocomplete="off"
                 />
               </div>
-            </div>
-
-            <div class="layui-inline">
-              <button class="layui-btn layui-btn-normal layui-btn-sm" id="btn-filter-checked">
+              <button class="layui-btn layui-btn-normal layui-btn-md" id="btn-filter-checked">
                 只看选中
               </button>
-              <button class="layui-btn layui-btn-primary layui-btn-sm" id="btn-filter-reset">
+              <button class="layui-btn layui-btn-primary layui-btn-md" id="btn-filter-reset">
                 还原全部
               </button>
-            </div>
-
-            <div class="layui-btn-group" style="float: right">
               <button
-                class="layui-btn layuiadmin-btn-useradmin"
+                class="layui-btn layuiadmin-btn-useradmin layui-btn-md"
                 lay-submit
                 lay-filter="search-report"
               >
