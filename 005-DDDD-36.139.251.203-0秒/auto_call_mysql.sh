@@ -5,9 +5,9 @@ DB_USER="hanyan"
 DB_PASS="BAIXIUDA@@han138388"
 DB_NAME="vos3000"
 # 对应服务器的基础导出路径 (0秒业务)
-BASE_EXPORT_PATH="/var/lib/mysql-files/004-EEEE-36.139.87.39-0秒-备用/"
+BASE_EXPORT_PATH="/var/lib/mysql-files/005-DDDD-36.139.251.203-0秒/"
 # [修正] 120秒通话归档基础路径 (直接导出到此目录下)
-BASE_120S_PATH="/var/lib/mysql-files/004-EEEE-36.139.87.39-120秒-备用/"
+BASE_120S_PATH="/var/lib/mysql-files/005-DDDD-36.139.251.203-120秒/"
 
 # --- 2. 核心导出与归档函数 ---
 do_export() {
