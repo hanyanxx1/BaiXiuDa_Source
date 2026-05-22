@@ -32,9 +32,10 @@ def refresh_csv_via_software(folder_path):
 
     try:
         try:
-            app = win32.gencache.EnsureDispatch('Et.Application')
+            # 改用动态调用，彻底避开 gen_py 缓存损坏问题
+            app = win32.Dispatch('Et.Application')
         except:
-            app = win32.gencache.EnsureDispatch('Excel.Application')
+            app = win32.Dispatch('Excel.Application')
         
         app.Visible = False 
         app.DisplayAlerts = False 
@@ -67,7 +68,16 @@ def check_header_and_encoding(filepath):
 
 def export_batches(df_to_export, file_prefix, output_folder, curr_date):
     """分批次导出，逻辑优化：末尾不足 20,000 则合并"""
-    df_to_export = df_to_export.sample(frac=1).reset_index(drop=True)
+    
+    # ==========================================
+    # 【核心修改点】：强迫症福音，执行 3 次强力洗牌
+    # ==========================================
+    for _ in range(3):
+        # frac=1 表示抽取 100% 的数据，每次循环都会彻底打乱
+        df_to_export = df_to_export.sample(frac=1)
+        
+    # 3 次洗牌结束后，再重新梳理一遍连续的行号，防止后续分包切片报错
+    df_to_export = df_to_export.reset_index(drop=True)
     
     export_df = pd.DataFrame({
         '客户姓名': '',
