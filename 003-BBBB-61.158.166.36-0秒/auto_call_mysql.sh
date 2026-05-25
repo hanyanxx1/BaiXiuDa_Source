@@ -8,6 +8,8 @@ DB_NAME="vos3000"
 BASE_EXPORT_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-0秒/"
 # 120秒通话归档基础路径 (直接导出到此目录下)
 BASE_120S_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-120秒/"
+# 【新增配置】120秒通话时长降序排序业务基础路径
+BASE_120S_SORT_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-120秒-通话时长排序/"
 
 # --- 2. 核心导出与归档函数 ---
 do_export() {
@@ -28,8 +30,10 @@ do_export() {
     # 确保路径存在并修正权限
     mkdir -p "$ALL_PATH"
     mkdir -p "$BASE_120S_PATH"
+    mkdir -p "$BASE_120S_SORT_PATH"
     chown -R mysql:mysql "$BASE_EXPORT_PATH"
     chown -R mysql:mysql "$BASE_120S_PATH"
+    chown -R mysql:mysql "$BASE_120S_SORT_PATH"
 
     # 初始化日志文件记录开始时间
     echo "任务统计开始于: $(date '+%Y-%m-%d %H:%M:%S')" > "$SUMMARY_LOG"
@@ -101,8 +105,31 @@ EOF
     echo "Step D (120秒归档导出 - ${TABLE_NAME}) 总行数: $TOTAL_120S" >> "$SUMMARY_LOG"
 
     # 修正权限并返回
+    # ==============================================================================
+    # E. 120秒含通话时长原始话单导出
+    # ==============================================================================
+    echo " -> 步骤 E: 导出 120秒 含通话时长原始话单到指定目录..."
+    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportCallData_WithHoldtime('${TABLE_NAME}', '${BASE_120S_SORT_PATH}', 'holdtime >= 120');"
+    
+    # 统计 120秒 含通话时长原始导出的总行数
+    TOTAL_WITH_HOLDTIME=$(find "$BASE_120S_SORT_PATH" -maxdepth 1 -name "${TABLE_NAME}_含通话时长_part*.csv" -exec cat {} + 2>/dev/null | wc -l)
+    echo "Step E (120秒含通话时长原始导出) 总行数: $TOTAL_WITH_HOLDTIME" >> "$SUMMARY_LOG"
+
+    # ==============================================================================
+    # F. 120秒时长排序降序导出
+    # ==============================================================================
+    echo " -> 步骤 F: 执行 120秒 时长排序降序导出..."
+    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportRankedDurationData('${TABLE_NAME}', '${BASE_120S_SORT_PATH}', 'holdtime >= 120', '${TABLE_NAME}_时长排序降序');"
+    
+    # 统计 120秒 时长排序降序导出的总行数
+    TOTAL_RANKED=$(find "$BASE_120S_SORT_PATH" -maxdepth 1 -name "${TABLE_NAME}_时长排序降序.csv" -exec cat {} + 2>/dev/null | wc -l)
+    echo "Step F (120秒时长排序降序唯一导出) 总行数: $TOTAL_RANKED" >> "$SUMMARY_LOG"
+
+    # 再次全局修正一次权限，确保所有新生成的文件可以顺利被后续提取或下载
     chown -R mysql:mysql "${BASE_EXPORT_PATH}"
     chown -R mysql:mysql "${BASE_120S_PATH}"
+    chown -R mysql:mysql "${BASE_120S_SORT_PATH}"
+    
     echo "√ 日期 ${TARGET_DATE} 处理全部完成！"
     echo ""
 }
