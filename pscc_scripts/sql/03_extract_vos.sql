@@ -4,6 +4,7 @@ SELECT
   FROM_UNIXTIME( starttime / 1000 ) AS 'vos_start_time',
   holdtime AS 'vos_hold_time',
   agentfee AS vos_agentfee,
+  agentaccount AS 'vos_agentaccount',
   calleegatewayid AS 'vos_callee_gateway'
 FROM 
   e_cdr_{table_suffix} 

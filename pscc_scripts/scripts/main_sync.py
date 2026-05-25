@@ -143,7 +143,7 @@ def process_single_date(target_date):
             invalid_duration_mask = merged_df['duration_diff'] > 10
             
             # 👇 修改点 1：把 'vos_agentfee' 加入清理名单，如果没匹配上或者误差大，代理费直接作废
-            vos_columns_to_clear = ['vos_caller', 'vos_start_time', 'vos_hold_time', 'vos_callee_gateway', 'vos_agentfee']
+            vos_columns_to_clear = ['vos_caller', 'vos_start_time', 'vos_hold_time', 'vos_callee_gateway', 'vos_agentfee', 'vos_agentaccount']
             merged_df.loc[invalid_duration_mask, vos_columns_to_clear] = None
 # ==========================================
 # [修改结束]
@@ -153,11 +153,14 @@ def process_single_date(target_date):
             columns_to_keep = [
                 'cc_admin_id', 'target_number', 
                 'cc_start_time', 'cc_billsec', 'cc_consume', 'cc_status', 'cc_gateway_name',
-                'vos_caller', 'vos_start_time', 'vos_hold_time', 'vos_callee_gateway', 'vos_agentfee'
+                'vos_caller', 'vos_start_time', 'vos_hold_time', 'vos_callee_gateway', 'vos_agentfee', 'vos_agentaccount'
             ]
             merged_df.rename(columns={'vos_caller': 'vos_caller_number'}, inplace=True)
             columns_to_keep[7] = 'vos_caller_number'
             final_df = merged_df[columns_to_keep].copy()
+
+            final_df['vos_agentfee'] = final_df['vos_agentfee'].fillna(0.00)
+            final_df['vos_agentaccount'] = final_df['vos_agentaccount'].fillna('')
 
             final_df['vos_agentfee'] = final_df['vos_agentfee'].fillna(0.00)
             # 6. 先删旧数据（防重复写入）

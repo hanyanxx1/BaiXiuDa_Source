@@ -31,6 +31,7 @@ CREATE TABLE `etl_merged_cdr` (
   `vos_callee_gateway` varchar(64) DEFAULT NULL COMMENT 'VOS-被叫经由网关',
   -- 👇 本次新增：VOS代理费透传字段，强制默认 0.0000 防计算击穿
   `vos_agentfee` decimal(10,4) DEFAULT '0.0000' COMMENT 'VOS-代理费(元)', 
+  `vos_agentaccount` varchar(255) DEFAULT NULL COMMENT 'VOS-代理商账号',
   
   -- 运维审计字段
   `etl_create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '数据写入时间',
