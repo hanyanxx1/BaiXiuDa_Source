@@ -57,7 +57,9 @@
                 data-type="batchStart"
                 title="批量开启选中任务"
                 disabled
-              >批量开启</button>
+              >
+                批量开启
+              </button>
 
               <button
                 class="layui-btn layuiadmin-btn-useradmin layui-btn-danger layui-btn-disabled"
@@ -65,7 +67,9 @@
                 data-type="batchStop"
                 title="批量停止选中任务"
                 disabled
-              >批量停止</button>
+              >
+                批量停止
+              </button>
 
               <button
                 class="layui-btn layuiadmin-btn-useradmin"
@@ -348,6 +352,7 @@
             });
           }
           element.render();
+          syncBatchBtnState([]); // ← 新增
         },
         page: true,
       });
@@ -559,25 +564,39 @@
           var checkData = table.checkStatus("LAY-user-manage-project-task").data;
           if (checkData.length === 0) return layer.msg("请先勾选任务", { icon: 2 });
 
-          var toStart = checkData.filter(function (item) { return item.status == 0; });
+          var toStart = checkData.filter(function (item) {
+            return item.status == 0;
+          });
           var skipCount = checkData.length - toStart.length;
-          if (toStart.length === 0) return layer.msg("所选任务均已在运行中，无需重复开启", { icon: 0 });
+          if (toStart.length === 0)
+            return layer.msg("所选任务均已在运行中，无需重复开启", { icon: 0 });
 
           var confirmMsg = "确认批量开启 <b>" + toStart.length + "</b> 个任务？";
-          if (skipCount > 0) confirmMsg += "<br><span style='color:#999;font-size:12px;'>（跳过 " + skipCount + " 个已运行/处理中任务）</span>";
+          if (skipCount > 0)
+            confirmMsg +=
+              "<br><span style='color:#999;font-size:12px;'>（跳过 " +
+              skipCount +
+              " 个已运行/处理中任务）</span>";
 
           layer.confirm(confirmMsg, { icon: 3, title: "批量开启确认" }, function (idx) {
             layer.close(idx);
             layer.load(1);
-            var successCount = 0, failCount = 0, doneCount = 0;
+            var successCount = 0,
+              failCount = 0,
+              doneCount = 0;
             toStart.forEach(function (item) {
               admin.req({
                 type: "POST",
                 url: layui.setter.configUrl + "admin/project_task/editStatus",
                 dataType: "json",
                 data: { id: item.id, status: 1 },
-                success: function (obj) { if (obj.data > 0) successCount++; else failCount++; },
-                error: function () { failCount++; },
+                success: function (obj) {
+                  if (obj.data > 0) successCount++;
+                  else failCount++;
+                },
+                error: function () {
+                  failCount++;
+                },
                 complete: function () {
                   doneCount++;
                   if (doneCount === toStart.length) {
@@ -599,25 +618,38 @@
           var checkData = table.checkStatus("LAY-user-manage-project-task").data;
           if (checkData.length === 0) return layer.msg("请先勾选任务", { icon: 2 });
 
-          var toStop = checkData.filter(function (item) { return item.status == 1; });
+          var toStop = checkData.filter(function (item) {
+            return item.status == 1;
+          });
           var skipCount = checkData.length - toStop.length;
           if (toStop.length === 0) return layer.msg("所选任务均已停止，无需重复操作", { icon: 0 });
 
           var confirmMsg = "确认批量停止 <b>" + toStop.length + "</b> 个任务？";
-          if (skipCount > 0) confirmMsg += "<br><span style='color:#999;font-size:12px;'>（跳过 " + skipCount + " 个已停止/处理中任务）</span>";
+          if (skipCount > 0)
+            confirmMsg +=
+              "<br><span style='color:#999;font-size:12px;'>（跳过 " +
+              skipCount +
+              " 个已停止/处理中任务）</span>";
 
           layer.confirm(confirmMsg, { icon: 3, title: "批量停止确认" }, function (idx) {
             layer.close(idx);
             layer.load(1);
-            var successCount = 0, failCount = 0, doneCount = 0;
+            var successCount = 0,
+              failCount = 0,
+              doneCount = 0;
             toStop.forEach(function (item) {
               admin.req({
                 type: "POST",
                 url: layui.setter.configUrl + "admin/project_task/editStatus",
                 dataType: "json",
                 data: { id: item.id, status: 0 },
-                success: function (obj) { if (obj.data > 0) successCount++; else failCount++; },
-                error: function () { failCount++; },
+                success: function (obj) {
+                  if (obj.data > 0) successCount++;
+                  else failCount++;
+                },
+                error: function () {
+                  failCount++;
+                },
                 complete: function () {
                   doneCount++;
                   if (doneCount === toStop.length) {
@@ -735,7 +767,8 @@
       // ===== 批量按钮状态同步 =====
       function syncBatchBtnState(checkedData) {
         var hasChecked = checkedData && checkedData.length > 0;
-        var $s = $("#btn-batch-start"), $p = $("#btn-batch-stop");
+        var $s = $("#btn-batch-start"),
+          $p = $("#btn-batch-stop");
         if (hasChecked) {
           $s.removeAttr("disabled").removeClass("layui-btn-disabled");
           $p.removeAttr("disabled").removeClass("layui-btn-disabled");
