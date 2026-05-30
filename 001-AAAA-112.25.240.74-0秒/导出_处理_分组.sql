@@ -52,9 +52,10 @@ BEGIN
 	SET @count_sql = CONCAT(
 		'SELECT COUNT(*) INTO @total_records FROM ',
 		table_name,
-		' ',
-		IF
-		( where_condition != '', CONCAT( 'WHERE ', where_condition ), '' ));
+		IF(where_condition IS NULL OR where_condition = '',
+		   '',
+		   CONCAT(' WHERE ', where_condition))
+	);
 	PREPARE stmt_count FROM @count_sql;
 	EXECUTE stmt_count;
 	DEALLOCATE PREPARE stmt_count;
@@ -70,9 +71,9 @@ BEGIN
 			'(SELECT '''', calleee164, '''', '''', '''', '''' ',
 			'FROM ',
 			table_name,
-			' ',
-		IF
-			( where_condition != '', CONCAT( 'WHERE ', where_condition, ' ' ), '' ),
+			IF(where_condition IS NULL OR where_condition = '',
+			   ' ',
+			   CONCAT(' WHERE ', where_condition, ' ')),
 			'LIMIT ',
 			batch_size,
 			' OFFSET ',
@@ -168,10 +169,6 @@ BEGIN
 	DECLARE total_small_groups INT DEFAULT 0;
 	DECLARE total_exported INT DEFAULT 0;
     
-	IF whereCondition IS NULL OR whereCondition = '' THEN
-		SET whereCondition = '1=1';
-	END IF;
-    
 	DROP TEMPORARY TABLE IF EXISTS temp_distinct_calls;
 	
 	SET @create_temp_table = CONCAT( '
@@ -179,11 +176,13 @@ BEGIN
 		SELECT 
 		MIN(callere164) AS callere164,
 		RIGHT(TRIM(calleee164), 11) AS calleee164
-		FROM ', table_name, ' 
-		WHERE ', whereCondition, '
-		GROUP BY 
+		FROM ', table_name,
+		IF(whereCondition IS NULL OR whereCondition = '',
+		   ' ',
+		   CONCAT(' WHERE ', whereCondition, ' ')),
+		'GROUP BY 
 		RIGHT(TRIM(calleee164), 11)
-	HAVING calleee164 REGEXP ''^[0-9]{11}$''' );
+		HAVING RIGHT(TRIM(calleee164), 11) REGEXP ''^[0-9]{11}$''' );
 	PREPARE stmt_create_temp FROM @create_temp_table;
 	EXECUTE stmt_create_temp;
 	DEALLOCATE PREPARE stmt_create_temp;
@@ -237,8 +236,8 @@ BEGIN
 END // 
 DELIMITER ;
 
--- -- 示例 1: 正常导出，生成的文件名将类似于 "1-AAAA-74-260407-04.08.csv"
+-- -- 示例 1: 传条件导出
 -- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260407', '/var/lib/mysql-files/e_cdr_20260407/', 'holdtime <= 0' );
 
--- -- 示例 2: 如果是在 74 服务器的白名单平铺导出模式下
--- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260407', '/var/lib/mysql-files/', 'holdtime <= 0' );
+-- -- 示例 2: 不传条件，查全表导出
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260407', '/var/lib/mysql-files/', '' );

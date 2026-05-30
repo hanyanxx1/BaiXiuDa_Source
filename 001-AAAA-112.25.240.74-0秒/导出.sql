@@ -5,42 +5,35 @@
 -- 3. 导出文件命名为：表名_partX.csv, X为文件序号，从1开始
 -- 4. 在最后一行输出总数量
 
-use vos3000;
+USE vos3000;
 
--- 导出到CSV文件:
--- 创建导出存储过程
--- 1. 首先删除已存在的存储过程
 DROP PROCEDURE IF EXISTS ExportCallData;
 DROP PROCEDURE IF EXISTS ExportBatchData_Raw;
 
--- 2. 创建新的存储过程，接受表名和导出路径作为参数
+-- 主导出过程
 DELIMITER //
 CREATE PROCEDURE ExportCallData(IN table_name VARCHAR(50), IN export_path VARCHAR(255), IN base_condition VARCHAR(500))
 BEGIN
-    DECLARE batch_size INT DEFAULT 1040000; -- 每个文件最大104万条
-    DECLARE where_condition VARCHAR(1000);
     DECLARE total_records INT;
     
-    -- 设置默认值
-    IF base_condition IS NULL OR base_condition = '' THEN
-        SET where_condition = '1=1';
-    ELSE
-        SET where_condition = base_condition;
-    END IF;
-    
     -- 获取总记录数
-    SET @count_sql = CONCAT('SELECT COUNT(*) INTO @total_records FROM ', table_name, ' WHERE ', where_condition);
+    SET @count_sql = CONCAT(
+        'SELECT COUNT(*) INTO @total_records FROM ', table_name,
+        IF(base_condition IS NULL OR base_condition = '',
+           '',
+           CONCAT(' WHERE ', base_condition))
+    );
     PREPARE stmt_count FROM @count_sql;
     EXECUTE stmt_count;
     DEALLOCATE PREPARE stmt_count;
     SET total_records = @total_records;
     
-    -- 调用导出函数 (指向新名称)
+    -- 调用批量导出子过程
     CALL ExportBatchData_Raw(
         table_name, 
         export_path, 
-        where_condition, 
-        table_name  -- 简化文件前缀，只使用表名
+        base_condition, 
+        table_name
     );
     
     -- 输出导出信息和总数量
@@ -48,7 +41,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- 创建批量导出数据的子过程
+-- 批量导出子过程
 DELIMITER //
 CREATE PROCEDURE ExportBatchData_Raw(
     IN table_name VARCHAR(50), 
@@ -63,7 +56,12 @@ BEGIN
     DECLARE num_batches INT;
     
     -- 动态计算总记录数和批次数
-    SET @count_sql = CONCAT('SELECT COUNT(*) INTO @total_records FROM ', table_name, ' WHERE ', where_condition);
+    SET @count_sql = CONCAT(
+        'SELECT COUNT(*) INTO @total_records FROM ', table_name,
+        IF(where_condition IS NULL OR where_condition = '',
+           '',
+           CONCAT(' WHERE ', where_condition))
+    );
     PREPARE stmt_count FROM @count_sql;
     EXECUTE stmt_count;
     DEALLOCATE PREPARE stmt_count;
@@ -71,17 +69,18 @@ BEGIN
     SET total_records = @total_records;
     SET num_batches = CEILING(total_records / batch_size);
     
-    -- 循环导出每个批次
     SET i = 0;
     
     batch_loop: WHILE i < num_batches DO
-        -- 每一批都包含表头
         SET @sql = CONCAT(
             'SELECT ''主叫号码'',''被叫号码'',''起始时间'',''终止时间'',''主叫经由网关'' ',
             'UNION ALL ',
             'SELECT callere164, calleee164, ',
             'FROM_UNIXTIME(starttime/1000), FROM_UNIXTIME(stoptime/1000), callergatewayid ',
-            'FROM ', table_name, ' WHERE ', where_condition, ' ',
+            'FROM ', table_name,
+            IF(where_condition IS NULL OR where_condition = '',
+               ' ',
+               CONCAT(' WHERE ', where_condition, ' ')),
             'LIMIT ', batch_size, ' OFFSET ', i * batch_size,
             ' INTO OUTFILE ''', export_path, '/', file_prefix, '_part', i+1, '.csv'' ',
             'FIELDS TERMINATED BY '','' ',
@@ -102,18 +101,4 @@ DELIMITER ;
 
 -- 以下是所有原始调用语句，没有任何省略
 -- 20260314
-CALL ExportCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314/all/', 'holdtime <= 0');
--- 20260315
-CALL ExportCallData('e_cdr_20260315', '/var/lib/mysql-files/e_cdr_20260315/all/', 'holdtime <= 0');
--- 20260316
-CALL ExportCallData('e_cdr_20260316', '/var/lib/mysql-files/e_cdr_20260316/all/', 'holdtime <= 0');
--- 20260317
-CALL ExportCallData('e_cdr_20260317', '/var/lib/mysql-files/e_cdr_20260317/all/', 'holdtime <= 0');
--- 20260318
-CALL ExportCallData('e_cdr_20260318', '/var/lib/mysql-files/e_cdr_20260318/all/', 'holdtime <= 0');
--- 20260319
-CALL ExportCallData('e_cdr_20260319', '/var/lib/mysql-files/e_cdr_20260319/all/', 'holdtime <= 0');
--- 20260320
-CALL ExportCallData('e_cdr_20260320', '/var/lib/mysql-files/e_cdr_20260320/all/', 'holdtime <= 0');
--- 20260321
-CALL ExportCallData('e_cdr_20260321', '/var/lib/mysql-files/e_cdr_20260321/all/', 'holdtime <= 0');
+-- CALL ExportCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314/all/', 'holdtime <= 0');
