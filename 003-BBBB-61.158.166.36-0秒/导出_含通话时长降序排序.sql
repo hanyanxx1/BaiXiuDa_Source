@@ -98,6 +98,6 @@ DELIMITER ;
 -- CALL ExportRankedDurationData(
 --    'e_cdr_20260401', 
 --    '/var/lib/mysql-files/001-AAAA-112.25.240.74-0秒/', 
---    'holdtime > 0', 
+--    '', 
 --    'e_cdr_20260401_时长排序降序'
 -- );

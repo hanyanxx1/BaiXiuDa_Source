@@ -5,8 +5,8 @@
 -- 2.1 从最后一位开始，向前截取11位
 -- 3. 对2处理后的数据结果，进行 calleee164 被叫号码进行去重，要求最后整个tableName中的calleee164 被叫号码不存在重复的
 -- 4. 对去重处理后的数据，按照callere164 主叫号码分组，第一列输出callere164 主叫号码分组，第二列输出对应的数量
--- 4.1 判断callere164 主叫号码分组数量是否大于50000条，如果大于50000条，则将该分组数据，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-callere164-当前服务-当前数据库表名的后6位-月份.日期.csv
--- 4.2 判断callere164 主叫号码分组数量是否小于50000条，如果小于50000条，则与其他小于50000条的分组数据合并后，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-BBBB-当前服务-当前数据库表名的后6位-月份.日期.csv
+-- 4.1 判断callere164 主叫号码分组数量是否大于batch_size条，如果大于batch_size条，则将该分组数据，分批导出到csv文件中，默认每个文件最大数量batch_size条，文件命名为：序号-callere164-当前服务-当前数据库表名的后6位-月份.日期.csv
+-- 4.2 判断callere164 主叫号码分组数量是否小于batch_size条，如果小于batch_size条，则与其他小于batch_size条的分组数据合并后，分批导出到csv文件中，默认每个文件最大数量batch_size条，文件命名为：序号-small_group_prefix-当前服务-当前数据库表名的后6位-月份.日期.csv
 -- 4.3 导出的csv文件，列头为客户姓名、客户号码、地址、购买套数、签收电话、备注，其中客户号码列的内容为calleee164 被叫号码，其他列内容为空
 -- 5. 对每个分组数据进行乱序处理
 -- 6. 单表数量最多可达3000万条，请优化执行效率，尽可能减少执行时间
@@ -22,7 +22,7 @@ DROP PROCEDURE IF EXISTS ProcessLargeGroups;
 
 -- 创建处理大分组的子过程
 DELIMITER //
-CREATE PROCEDURE ProcessLargeGroups(IN export_path VARCHAR(255), IN table_name VARCHAR(50))
+CREATE PROCEDURE ProcessLargeGroups(IN export_path VARCHAR(255), IN table_name VARCHAR(50), IN batch_size INT, IN service_name VARCHAR(50))
 BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE curr_callere164 VARCHAR(50);
@@ -58,7 +58,9 @@ BEGIN
             export_path,
             '',
             curr_callere164,
-            table_name 
+            table_name,
+            batch_size,
+            service_name
         );
         
         DROP TEMPORARY TABLE IF EXISTS temp_large_group_data;
@@ -70,7 +72,7 @@ DELIMITER ;
 
 
 DELIMITER //
-CREATE PROCEDURE ExportDistinctGroupedCallData(IN table_name VARCHAR(50), IN export_path VARCHAR(255), IN whereCondition VARCHAR(500))
+CREATE PROCEDURE ExportDistinctGroupedCallData(IN table_name VARCHAR(50), IN export_path VARCHAR(255), IN whereCondition VARCHAR(500), IN small_group_prefix VARCHAR(50), IN batch_size INT, IN service_name VARCHAR(50))
 BEGIN
     DECLARE total_records INT;
     DECLARE total_large_groups INT DEFAULT 0;
@@ -91,7 +93,7 @@ BEGIN
         WHERE ', whereCondition, '
         GROUP BY 
             RIGHT(TRIM(calleee164), 11)
-        HAVING calleee164 REGEXP ''^[0-9]{11}$'''
+        HAVING RIGHT(TRIM(calleee164), 11) REGEXP ''^[0-9]{11}$'''
     );
     PREPARE stmt_create_temp FROM @create_temp_table;
     EXECUTE stmt_create_temp;
@@ -109,22 +111,22 @@ BEGIN
     GROUP BY callere164;
     
     DROP TEMPORARY TABLE IF EXISTS temp_large_groups;
-    CREATE TEMPORARY TABLE temp_large_groups AS
-    SELECT callere164, record_count
-    FROM temp_caller_groups
-    WHERE record_count >= 50000;
+    SET @sql_large = CONCAT('CREATE TEMPORARY TABLE temp_large_groups AS SELECT callere164, record_count FROM temp_caller_groups WHERE record_count >= ', batch_size);
+    PREPARE stmt_large FROM @sql_large;
+    EXECUTE stmt_large;
+    DEALLOCATE PREPARE stmt_large;
     
     DROP TEMPORARY TABLE IF EXISTS temp_small_groups;
-    CREATE TEMPORARY TABLE temp_small_groups AS
-    SELECT callere164, record_count
-    FROM temp_caller_groups
-    WHERE record_count < 50000;
+    SET @sql_small = CONCAT('CREATE TEMPORARY TABLE temp_small_groups AS SELECT callere164, record_count FROM temp_caller_groups WHERE record_count < ', batch_size);
+    PREPARE stmt_small FROM @sql_small;
+    EXECUTE stmt_small;
+    DEALLOCATE PREPARE stmt_small;
     
     SELECT COUNT(*) INTO total_large_groups FROM temp_large_groups;
     SELECT COUNT(*) INTO total_small_groups FROM temp_small_groups;
     
     IF total_large_groups > 0 THEN
-        CALL ProcessLargeGroups(export_path, table_name);
+        CALL ProcessLargeGroups(export_path, table_name, batch_size, service_name);
         SELECT SUM(record_count) INTO @large_groups_total FROM temp_large_groups;
         SET total_exported = total_exported + @large_groups_total;
     END IF;
@@ -145,8 +147,10 @@ BEGIN
             'temp_small_groups_data',
             export_path,
             '',
-            'BBBB',
-            table_name
+            small_group_prefix,
+            table_name,
+            batch_size,
+            service_name
         );
         
         DROP TEMPORARY TABLE IF EXISTS temp_small_groups_data;
@@ -171,16 +175,16 @@ CREATE PROCEDURE ExportBatchData_Grouped(
     IN export_path VARCHAR(255), 
     IN where_condition VARCHAR(1000),
     IN file_prefix VARCHAR(255),
-    IN orig_table_name VARCHAR(50) 
+    IN orig_table_name VARCHAR(50),
+    IN batch_size INT,
+    IN service_name VARCHAR(50)
 )
 BEGIN
     DECLARE i INT DEFAULT 0;
-    DECLARE batch_size INT DEFAULT 50000;
     DECLARE total_records INT;
     DECLARE num_batches INT;
     DECLARE curr_date VARCHAR(10);
     
-    DECLARE current_service VARCHAR(50) DEFAULT '36'; 
     DECLARE table_suffix VARCHAR(6);
     
     SET curr_date = DATE_FORMAT(NOW(), '%m.%d');
@@ -205,11 +209,11 @@ BEGIN
             IF(where_condition != '', CONCAT('WHERE ', where_condition, ' '), ''),
             'LIMIT ', batch_size, ' OFFSET ', i * batch_size, ') AS tmp ',
             'INTO OUTFILE ''', export_path, '/', 
-            i+1, '-', file_prefix, '-', current_service, '-', table_suffix, '-', curr_date, '.csv'' ',
+            i+1, '-', file_prefix, '-', service_name, '-', table_suffix, '-', curr_date, '.csv'' ',
             'FIELDS TERMINATED BY '','' ',
             'ENCLOSED BY '''' ',
             'ESCAPED BY ''\\\\'' ',
-            'LINES TERMINATED BY ''\\n'''  
+            'LINES TERMINATED BY ''\\n'''
         );
 
         PREPARE stmt FROM @sql;
@@ -221,49 +225,30 @@ BEGIN
 END //
 DELIMITER ;
 
--- ==================== 原有的测试数据与调用（保留原样） ====================
--- SET @where_condition = 'calleee164 NOT LIKE "%QIANHAO%" 
---     AND calleee164 NOT LIKE "%WuRaoHaoMa%" 
---     AND calleee164 NOT LIKE "%DONGTAIDIFANG%" 
---     AND calleee164 NOT LIKE "%/%" 
---     AND calleee164 NOT LIKE "%?%" 
---     AND calleee164 NOT LIKE "%,%" 
---     AND calleee164 NOT LIKE "%#%" 
---     AND calleee164 NOT LIKE "%\\\\%" 
---     AND calleee164 NOT LIKE "%*%" 
---     AND calleee164 NOT LIKE "%-" 
---     AND holdtime <= 0';
-
--- SET @where_condition = '
---     calleee164 NOT LIKE "%/%" 
---     AND calleee164 NOT LIKE "%?%" 
---     AND calleee164 NOT LIKE "%,%" 
---     AND calleee164 NOT LIKE "%#%" 
---     AND calleee164 NOT LIKE "%\\\\%" 
---     AND calleee164 NOT LIKE "%*%" 
---     AND calleee164 NOT LIKE "%-" 
---     AND holdtime <= 0';
-
--- CALL ExportDistinctGroupedCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314', @where_condition);
-
-
 -- ==================== 最新规范调用示例 ====================
 /*
 【调用说明】
-主入口的调用方式完全保持不变。底层的命名逻辑会在内部自动完成解析和拼接。
+主入口调用方式已更新，新增3个参数：small_group_prefix、batch_size、service_name
 
-【单日数据调用示例】
+【参数说明】
 参数 1: 原始表名 (如 e_cdr_20260408，系统会自动提取后6位 '260408')
-参数 2: 导出存放的文件路径 (根据服务器权限配置决定是否可以带子目录)
+参数 2: 导出存放的文件路径
 参数 3: SQL Where 过滤条件
+参数 4: small_group_prefix - 小分组文件名前缀，如 'BBBB'
+参数 5: batch_size - 每个文件最大导出条数，同时作为大小分组判断阈值，如 50000
+参数 6: service_name - 当前服务标识，如 '36'
 
+【调用示例】
 CALL ExportDistinctGroupedCallData(
     'e_cdr_20260408', 
-    '/var/lib/mysql-files/001-AAAA-112.25.240.74-0秒/', 
-    'holdtime <= 0'
+    '/var/lib/mysql-files/003-BBBB-61.158.166.36-0秒/', 
+    'holdtime <= 0',
+    'BBBB',
+    50000,
+    '36'
 );
 
 -- 执行后，将生成类似以下名称的 CSV 文件：
--- 大分组：1-被叫号码-36-260408-04.08.csv
--- 小分组：1-BBBB-36-260408-04.08.csv
+-- 大分组：1-被叫号码-36-260408-05.30.csv
+-- 小分组：1-BBBB-36-260408-05.30.csv
 */

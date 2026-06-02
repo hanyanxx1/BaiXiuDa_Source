@@ -3,7 +3,7 @@
 # 核心功能: 
 #   1. 支持多路径汇总与自动日期命名
 #   2. 严格 11 位数字清洗与确定性去重
-#   3. 分批逻辑优化：若最后一个分包 < 20,000 条，则合并至前一个文件
+#   3. 分批逻辑优化：按2万条分批处理，若最后一个分包 < 5000 条，则合并至前一个文件
 #   4. 自动刷新 WPS/Excel 格式
 #   5. [更新] 日志输出完整绝对路径，方便多目录排查错误
 # ==============================================================================
@@ -66,7 +66,7 @@ def check_header_and_encoding(filepath):
     return False, 'utf-8-sig'
 
 def export_batches(df_group, core_identifier, output_folder, curr_date):
-    """分批次导出，逻辑优化：末尾不足 20,000 则合并"""
+    """分批次导出，逻辑优化：末尾不足 5,000 则合并"""
     
     # ==========================================
     # 【核心修改点】：强迫症福音，执行 3 次强力洗牌
@@ -88,8 +88,8 @@ def export_batches(df_group, core_identifier, output_folder, curr_date):
     })
 
     total_len = len(export_df)
-    batch_size = 50000
-    min_last_batch = 20000 # 最后一包最小阈值
+    batch_size = 20000
+    min_last_batch = 10000 # 最后一包最小阈值
     
     # 计算初始包数
     initial_batches = total_len // batch_size
@@ -99,7 +99,7 @@ def export_batches(df_group, core_identifier, output_folder, curr_date):
     
     # 构造分包区间
     if initial_batches == 0:
-        # 总数不足 50000，只有一包
+        # 总数不足 20000，只有一包
         batch_ranges.append((0, total_len))
     elif remainder < min_last_batch and remainder > 0:
         # 最后一包太小，合并到倒数第一包
@@ -195,11 +195,11 @@ def process_multi_paths():
     counts = all_df['callere164'].value_counts()
     
     # 大组处理
-    for caller in counts[counts >= 50000].index:
+    for caller in counts[counts >= 20000].index:
         export_batches(all_df[all_df['callere164'] == caller], str(caller), output_folder, curr_date)
     
     # 小组处理
-    small_df = all_df[all_df['callere164'].isin(counts[counts < 50000].index)]
+    small_df = all_df[all_df['callere164'].isin(counts[counts < 20000].index)]
     if not small_df.empty: 
         export_batches(small_df, 'QQQQ', output_folder, curr_date)
 

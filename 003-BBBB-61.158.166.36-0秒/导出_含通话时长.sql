@@ -107,4 +107,4 @@ DELIMITER ;
 -- 【测试调用示例】
 -- =========================================================
 -- 执行下行后，将在指定目录下看到：e_cdr_20260331_含通话时长_part1.csv
--- CALL ExportCallData_WithHoldtime('e_cdr_20260331', '/var/lib/mysql-files/e_cdr_20260331/all/', 'holdtime <= 0');
+-- CALL ExportCallData_WithHoldtime('e_cdr_20260331', '/var/lib/mysql-files/e_cdr_20260331/all/', '');

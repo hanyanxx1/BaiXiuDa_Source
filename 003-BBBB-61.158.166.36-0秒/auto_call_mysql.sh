@@ -5,7 +5,7 @@ DB_USER="root"
 DB_PASS="BAIXIUDA@@han138388"
 DB_NAME="vos3000"
 # 对应服务器的基础导出路径 (0秒业务)
-BASE_EXPORT_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-0秒/"
+BASE_EXPORT_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36/"
 # 120秒通话归档基础路径 (直接导出到此目录下)
 BASE_120S_PATH="/var/lib/mysql-files/003-BBBB-61.158.166.36-120秒/"
 # 【新增配置】120秒通话时长降序排序业务基础路径
@@ -41,7 +41,7 @@ do_export() {
     # A. 原始数据全导出 (0秒)
     echo " -> 步骤 A: 导出 0秒 原始话单到 all/ 目录..."
     # 原始话单一般保留全貌，因此这里依旧只传入 holdtime <= 0
-    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportCallData('${TABLE_NAME}', '${ALL_PATH}', 'holdtime <= 0');"
+    mysql -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "CALL ExportCallData('${TABLE_NAME}', '${ALL_PATH}', '');"
 
     # 统计 A 步骤导出的总行数
     TOTAL_RAW=$(find "$ALL_PATH" -maxdepth 1 -name "*.csv" -exec cat {} + 2>/dev/null | wc -l)
@@ -59,10 +59,9 @@ do_export() {
         AND calleee164 NOT LIKE "%#%" 
         AND calleee164 NOT LIKE "%\\\\\\\\%" 
         AND calleee164 NOT LIKE "%*%" 
-        AND calleee164 NOT LIKE "%-%" 
-        AND holdtime <= 0';
+        AND calleee164 NOT LIKE "%-%"';
         
-    CALL ExportDistinctGroupedCallData('${TABLE_NAME}', '${ROOT_PATH}', @where_condition);
+    CALL ExportDistinctGroupedCallData('${TABLE_NAME}', '${ROOT_PATH}', @where_condition, 'BBBB', 20000, '36');
 EOF
     
     # 统计 B 步骤处理后的总行数

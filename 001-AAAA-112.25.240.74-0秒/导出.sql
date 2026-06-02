@@ -100,5 +100,5 @@ END //
 DELIMITER ;
 
 -- 以下是所有原始调用语句，没有任何省略
--- 20260314
--- CALL ExportCallData('e_cdr_20260314', '/var/lib/mysql-files/e_cdr_20260314/all/', 'holdtime <= 0');
+-- 20260506
+-- CALL ExportCallData('e_cdr_20260506', '/var/lib/mysql-files/e_cdr_20260506/all/', '');

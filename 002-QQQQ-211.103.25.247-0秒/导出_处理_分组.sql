@@ -1,12 +1,12 @@
--- 247
+-- 74：
 -- 需求如下：
 -- 1. 按照传入的whereCondition 过滤数据
 -- 2. 对calleee164 被叫号码进行如下处理
 -- 2.1 从最后一位开始，向前截取11位
 -- 3. 对2处理后的数据结果，进行 calleee164 被叫号码进行去重，要求最后整个tableName中的calleee164 被叫号码不存在重复的
 -- 4. 对去重处理后的数据，按照callere164 主叫号码分组，第一列输出callere164 主叫号码分组，第二列输出对应的数量
--- 4.1 判断callere164 主叫号码分组数量是否大于50000条，如果大于50000条，则将该分组数据，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-callere164-0-月份.日期.csv
--- 4.2 判断callere164 主叫号码分组数量是否小于50000条，如果小于50000条，则与其他小于50000条的分组数据合并后，分批导出到csv文件中，默认每个文件最大数量5万条，文件命名为：序号-QQQQ-当前服务-当前数据库表名的后6位-月份.日期.csv
+-- 4.1 判断callere164 主叫号码分组数量是否大于batch_size条，如果大于batch_size条，则将该分组数据，分批导出到csv文件中，默认每个文件最大数量batch_size条，文件命名为：序号-callere164-当前服务-当前数据库表名的后6位-月份.日期.csv
+-- 4.2 判断callere164 主叫号码分组数量是否小于batch_size条，如果小于batch_size条，则与其他小于batch_size条的分组数据合并后，分批导出到csv文件中，默认每个文件最大数量batch_size条，文件命名为：序号-small_group_prefix-当前服务-当前数据库表名的后6位-月份.日期.csv
 -- 4.3 导出的csv文件，列头为客户姓名、客户号码、地址、购买套数、签收电话、备注，其中客户号码列的内容为calleee164 被叫号码，其他列内容为空
 -- 5. 对每个分组数据进行乱序处理
 -- 6. 单表数量最多可达3000万条，请优化执行效率，尽可能减少执行时间
@@ -22,7 +22,7 @@ DROP PROCEDURE IF EXISTS ProcessLargeGroups;
 DROP PROCEDURE IF EXISTS ExportBatchData_Grouped;
 
 -- =========================================================
--- 2. 创建底层分批导出过程 (支持动态命名: 序号-QQQQ-当前服务-表名后6位-日期)
+-- 2. 创建底层分批导出过程 (支持动态命名: 序号-file_prefix-当前服务-表名后6位-日期)
 -- =========================================================
 DELIMITER //
 CREATE PROCEDURE ExportBatchData_Grouped ( 
@@ -30,18 +30,15 @@ CREATE PROCEDURE ExportBatchData_Grouped (
     IN export_path VARCHAR ( 255 ), 
     IN where_condition VARCHAR ( 1000 ), 
     IN file_prefix VARCHAR ( 255 ),
-    IN orig_table_name VARCHAR ( 50 ) -- 接收原始表名用于截取
+    IN orig_table_name VARCHAR ( 50 ), -- 接收原始表名用于截取
+    IN batch_size INT,                 -- 每个文件最大导出条数
+    IN service_name VARCHAR ( 50 )     -- 当前服务标识，如 '74'
 ) 
 BEGIN
 	DECLARE i INT DEFAULT 0;
-	DECLARE batch_size INT DEFAULT 50000;
 	DECLARE total_records INT;
 	DECLARE num_batches INT;
 	DECLARE curr_date VARCHAR ( 10 );
-	
-    -- 声明当前服务变量 (可按需修改)
-	DECLARE current_service VARCHAR(50) DEFAULT '247'; 
-    -- 声明用于存储表名后6位的变量
 	DECLARE table_suffix VARCHAR(6);
 
 	SET curr_date = DATE_FORMAT( NOW(), '%m.%d' );
@@ -52,9 +49,10 @@ BEGIN
 	SET @count_sql = CONCAT(
 		'SELECT COUNT(*) INTO @total_records FROM ',
 		table_name,
-		' ',
-		IF
-		( where_condition != '', CONCAT( 'WHERE ', where_condition ), '' ));
+		IF(where_condition IS NULL OR where_condition = '',
+		   '',
+		   CONCAT(' WHERE ', where_condition))
+	);
 	PREPARE stmt_count FROM @count_sql;
 	EXECUTE stmt_count;
 	DEALLOCATE PREPARE stmt_count;
@@ -70,9 +68,9 @@ BEGIN
 			'(SELECT '''', calleee164, '''', '''', '''', '''' ',
 			'FROM ',
 			table_name,
-			' ',
-		IF
-			( where_condition != '', CONCAT( 'WHERE ', where_condition, ' ' ), '' ),
+			IF(where_condition IS NULL OR where_condition = '',
+			   ' ',
+			   CONCAT(' WHERE ', where_condition, ' ')),
 			'LIMIT ',
 			batch_size,
 			' OFFSET ',
@@ -85,9 +83,9 @@ BEGIN
 			'-',
 			file_prefix,
 			'-',
-			current_service,   -- 拼接当前服务
+			service_name,    -- 拼接当前服务
 			'-',
-			table_suffix,      -- 拼接表名后6位
+			table_suffix,    -- 拼接表名后6位
 			'-',
 			curr_date,
 			'.csv'' ',
@@ -113,7 +111,9 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE ProcessLargeGroups (
 	IN export_path VARCHAR ( 255 ),
-	IN table_name VARCHAR ( 50 )
+	IN table_name VARCHAR ( 50 ),
+	IN batch_size INT,             -- 每个文件最大导出条数
+	IN service_name VARCHAR ( 50 ) -- 当前服务标识，如 '74'
 ) 
 BEGIN
 	DECLARE done INT DEFAULT FALSE;
@@ -142,8 +142,8 @@ BEGIN
 		EXECUTE stmt_large_group;
 		DEALLOCATE PREPARE stmt_large_group;
         
-        -- 向下传递 table_name
-		CALL ExportBatchData_Grouped ( 'temp_large_group_data', export_path, '', curr_callere164, table_name ); 
+        -- 向下传递 table_name、batch_size、service_name，大分组文件名前缀固定为主叫号码本身
+		CALL ExportBatchData_Grouped ( 'temp_large_group_data', export_path, '', curr_callere164, table_name, batch_size, service_name ); 
         
 		DROP TEMPORARY TABLE IF EXISTS temp_large_group_data;
 		
@@ -160,17 +160,16 @@ DELIMITER //
 CREATE PROCEDURE ExportDistinctGroupedCallData (
 	IN table_name VARCHAR ( 50 ),
 	IN export_path VARCHAR ( 255 ),
-	IN whereCondition VARCHAR ( 500 )
+	IN whereCondition VARCHAR ( 500 ),
+	IN small_group_prefix VARCHAR ( 50 ),  -- 小分组文件名前缀，如 'AAAA'
+	IN batch_size INT,                      -- 每个文件最大导出条数，同时作为大小分组判断阈值，如 20000
+	IN service_name VARCHAR ( 50 )          -- 当前服务标识，如 '74'
 ) 
 BEGIN
 	DECLARE total_records INT;
 	DECLARE total_large_groups INT DEFAULT 0;
 	DECLARE total_small_groups INT DEFAULT 0;
 	DECLARE total_exported INT DEFAULT 0;
-    
-	IF whereCondition IS NULL OR whereCondition = '' THEN
-		SET whereCondition = '1=1';
-	END IF;
     
 	DROP TEMPORARY TABLE IF EXISTS temp_distinct_calls;
 	
@@ -179,11 +178,13 @@ BEGIN
 		SELECT 
 		MIN(callere164) AS callere164,
 		RIGHT(TRIM(calleee164), 11) AS calleee164
-		FROM ', table_name, ' 
-		WHERE ', whereCondition, '
-		GROUP BY 
+		FROM ', table_name,
+		IF(whereCondition IS NULL OR whereCondition = '',
+		   ' ',
+		   CONCAT(' WHERE ', whereCondition, ' ')),
+		'GROUP BY 
 		RIGHT(TRIM(calleee164), 11)
-	HAVING calleee164 REGEXP ''^[0-9]{11}$''' );
+		HAVING RIGHT(TRIM(calleee164), 11) REGEXP ''^[0-9]{11}$''' );
 	PREPARE stmt_create_temp FROM @create_temp_table;
 	EXECUTE stmt_create_temp;
 	DEALLOCATE PREPARE stmt_create_temp;
@@ -194,16 +195,22 @@ BEGIN
 	CREATE TEMPORARY TABLE temp_caller_groups AS SELECT callere164, COUNT(*) AS record_count FROM temp_distinct_calls GROUP BY callere164;
     
 	DROP TEMPORARY TABLE IF EXISTS temp_large_groups;
-	CREATE TEMPORARY TABLE temp_large_groups AS SELECT callere164, record_count FROM temp_caller_groups WHERE record_count >= 50000;
+	SET @sql_large = CONCAT('CREATE TEMPORARY TABLE temp_large_groups AS SELECT callere164, record_count FROM temp_caller_groups WHERE record_count >= ', batch_size);
+	PREPARE stmt_large FROM @sql_large;
+	EXECUTE stmt_large;
+	DEALLOCATE PREPARE stmt_large;
     
 	DROP TEMPORARY TABLE IF EXISTS temp_small_groups;
-	CREATE TEMPORARY TABLE temp_small_groups AS SELECT callere164, record_count FROM temp_caller_groups WHERE record_count < 50000; 
+	SET @sql_small = CONCAT('CREATE TEMPORARY TABLE temp_small_groups AS SELECT callere164, record_count FROM temp_caller_groups WHERE record_count < ', batch_size);
+	PREPARE stmt_small FROM @sql_small;
+	EXECUTE stmt_small;
+	DEALLOCATE PREPARE stmt_small;
     
     SELECT COUNT(*) INTO total_large_groups FROM temp_large_groups; 
     SELECT COUNT(*) INTO total_small_groups FROM temp_small_groups; 
     
     IF total_large_groups > 0 THEN
-		CALL ProcessLargeGroups ( export_path, table_name );
+		CALL ProcessLargeGroups ( export_path, table_name, batch_size, service_name );
 		SELECT SUM( record_count ) INTO @large_groups_total FROM temp_large_groups;
 		SET total_exported = total_exported + @large_groups_total;
 	END IF;
@@ -219,8 +226,8 @@ BEGIN
 		SELECT COUNT(*) INTO @small_groups_total FROM temp_small_groups_data;
 		SET total_exported = total_exported + @small_groups_total;
         
-        -- 向下传递 table_name
-		CALL ExportBatchData_Grouped ( 'temp_small_groups_data', export_path, '', 'QQQQ', table_name ); 
+		-- 向下传递 table_name、batch_size、service_name，小分组文件名前缀使用传入的 small_group_prefix
+		CALL ExportBatchData_Grouped ( 'temp_small_groups_data', export_path, '', small_group_prefix, table_name, batch_size, service_name ); 
         
 		DROP TEMPORARY TABLE IF EXISTS temp_small_groups_data;
 	END IF;
@@ -237,8 +244,8 @@ BEGIN
 END // 
 DELIMITER ;
 
--- -- 示例 1: 正常导出，生成的文件名将类似于 "1-QQQQ-247-260407-04.08.csv"
--- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260407', '/var/lib/mysql-files/e_cdr_20260407/', 'holdtime <= 0' );
+-- -- 示例 1: 传条件导出，小分组前缀 'QQQQ'，每批2万条，服务标识 '247'
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260506', '/var/lib/mysql-files/e_cdr_20260506/', 'holdtime <= 0', 'QQQQ', 20000, '247' );
 
--- -- 示例 2: 如果是在 247 服务器的白名单平铺导出模式下
--- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260407', '/var/lib/mysql-files/', 'holdtime <= 0' );
+-- -- 示例 2: 不传条件，查全表导出，小分组前缀 'QQQQ'，每批2万条，服务标识 '247'
+-- CALL ExportDistinctGroupedCallData ( 'e_cdr_20260506', '/var/lib/mysql-files/', '', 'QQQQ', 20000, '247' );

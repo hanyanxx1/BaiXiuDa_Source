@@ -35,5 +35,5 @@ BEGIN
 END //
 DELIMITER ;
 -- 74:
-CALL GetDistinctCallDataCount('e_cdr_20251224', 'holdtime <= 0');
+CALL GetDistinctCallDataCount('e_cdr_20260506', 'holdtime <= 0');
 
