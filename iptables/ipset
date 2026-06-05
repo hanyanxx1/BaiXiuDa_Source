@@ -1,0 +1,156 @@
+#!/bin/bash
+# ============================================================
+# 功能：限制 TCP/UDP 52666 端口只允许指定的网段访问
+# 适用：Debian 11 (已安装 ipset, iptables-persistent, ipset-persistent)
+# 用法：sudo bash setup_whitelist_52666.sh
+# ============================================================
+
+set -e
+
+# ---------- 前置依赖检查 ----------
+echo "检查必要命令..."
+for cmd in iptables ipset; do
+    if ! command -v $cmd >/dev/null 2>&1; then
+        echo "错误: 未找到命令 $cmd，请先安装 iptables 和 ipset。"
+        exit 1
+    fi
+done
+
+if command -v ipset-persistent >/dev/null 2>&1; then
+    echo "  -> ipset-persistent 已安装，将使用服务持久化。"
+else
+    echo "警告: ipset-persistent 未安装，重启后 ipset 规则可能丢失。"
+    echo "      建议执行: sudo apt install ipset-persistent"
+fi
+
+# ---------- 可修改变量 ----------
+IPSET_NAME="pscc_allow"               # ipset 集合名称
+PORT="52666"                           # 目标端口
+
+# 允许的网段列表（请务必使用 CIDR 格式，如 192.168.1.0/24）
+ALLOWED_NETWORKS=(
+    "1.198.38.0/24"
+    "221.14.88.0/24"
+    "42.51.32.0/24"
+    "42.51.33.0/24"
+    "42.51.37.0/24"
+    "42.51.38.0/24"
+    "42.51.40.0/24"
+    "42.51.41.0/24"
+    "42.51.42.0/24"
+    "42.224.10.0/24"
+    "42.224.90.0/24"
+    "42.224.92.0/24"
+    "42.224.93.0/24"
+    "42.224.141.0/24"
+    "42.224.143.0/24"
+    "42.224.224.0/24"
+    "42.224.228.0/24"
+    "42.224.231.0/24"
+    "42.228.236.0/24"
+    "42.228.237.0/24"
+    "42.228.238.0/24"
+    "115.50.151.0/24"
+    "115.50.152.0/24"
+    "115.50.154.0/24"
+    "123.5.138.0/24"
+    "123.5.140.0/24"
+    "123.5.176.0/24"
+    "123.5.183.0/24"
+    "123.9.218.0/24"
+    "123.162.186.0/24"
+    "123.162.187.0/24"
+    "125.40.138.0/24"
+    "125.40.159.0/24"
+    "125.43.126.0/24"
+    "125.43.127.0/24"
+    "182.121.76.0/24"
+    "182.121.142.0/24"
+    "182.121.143.0/24"
+    "219.157.9.0/24"
+    "222.141.25.0/24"
+    "61.158.166.0/24"
+    "183.185.109.0/24"
+    "8.130.15.135"
+    "125.40.158.0/24"
+    "182.121.66.0/24"
+    "42.235.149.0/24"
+    "123.5.137.0/24"
+    "42.224.73.0/24"
+    "42.224.80.0/24"
+    "42.235.146.0/24"
+    "42.228.233.0/24"
+    "42.235.148.0/24"
+    "115.50.73.0/24"
+)
+# ---------------------------------
+
+# 1. 准备 ipset 集合
+echo "[1/4] 创建/清空 ipset 集合 ${IPSET_NAME} ..."
+if ipset list ${IPSET_NAME} &>/dev/null; then
+    ipset flush ${IPSET_NAME}
+else
+    ipset create ${IPSET_NAME} hash:net
+fi
+
+# 2. 添加允许的网段（自动检测并补全缺失掩码的IP为 /32）
+echo "[2/4] 添加允许的网段到 ipset ..."
+for net in "${ALLOWED_NETWORKS[@]}"; do
+    # 检查是否包含子网掩码，若无则添加 /32 并给出警告
+    if [[ ! "$net" =~ /[0-9]+$ ]]; then
+        echo "  -> 警告: '$net' 不含子网掩码，将作为单个 IP 添加 ($net/32)"
+        net="${net}/32"
+    fi
+    if ipset add ${IPSET_NAME} ${net} 2>/dev/null; then
+        echo "  -> 已添加 ${net}"
+    else
+        echo "  -> 错误: 添加 ${net} 失败，请检查格式"
+    fi
+done
+
+# 3. 清理旧规则（仅针对 52666 端口）
+echo "[3/4] 清理旧规则（端口 ${PORT}） ..."
+iptables -D INPUT -p udp --dport ${PORT} -m set --match-set ${IPSET_NAME} src -j ACCEPT 2>/dev/null || true
+iptables -D INPUT -p tcp --dport ${PORT} -m set --match-set ${IPSET_NAME} src -j ACCEPT 2>/dev/null || true
+iptables -D INPUT -p udp --dport ${PORT} -j DROP 2>/dev/null || true
+iptables -D INPUT -p tcp --dport ${PORT} -j DROP 2>/dev/null || true
+
+# 4. 添加新规则（白名单优先）
+echo "[4/4] 添加新规则（白名单 -> DROP） ..."
+iptables -I INPUT 1 -p udp --dport ${PORT} -m set --match-set ${IPSET_NAME} src -j ACCEPT
+iptables -I INPUT 1 -p tcp --dport ${PORT} -m set --match-set ${IPSET_NAME} src -j ACCEPT
+iptables -A INPUT -p udp --dport ${PORT} -j DROP
+iptables -A INPUT -p tcp --dport ${PORT} -j DROP
+
+# 5. 持久化保存
+echo "[5/5] 持久化保存规则..."
+
+# --- iptables 保存 ---
+if command -v netfilter-persistent >/dev/null 2>&1; then
+    netfilter-persistent save
+    echo "  -> iptables 规则已通过 netfilter-persistent 保存。"
+else
+    mkdir -p /etc/iptables
+    iptables-save > /etc/iptables/rules.v4
+    echo "  -> iptables 规则已保存到 /etc/iptables/rules.v4。"
+    echo "     未安装 iptables-persistent，请确保系统重启后加载此文件。"
+fi
+
+# --- ipset 保存 ---
+IPSET_SAVE_FILE="/etc/iptables/ipset"
+mkdir -p /etc/iptables
+ipset save > ${IPSET_SAVE_FILE}
+echo "  -> 所有 ipset 集合已保存到 ${IPSET_SAVE_FILE}"
+
+if systemctl is-active --quiet ipset-persistent; then
+    systemctl restart ipset-persistent
+    echo "  -> ipset-persistent 服务已重启。"
+else
+    systemctl enable ipset-persistent 2>/dev/null || true
+    systemctl start ipset-persistent 2>/dev/null || true
+    echo "  -> ipset-persistent 服务已启用并启动。"
+fi
+
+echo ""
+echo "✅ 配置完成！当前 ${PORT} 端口规则如下："
+iptables -L INPUT -n -v --line-numbers | grep "dpt:${PORT}"

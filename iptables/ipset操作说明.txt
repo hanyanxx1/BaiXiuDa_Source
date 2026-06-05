@@ -1,0 +1,31 @@
+# http://ip138.com/                              # ip查看
+# ==============================================================================
+# 52666 端口 ipset 白名单防火墙标准运维手册
+# ==============================================================================
+
+# 1、怎么生效起来（启动/重新部署防线）
+sudo bash /root/ipset                            # 核心部署命令：运行脚本，加载白名单列表并合拢防火墙过滤防线
+
+# 2、怎么查看是否生效
+sudo iptables -L INPUT -n --line-numbers         # 查看保安：确认 match-set pscc_allow 规则置顶（Num为1、2），DROP 规则在下方
+sudo ipset list pscc_allow                       # 查看名册：列出当前内存白名单集合中已生效的所有 IP 和网段
+ipset test pscc_allow 42.235.148.0               # 模拟放行校验：测试指定 IP 是否在白名单内（返回 in set 代表已被放行）
+iptables -L INPUT -n -v | grep -E "52666"        # 查看规则命中计数：检查 52666 端口各个规则当前的流量包匹配和拦截计数
+sudo ipset list pscc_allow | grep -E "42.235.148.0"
+
+# 3、怎么动态添加（免重启、业务零中断热追加）
+sudo ipset add -exist pscc_allow 115.50.73.0/24 # 动态追加网段/IP：在业务高峰期免重启、瞬间放行某个急需恢复的用户网段或 IP
+
+# 4、怎么动态删除（实时踢出某个 IP/网段）
+sudo ipset del pscc_allow 182.121.66.0/24        # 动态踢出网段/IP：实时从白名单中收回某个 IP 权限，使其流量在 1 秒内被阻断拦截
+
+# 5、怎么手动持久化保存 ipset 规则（防重启丢失）
+sudo ipset save pscc_allow > /etc/iptables/ipset_pscc_allow.rules # 备份内存数据：将当前的内存白名单集合导出并保存到本地文件中
+sudo systemctl restart ipset-persistent 2>/dev/null || echo "未安装或请手动重启" # 重启持久化服务：若系统已安装该服务则触发重载保存
+
+# 6、怎么修改白名单脚本文件（消灭复制格式错误）
+nano /root/ipset                                 # 文本编辑命令：打开白名单文件，彻底删掉行尾带空格的错行，纯手动输入新网段后再重新运行脚本固化
+
+# 🚨 应急救灾：万一业务受到严重影响需要“全盘恢复放开”（清空所有规则）
+sudo iptables -P INPUT ACCEPT                    # 紧急解封步骤 1：先将防火墙 INPUT 链的默认全局策略设置为接收（允许所有流量）
+sudo iptables -F INPUT                           # 紧急解封步骤 2：一键清空所有已挂载的拦截过滤规则（52666 端口将彻底暴露，全网全放开）
