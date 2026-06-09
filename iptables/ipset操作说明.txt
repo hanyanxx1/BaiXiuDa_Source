@@ -9,7 +9,7 @@ sudo bash /root/ipset                            # 核心部署命令：运行�
 # 2、怎么查看是否生效
 sudo iptables -L INPUT -n --line-numbers         # 查看保安：确认 match-set pscc_allow 规则置顶（Num为1、2），DROP 规则在下方
 sudo ipset list pscc_allow                       # 查看名册：列出当前内存白名单集合中已生效的所有 IP 和网段
-ipset test pscc_allow 42.235.148.0               # 模拟放行校验：测试指定 IP 是否在白名单内（返回 in set 代表已被放行）
+ipset test pscc_allow 42.228.232.166               # 模拟放行校验：测试指定 IP 是否在白名单内（返回 in set 代表已被放行）
 iptables -L INPUT -n -v | grep -E "52666"        # 查看规则命中计数：检查 52666 端口各个规则当前的流量包匹配和拦截计数
 sudo ipset list pscc_allow | grep -E "42.235.148.0"
 
